@@ -1,5 +1,5 @@
 var node = {}
-var lifeline = [new Node(0,1,1,1,10), new Node(2,0,1,1,12)]
+//var lifeline = [new Node(0,1,1,1,10), new Node(2,0,1,1,12)]
 
 function Node(pid, tid, pidSource, tidSource, time) {
   if (!(this instanceof Node)) {
