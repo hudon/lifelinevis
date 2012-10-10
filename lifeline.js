@@ -13,7 +13,6 @@
         this.time = time;
     }
 
-    //var node = {}, lifeline = [new Node(0, 1, 1, 1, 10), new Node(2, 0, 1, 1, 12)];
     var lifeline = [], util = {};
 
     function loadLifeline() {
