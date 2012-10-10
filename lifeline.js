@@ -12,7 +12,6 @@
         this.time = time;
     }
 
-    //var node = {}, lifeline = [new Node(0, 1, 1, 1, 10), new Node(2, 0, 1, 1, 12)];
     var lifeline = [];
 
     window.addEventListener('load', windowLoadHandler, false);
@@ -31,8 +30,9 @@
     function redrawLifelineUI() {
         var node, container, i,
                 div = document.getElementById('lifeline');
+        div.setAttribute('data-records', lifeline);
 
-        for (i = 0; i < lifeline.length; i++) {
+        /*for (i = 0; i < lifeline.length; i++) {
             node = lifeline[i];
 
             // create node UI
@@ -41,7 +41,7 @@
 
             div.appendChild(container);
 
-        }
+        }*/
     }
 
     /* Utilities */
