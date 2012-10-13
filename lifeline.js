@@ -127,47 +127,50 @@
     function update(source) {
         var nodes = tree.nodes(root).reverse();
         console.log(nodes);
+        
+        // creates as many g.node as vertices in tree
         var node = vis.selectAll("g.node")
-            .data(nodes, function(d) { return d.id || (d.id = ++i); });
-            
-        var nodeEnter = node.enter().append("svg:g")
-    	    .attr("class", "node");
+                      .data(nodes, function(d) { return d.id || (d.id = ++i); });
+           
+        // creating vertices in the tree (g with circle and text) 
+        var nodeEnter = node.enter()
+                            .append("svg:g")
+    	                    .attr("class", "node");
     	
 	    nodeEnter.append("svg:circle")
-            .attr("r", 4.5)
-            .style("fill", function(d) { return d._children ? "lightsteelblue" : "#fff"; })
-            .on("click", click);
+                 .attr("r", 4.5)
+                 .style("fill", function(d) { return d._children ? "lightsteelblue" : "#fff"; })
+                 .on("click", click);
             
         nodeEnter.append("svg:text")
-      	    .attr("x", function(d) { return d._children ? -8 : 8; })
-		    .attr("y", 3)
-      	    .text(function(d) { 
-      	        return "process : " + d.pid + " thread : " + d.tid; 
-      	    });
+      	         .attr("x", -5)//function(d) { return d._children ? -8 : 8; }) --> used by original
+		         .attr("y", 18)
+      	         .text(function(d) { 
+      	            return "process : " + d.pid + " thread : " + d.tid; 
+      	         });
     
-        // Transition nodes to their new position.
+        // Transition nodes to their new position (duration controls speed: higher == slower)
 	    nodeEnter.transition()
-		    .duration(duration)
-		    .attr("transform", function(d) { return "translate(" + d.y + "," + d.x + ")"; })
-          	.style("opacity", 1)
-          .select("circle")
-            .style("fill", "lightsteelblue");
+		         .duration(duration)
+		         .attr("transform", function(d) { return "translate(" + d.y + "," + d.x + ")"; })
+          	     .style("opacity", 1)
+                 .select("circle")
+                    .style("fill", "lightsteelblue");
           
         node.transition()
-          .duration(duration)
-          .attr("transform", function(d) { return "translate(" + d.y + "," + d.x + ")"; })
-          .style("opacity", 1);
-        
+            .duration(duration)
+            .attr("transform", function(d) { return "translate(" + d.y + "," + d.x + ")"; })
+            .style("opacity", 1);
 
 	    node.exit().transition()
-          .duration(duration)
-          .attr("transform", function(d) { return "translate(" + source.y + "," + source.x + ")"; })
-          .style("opacity", 1e-6)
-          .remove();
+            .duration(duration)
+            .attr("transform", function(d) { return "translate(" + source.y + "," + source.x + ")"; })
+            .style("opacity", 1e-6)
+            .remove();
           
-        // Update the links…
+        // form the edges between the vertices
         var link = vis.selectAll("path.link")
-            .data(tree.links(nodes), function(d) { return d.target.id; });
+                      .data(tree.links(nodes), function(d) { return d.target.id; });
 
         // Enter any new links at the parent's previous position.
         link.enter().insert("svg:path", "g")
@@ -213,37 +216,37 @@
         update(d);
     }
 
-    function redrawLifelineUI() {
-        var w = 960,
-            h = 2000;
+    function drawLifelineTree() {
+        var w = 800,//960,  the width and height of the whole svg arrea
+            h = 700;//2000;
             
         tree = d3.layout.tree()
-            .size([h, w - 160]);
+                 .size([h, w - 160]);
 
         diagonal = d3.svg.diagonal()
-            .projection(function(d) { return [d.y, d.x]; });
+                     .projection(function(d) { return [d.y, d.x]; });
 
-        vis = d3.select("#lifeline").append("svg:svg")
-            .attr("width", w)
-            .attr("height", h)
-          .append("svg:g")
-            .attr("transform", "translate(40,0)");
+        // creates an SVG canvas
+        vis = d3.select("#lifeline")
+                .append("svg:svg")
+                .attr("width", w)
+                .attr("height", h)
+                .append("svg:g")
+                    .attr("transform", "translate(20,0)");//moves the initial position of the svg:g element
           
         // want to draw from treeLifeline structure    
         d3.json("tree_example.json", function(json) {
-            json.x0 = 800;
+            json.x0 = 300;//800;
             json.y0 = 0;
             root = json;
             update(json);
         });
-        
-        //update(treeLifeline);
     }
 
     function windowLoadHandler() {
         loadLifeline();
         parseLifelineData();
-        redrawLifelineUI();
+        drawLifelineTree();
     }
 
     window.addEventListener('load', windowLoadHandler, false);
