@@ -1,1 +1,12 @@
-{"myjson":2, "yourjson":3}
+total 288
+-rwxrwxrwx 1 pilgrim users 239578 Oct  3 11:02 d3.v2.js
+-rwxrwxrwx 1 pilgrim users    239 Oct 10 07:43 index.html
+-rwxrwxrwx 1 pilgrim users   2129 Oct 10 08:21 lifeline.js
+-rwxrwxrwx 1 pilgrim users     19 Oct 10 07:44 lifeline.json
+-rwxrwxrwx 1 pilgrim users     19 Oct 10 07:44 lifeline.json~
+-rwxrwxrwx 1 pilgrim users   2215 Oct 10 08:20 lifeline.js~
+-rwxrwxrwx 1 pilgrim users      0 Oct 12 06:52 tagger.json
+-rwxrwxrwx 1 pilgrim users    603 Oct 12 07:04 tagger.py
+-rwxrwxrwx 1 pilgrim users    592 Oct 12 07:03 tagger.py~
+-rwxrwxrwx 1 pilgrim users  40589 Oct  1 13:20 underscore.js
+
