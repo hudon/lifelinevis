@@ -52,12 +52,12 @@
             while (level >= 0) {
                 var bucket = buckets[level] ? buckets[level] : []; 
                 p_bucket_node = findParent(level, parent, bucket);
-                if (p_bucket_node.treeNum) break;
+                if (p_bucket_node) break;
                 level -= 1;
             }
             
             // have a parent, go to parent in identified tree and add the child -- update parent in bucket
-            if (p_bucket_node.treeNum) {
+            if (p_bucket_node) {
                 var tree = treeLifeline[p_bucket_node.treeNum];                 // a root Node 
                 addTreeChild(tree, 0, level, p_bucket_node.vertex, vert);       
                 addToBucket(level+1, vert, p_bucket_node.treeNum);              // add child to the right bucket
@@ -81,7 +81,7 @@
                 return bNode;
             }
         }
-        return -1;
+        return 0;
     }
     
     function addTreeChild(tree, curLevel, goalLevel, parentVertex, childVertex) {
@@ -106,6 +106,7 @@
                 var bNode = bucket[i];
                 if (vertex.pid == bNode.vertex.pid && vertex.tid == bNode.vertex.tid) { // check if similar node is already in the bucket
                     bNode.treeNum = treeNum;
+                    bNode.vertex.time = vertex.time;
                     return;
                 }
             }
