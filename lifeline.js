@@ -143,9 +143,6 @@
             link,
             node;       
 
-<<<<<<< HEAD
-        // adds id to each obj in nodes, creates element placeholders
-=======
         // when we have more than 1 tree, needs more support in other parts of code
         /*for (var i=0; i<source.length; i++) {
             if (nodes) {
@@ -156,7 +153,6 @@
         }*/
 
         // creates as many g.node as vertices in tree
->>>>>>> minor refactor
         nodeIdentifier = 0;
         node = vis.selectAll("g.node")    // selects elements that don't exist in order to create new ones == empty selection
             .data(nodes, function (d) {   // all nodes data ends up as placeholder nodes for missing elements in enter()
