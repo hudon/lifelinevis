@@ -2,6 +2,7 @@ import subprocess
 import time
 import getopt
 import sys
+import string
 
 def get_process_thread_ids(ps):
     threadids = []
@@ -36,7 +37,7 @@ def assigntag(process_name):
 
 def to_json(showtag_output):
     i = -1
-    result = "[\n"
+    jsons = []
     for line in showtag_output.readlines():
         i += 1
         if i == 0:
@@ -47,9 +48,8 @@ def to_json(showtag_output):
         json = {"tagName": words[0], "srcProcessId": words[1], "srcThreadId":
                 words[2], "dstProcessId": words[3], "dstThreadId":
                 words[4], "time": long(words[5]) }
-        result += str(json) + '\n'
-    result += "]"
-    return result
+        jsons.append(str(json));
+    return "[" + string.join(jsons, ",\n") + "]"
 
 def showtag():
     result = ""
@@ -68,16 +68,25 @@ def printJSON(lifeline):
     f.write(lifeline+ '\n')
     print ("TAGGER: json saved to file (tagger.json)")
 
+def usage():
+    print 'python tagger.py [-n]'
+    print '  -n    use this option to start firefox and assign tags to it'
+    print '        without the option, no process will be started and'
+    print '        tags will not be assigned (but a new lifeline will'
+    print '        still be printed to tagger.json'
+    sys.exit(2)
+
 if __name__ == "__main__":
     try:
         opts, args = getopt.getopt(sys.argv, "n")
     except getopt.GetoptError:
-        print 'python tagger.py [-n]'
-        sys.exit(2)
+        usage()
     newprocess = ''
     for opt, arg in opts:
         if opt == '-n':
             newprocess = 'firefox'
+        elif opt == '-h':
+            usage()
     if newprocess:
         assigntag(newprocess)
     lifeline = showtag()
