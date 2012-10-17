@@ -41,43 +41,46 @@
     // return tree, time
     // finding a parent - check all vertices on the level
     function findParent(vertex, bucket) {
-        _.each(bucket, function (bNode) {
-            if (vertex.pid === bNode.vertex.pid && vertex.tid === bNode.vertex.tid) {
-                return bNode;
-            }
+        return _.find(bucket, function (bNode) {
+            return vertex.pid === bNode.vertex.pid && vertex.tid === bNode.vertex.tid;
         });
-        return 0;
     }
 
-    function addTreeChild(tree, curLevel, goalLevel, parentVertex, childVertex) {
-        if (curLevel === goalLevel) {
-            var vertex = tree.vertex;
-            if (vertex.pid === parentVertex.pid && vertex.tid === parentVertex.tid && vertex.time === parentVertex.time) {
-                tree.addChild(childVertex);
-                return;
-            }
+    function addTreeChildHelper(node, currLevel, goalLevel, parentVertex, childVertex) {
+        if (currLevel == goalLevel) {
+            if (node.vertex.pid === parentVertex.pid
+                && node.vertex.tid === parentVertex.tid
+                && node.vertex.time === parentVertex.time) {
+                    node.addChild(childVertex);
+                }
         } else {
-            _.each(tree.children, function (child) {
-                addTreeChild(child, curLevel + 1, goalLevel, parentVertex, childVertex);
+            _.each(node.children, function (child) {
+                addTreeChildHelper(child, currLevel + 1, goalLevel, parentVertex, childVertex);
             });
         }
+    }
+
+    function addTreeChild(tree, parentLevel, parentVertex, childVertex) {
+        addTreeChildHelper(tree, 0, parentLevel, parentVertex, childVertex);
     }
 
     function addToBucket(level, vertex, treeNum) {
-        var bucket = buckets[level] || [],
+        buckets[level] = buckets[level] || []
+        var bucket = buckets[level],
             bNode;
-        if (bucket.length > 0) {
-            _.each(bucket, function (bNode) {
-                if (vertex.pid === bNode.vertex.pid && vertex.tid === bNode.vertex.tid) { // check if similar node is already in the bucket
-                    bNode.treeNum = treeNum;
-                    bNode.vertex.time = vertex.time;
-                    return;
-                }
-            });
+
+        // check if similar node is already in the bucket
+        bNode = _.find(bucket, function (node) {
+            return vertex.pid === node.vertex.pid && vertex.tid === node.vertex.tid;
+        });
+
+        if (!bNode) {
+            bNode = new BucketNode(vertex, treeNum);
         } else {
-            buckets[level] = [];
+            bNode.treeNum = treeNum;
+            bNode.vertex.time = vertex.time;
         }
-        bNode = new BucketNode(vertex, treeNum);
+
         buckets[level].push(bNode);
     }
 
@@ -94,7 +97,7 @@
             res.srcThreadId = node.srcThreadId;
             res.dstProcessId = node.dstProcessId;
             res.dstThreadId = node.dstThreadId;
-            res.time = Math.round(node.time / minTime) * 100;
+            res.time = Math.ceil(node.time / minTime) * 100;
             return res;
         });
 
@@ -120,7 +123,7 @@
             // have a parent, go to parent in identified tree and add the child -- update parent in bucket
             if (parentBucketNode) {
                 tree = treeLifeline[parentBucketNode.treeNum];                 // a root Node
-                addTreeChild(tree, 0, level, parentBucketNode.vertex, vert);
+                addTreeChild(tree, level, parentBucketNode.vertex, vert);
                 addToBucket(level + 1, vert, parentBucketNode.treeNum);              // add child to the right bucket
 
                 // do not have a parent in our current trees, create a new root == level 0
@@ -267,7 +270,7 @@
 
 
     function drawLifelineTree() {
-        // want to draw from treeLifeline structure
+        // TODO want to draw from treeLifeline structure
         d3.json("tree_example.json", function (json) {
             _.each(json, function (jsonTree) {
 

@@ -1,3 +1,2 @@
 [{"dstProcessId": "20489", "srcProcessId": "499749", "dstThreadId": "3", "tagName": "2", "time": 490757840, "srcThreadId": "0"},
-{"dstProcessId": "5656", "srcProcessId": "20489", "dstThreadId": "8", "tagName": "2", "time": 529400520, "srcThreadId": "3"},
-{"dstProcessId": "3121", "srcProcessId": "20489", "dstThreadId": "9", "tagName": "2", "time": 979683512, "srcThreadId": "3"}]
+{"dstProcessId": "5656", "srcProcessId": "20489", "dstThreadId": "8", "tagName": "2", "time": 529400520, "srcThreadId": "3"}]
