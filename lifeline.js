@@ -252,7 +252,7 @@
     function drawLifelineTree() {
         // want to draw from treeLifeline structure
         d3.json("tree_example.json", function (json) {
-            _.each(json, function (tree) {
+            _.each(json, function (jsonTree) {
 
                 var w = 800,//960,  the width and height of the whole svg arrea
                     h = 700,//2000;
@@ -273,9 +273,9 @@
                     .append("svg:g")
                     .attr("transform", "translate(20,0)"); //moves the initial position of the svg:g element
 
-                tree.x0 = 300;//800;
-                tree.y0 = 0;
-                update(tree, tree, diagonal, tree, animationDuration, vis);
+                jsonTree.x0 = 300;//800;
+                jsonTree.y0 = 0;
+                update(jsonTree, jsonTree, diagonal, tree, animationDuration, vis);
             });
         });
     }
