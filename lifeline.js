@@ -136,7 +136,14 @@
             link,
             node;
 
-        console.log(nodes);
+        // when we have more than 1 tree, needs more support in other parts of code
+        /*for (var i=0; i<source.length; i++) {
+            if (nodes) {
+                _.each(tree.nodes(source[i]).reverse(), function(node) { nodes.push(node) });
+            } else {
+                nodes = tree.nodes(source[i]).reverse();
+            }
+        }*/
 
         // creates as many g.node as vertices in tree
         nodeIdentifier = 0;
@@ -241,9 +248,14 @@
 
         // want to draw from treeLifeline structure
         d3.json("tree_example.json", function (json) {
-            json.x0 = 300;//800;
+            json.x0 = 300;
             json.y0 = 0;
+            /*for (var i=0; i<json.length; i++) {
+                json[i].x0 = 300;//800;
+                json[i].y0 = 0 + (i*200);
+            }*/
             update(json, diagonal, tree, animationDuration, vis);
+            
         });
     }
 
