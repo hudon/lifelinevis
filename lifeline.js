@@ -117,6 +117,7 @@
         });
     }
 
+
     /**
      * Updates the tree visualization
      * @param {Object} root - The root node of the tree
@@ -135,26 +136,17 @@
             update(root, d, diagonal, tree, animationDuration, vis);
         }
 
-        var nodes = tree.nodes(root).reverse(),
+
+        var nodes = tree.nodes(source).reverse(), // result is an array of objs with x and y locations (+vertex info)
             nodeIdentifier,
-            nodeEnter,
+            nodeEnter,  // the enter set of node elements (i.e. all new nodes on screen)
             link,
-            node;
+            node;       
 
-        // when we have more than 1 tree, needs more support in other parts of code
-        
-        /*for (var i=0; i<source.length; i++) {
-            if (nodes) {
-                _.each(tree.nodes(source[i]).reverse(), function(node) { nodes.push(node) });
-            } else {
-                nodes = tree.nodes(source[i]).reverse();
-            }
-        }*/
-
-        // creates as many g.node as vertices in tree
+        // adds id to each obj in nodes, creates element placeholders
         nodeIdentifier = 0;
-        node = vis.selectAll("g.node")
-            .data(nodes, function (d) {
+        node = vis.selectAll("g.node")    // selects elements that don't exist in order to create new ones == empty selection
+            .data(nodes, function (d) {   // all nodes data ends up as placeholder nodes for missing elements in enter()
                 nodeIdentifier += 1;
                 if (!d.id) {
                     d.id = nodeIdentifier;
@@ -162,16 +154,21 @@
                 return d.id;
             });
 
-        // creating vertices in the tree (g with circle and text) 
+        /****** Dealing will all new node elements ******/
+        
+        // for every node placeholder in enter set, add the missing elements to the SVG
+        // returns a list of SVG g elements (with node object in their data attrib)
         nodeEnter = node.enter()
             .append("svg:g")
             .attr("class", "node");
 
+        // to each g elements add a SVG circle element (~~ as a child)
         nodeEnter.append("svg:circle")
             .attr("r", 4.5)
             .style("fill", function (d) { return d._children ? "lightsteelblue" : "#fff"; })
             .on("click", click);
 
+        // to each g element add a SVG text element (~~ another child)
         nodeEnter.append("svg:text")
             .attr("x", -5)//function(d) { return d._children ? -8 : 8; }) --> used by original
             .attr("y", 18)
@@ -179,30 +176,36 @@
                 return "process : " + d.pid + " thread : " + d.tid;
             });
 
-        // Transition nodes to their new position (duration controls speed: higher == slower)
+        // Transition the g elements to their new position (duration controls speed: higher == slower)
         nodeEnter.transition()
             .duration(animationDuration)
-            .attr("transform", function (d) { return "translate(" + d.y + "," + d.x + ")"; })
+            .attr("transform", function (d) { return "translate(" + d.y + "," + d.x + ")"; }) // translate to nodes x & y pos.
             .style("opacity", 1)
             .select("circle")
             .style("fill", "lightsteelblue");
+            
+        /****** done with new node elements ******/
 
+        // the update set (I believe)
         node.transition()
             .duration(animationDuration)
             .attr("transform", function (d) { return "translate(" + d.y + "," + d.x + ")"; })
             .style("opacity", 1);
 
+        // The exit set -- remove any elements we don't need from screen
         node.exit().transition()
             .duration(animationDuration)
             .attr("transform", function () { return "translate(" + source.y + "," + source.x + ")"; })
             .style("opacity", 1e-6)
             .remove();
+            
+        /****** Vertex connection edges ******/
 
-        // form the edges between the vertices
+        // returns an array of objects representing the links from parent to child for each node ({source, target})
         link = vis.selectAll("path.link")
-            .data(tree.links(nodes), function (d) { return d.target.id; });
-
-        // Enter any new links at the parent's previous position.
+            .data(tree.links(nodes), function (d) { return d.target.id; }); 
+            
+        // form any new links
         link.enter().insert("svg:path", "g")
             .attr("class", "link")
             .attr("d", function () {
@@ -218,7 +221,7 @@
             .duration(animationDuration)
             .attr("d", diagonal);
 
-        // Transition exiting nodes to the parent's new position.
+        // remove any of the links that are no longer necessary
         link.exit().transition()
             .duration(animationDuration)
             .attr("d", function () {
@@ -226,6 +229,8 @@
                 return diagonal({source: o, target: o});
             })
             .remove();
+            
+        /****** done with link construction ******/
 
         // Stash the old positions for transition.
         nodes.forEach(function (d) {
@@ -236,31 +241,32 @@
 
 
     function drawLifelineTree() {
-        var w = 800,//960,  the width and height of the whole svg arrea
-            h = 700,//2000;
-            tree = d3.layout.tree().size([h, w - 160]),
-            animationDuration = 500,
-
-            diagonal = d3.svg.diagonal()
-                .projection(function (d) { return [d.y, d.x]; }),
-
-            // creates an SVG canvas
-            vis = d3.select("#lifeline")
-                .append("svg:svg")
-                .attr("width", w)
-                .attr("height", h)
-                .append("svg:g")
-                .attr("transform", "translate(20,0)");//moves the initial position of the svg:g element
-
         // want to draw from treeLifeline structure
         d3.json("tree_example.json", function (json) {
-            json.x0 = 300;
-            json.y0 = 0;
-            /*for (var i=0; i<json.length; i++) {
-                json[i].x0 = 300;//800;
-                json[i].y0 = 0 + (i*200);
-            }*/
-            update(json, json, diagonal, tree, animationDuration, vis);
+        
+            for (var i=0; i<json.length; i++) {
+            
+                var w = 800,//960,  the width and height of the whole svg arrea
+                    h = 700,//2000;
+                    tree = d3.layout.tree().size([h, w - 160]),
+                    animationDuration = 500,
+
+                diagonal = d3.svg.diagonal()
+                    .projection(function (d) { return [d.y, d.x]; }),
+
+                // creates an SVG canvas
+                vis = d3.select("#lifeline")
+                    .append("svg:svg")
+                    .attr("width", w)
+                    .attr("height", h)
+                    .append("svg:g")
+                    .attr("transform", "translate(20,0)");//moves the initial position of the svg:g element
+               
+                json[i].x0 = 300;
+                json[i].y0 = 0;
+                update(json[i], diagonal, tree, animationDuration, vis);
+            }
+
         });
     }
 

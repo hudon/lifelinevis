@@ -1,4 +1,4 @@
-{
+[{
     "pid":0,
     "tid":1,
     "time":2,
@@ -40,4 +40,39 @@
             ]
         }
     ]
-}
+},
+{
+    "pid":0,
+    "tid":1,
+    "time":2,
+    "children": [
+        {   "pid":1,
+            "tid":1,
+            "time":2, 
+            "children": [
+            ]
+        },
+        {
+            "pid":1,
+            "tid":2,
+            "time":3, 
+            "children": [
+                {
+                    "pid":2,
+                    "tid":1,
+                    "time":5, 
+                    "children": [
+                        {
+                            "pid":3,
+                            "tid":1,
+                            "time":6, 
+                            "children": [
+                            
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}]
