@@ -76,6 +76,8 @@ def usage():
     print '        still be printed to tagger.json'
     sys.exit(2)
 
+# TODO: print out double quotes instead of single quotes (JSON)
+# TODO: do not print the 'L' on the right of long values for time (JSON)
 if __name__ == "__main__":
     try:
         opts, args = getopt.getopt(sys.argv, "n")
