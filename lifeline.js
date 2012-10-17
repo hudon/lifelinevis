@@ -142,6 +142,7 @@
             node;
 
         // when we have more than 1 tree, needs more support in other parts of code
+        
         /*for (var i=0; i<source.length; i++) {
             if (nodes) {
                 _.each(tree.nodes(source[i]).reverse(), function(node) { nodes.push(node) });
