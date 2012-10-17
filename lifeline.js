@@ -3,6 +3,12 @@
     /*jslint nomen: true, browser: true*/
     /*global _,console,d3*/
 
+    var lifeline = [],
+        util = {},
+        treeLifeline = [],  // tree-like representation of the lifeline
+        buckets = [],       // nodes per level
+        timePeriod = 1;
+
     // Vertex: a process thread; Edge: the event of sending/recieving a tag
     function Vertex(pid, tid, time) {
         this.pid = pid;
@@ -24,12 +30,6 @@
         this.vertex = vertex;
         this.treeNum = treeNum;
     }
-
-    var lifeline = [],
-        util = {},
-        treeLifeline = [],  // tree-like representation of the lifeline
-        buckets = [],       // nodes per level
-        timePeriod = 1;
 
     function loadLifeline() {
         util.ajaxget('/lifeline.json', function (response) {
@@ -143,7 +143,20 @@
             link,
             node;       
 
+<<<<<<< HEAD
         // adds id to each obj in nodes, creates element placeholders
+=======
+        // when we have more than 1 tree, needs more support in other parts of code
+        /*for (var i=0; i<source.length; i++) {
+            if (nodes) {
+                _.each(tree.nodes(source[i]).reverse(), function(node) { nodes.push(node) });
+            } else {
+                nodes = tree.nodes(source[i]).reverse();
+            }
+        }*/
+
+        // creates as many g.node as vertices in tree
+>>>>>>> minor refactor
         nodeIdentifier = 0;
         node = vis.selectAll("g.node")    // selects elements that don't exist in order to create new ones == empty selection
             .data(nodes, function (d) {   // all nodes data ends up as placeholder nodes for missing elements in enter()
