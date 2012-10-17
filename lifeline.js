@@ -112,21 +112,26 @@
         buckets[level].push(bNode);
     }
 
-    // TODO: remove these vars (reduce global state)
-    var duration = 500,
-        i = 0,
-        root,
-        tree,
-        diagonal,
-        vis;
+    function update(source, diagonal, tree, animationDuration, vis) {
+        // Toggle children on click.
+        function click(d) {
+            if (d.children) {
+                d._children = d.children;
+                d.children = null;
+            } else {
+                d.children = d._children;
+                d._children = null;
+            }
+            update(d, diagonal, tree, animationDuration, vis);
+        }
 
-    function update(source) {
-        var nodes = tree.nodes(root).reverse();
+        var nodes = tree.nodes(source).reverse();
         console.log(nodes);
 
         // creates as many g.node as vertices in tree
+        var nodeIdentifier = 0;
         var node = vis.selectAll("g.node")
-            .data(nodes, function(d) { return d.id || (d.id = ++i); });
+            .data(nodes, function(d) { return d.id || (d.id = ++nodeIdentifier); });
 
         // creating vertices in the tree (g with circle and text) 
         var nodeEnter = node.enter()
@@ -147,19 +152,19 @@
 
         // Transition nodes to their new position (duration controls speed: higher == slower)
         nodeEnter.transition()
-            .duration(duration)
+            .duration(animationDuration)
             .attr("transform", function(d) { return "translate(" + d.y + "," + d.x + ")"; })
             .style("opacity", 1)
             .select("circle")
             .style("fill", "lightsteelblue");
 
         node.transition()
-            .duration(duration)
+            .duration(animationDuration)
             .attr("transform", function(d) { return "translate(" + d.y + "," + d.x + ")"; })
             .style("opacity", 1);
 
         node.exit().transition()
-            .duration(duration)
+            .duration(animationDuration)
             .attr("transform", function(d) { return "translate(" + source.y + "," + source.x + ")"; })
             .style("opacity", 1e-6)
             .remove();
@@ -176,17 +181,17 @@
                 return diagonal({source: o, target: o});
             })
         .transition()
-            .duration(duration)
+            .duration(animationDuration)
             .attr("d", diagonal);
 
         // Transition links to their new position.
         link.transition()
-            .duration(duration)
+            .duration(animationDuration)
             .attr("d", diagonal);
 
         // Transition exiting nodes to the parent's new position.
         link.exit().transition()
-            .duration(duration)
+            .duration(animationDuration)
             .attr("d", function(d) {
                 var o = {x: source.x, y: source.y};
                 return diagonal({source: o, target: o});
@@ -200,42 +205,29 @@
         });
     }
 
-    // Toggle children on click.
-    function click(d) {
-        if (d.children) {
-            d._children = d.children;
-            d.children = null;
-        } else {
-            d.children = d._children;
-            d._children = null;
-        }
-        update(d);
-    }
 
     function drawLifelineTree() {
-        var w = 800,//960,  the width and height of the whole svg arrea
-            h = 700;//2000;
+        var w = 800//960,  the width and height of the whole svg arrea
+            , h = 700//2000;
+            , tree = d3.layout.tree().size([h, w - 160])
+            , animationDuration = 500
 
-        tree = d3.layout.tree()
-            .size([h, w - 160]);
+            , diagonal = d3.svg.diagonal()
+                .projection(function(d) { return [d.y, d.x]; })
 
-        diagonal = d3.svg.diagonal()
-            .projection(function(d) { return [d.y, d.x]; });
-
-        // creates an SVG canvas
-        vis = d3.select("#lifeline")
-            .append("svg:svg")
-            .attr("width", w)
-            .attr("height", h)
-            .append("svg:g")
-            .attr("transform", "translate(20,0)");//moves the initial position of the svg:g element
+            // creates an SVG canvas
+            , vis = d3.select("#lifeline")
+                .append("svg:svg")
+                .attr("width", w)
+                .attr("height", h)
+                .append("svg:g")
+                .attr("transform", "translate(20,0)");//moves the initial position of the svg:g element
 
         // want to draw from treeLifeline structure
         d3.json("tree_example.json", function(json) {
             json.x0 = 300;//800;
             json.y0 = 0;
-            root = json;
-            update(json);
+            update(json, diagonal, tree, animationDuration, vis);
         });
     }
 
