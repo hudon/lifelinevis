@@ -250,9 +250,9 @@
                     h = 700,//2000;
                     tree = d3.layout.tree().size([h, w - 160]),
                     animationDuration = 500,
-
-                diagonal = d3.svg.diagonal()
-                    .projection(function (d) { return [d.y, d.x]; }),
+                    diagonal = d3.svg.diagonal()
+                        .projection(function (d) { return [d.y, d.x]; }),
+                    vis;
 
                 // creates an SVG canvas
                 vis = d3.select("#lifeline")
@@ -260,11 +260,11 @@
                     .attr("width", w)
                     .attr("height", h)
                     .append("svg:g")
-                    .attr("transform", "translate(20,0)");//moves the initial position of the svg:g element
+                    .attr("transform", "translate(20,0)"); //moves the initial position of the svg:g element
                
-                json[i].x0 = 300;
+                json[i].x0 = 300;//800;
                 json[i].y0 = 0;
-                update(json[i], diagonal, tree, animationDuration, vis);
+                update(json[i], json[i], diagonal, tree, animationDuration, vis);
             }
 
         });
