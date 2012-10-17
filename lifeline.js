@@ -117,7 +117,12 @@
         });
     }
 
-    function update(source, diagonal, tree, animationDuration, vis) {
+    /**
+     * Updates the tree visualization
+     * @param {Object} root - The root node of the tree
+     * @param {Object} source - The source node of the update
+    */
+    function update(root, source, diagonal, tree, animationDuration, vis) {
         // Toggle children on click.
         function click(d) {
             if (d.children) {
@@ -127,10 +132,10 @@
                 d.children = d._children;
                 d._children = null;
             }
-            update(d, diagonal, tree, animationDuration, vis);
+            update(root, d, diagonal, tree, animationDuration, vis);
         }
 
-        var nodes = tree.nodes(source).reverse(),
+        var nodes = tree.nodes(root).reverse(),
             nodeIdentifier,
             nodeEnter,
             link,
@@ -254,8 +259,7 @@
                 json[i].x0 = 300;//800;
                 json[i].y0 = 0 + (i*200);
             }*/
-            update(json, diagonal, tree, animationDuration, vis);
-            
+            update(json, json, diagonal, tree, animationDuration, vis);
         });
     }
 
