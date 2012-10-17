@@ -164,7 +164,7 @@
             });
 
         /****** Dealing will all new node elements ******/
-        
+
         // for every node placeholder in enter set, add the missing elements to the SVG
         // returns a list of SVG g elements (with node object in their data attrib)
         nodeEnter = node.enter()
@@ -192,7 +192,7 @@
             .style("opacity", 1)
             .select("circle")
             .style("fill", "lightsteelblue");
-            
+
         /****** done with new node elements ******/
 
         // the update set (I believe)
@@ -207,13 +207,13 @@
             .attr("transform", function () { return "translate(" + source.y + "," + source.x + ")"; })
             .style("opacity", 1e-6)
             .remove();
-            
+
         /****** Vertex connection edges ******/
 
         // returns an array of objects representing the links from parent to child for each node ({source, target})
         link = vis.selectAll("path.link")
             .data(tree.links(nodes), function (d) { return d.target.id; }); 
-            
+
         // form any new links
         link.enter().insert("svg:path", "g")
             .attr("class", "link")
@@ -238,7 +238,7 @@
                 return diagonal({source: o, target: o});
             })
             .remove();
-            
+
         /****** done with link construction ******/
 
         // Stash the old positions for transition.
@@ -252,16 +252,18 @@
     function drawLifelineTree() {
         // want to draw from treeLifeline structure
         d3.json("tree_example.json", function (json) {
-        
-            for (var i=0; i<json.length; i++) {
-            
+            _.each(json, function (tree) {
+
                 var w = 800,//960,  the width and height of the whole svg arrea
                     h = 700,//2000;
                     tree = d3.layout.tree().size([h, w - 160]),
                     animationDuration = 500,
-                    diagonal = d3.svg.diagonal()
-                        .projection(function (d) { return [d.y, d.x]; }),
+                    diagonal,
                     vis;
+
+                diagonal = d3.svg.diagonal().projection(function (d) {
+                    return [d.y, d.x];
+                });
 
                 // creates an SVG canvas
                 vis = d3.select("#lifeline")
@@ -270,12 +272,11 @@
                     .attr("height", h)
                     .append("svg:g")
                     .attr("transform", "translate(20,0)"); //moves the initial position of the svg:g element
-               
-                json[i].x0 = 300;//800;
-                json[i].y0 = 0;
-                update(json[i], json[i], diagonal, tree, animationDuration, vis);
-            }
 
+                tree.x0 = 300;//800;
+                tree.y0 = 0;
+                update(tree, tree, diagonal, tree, animationDuration, vis);
+            });
         });
     }
 
