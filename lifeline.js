@@ -1,6 +1,7 @@
 (function () {
     'use strict';
     /*jslint browser: true*/
+    /*global _*/
 
     // Vertex: a process thread; Edge: the event of sending/recieving a tag
     function Vertex(pid, tid, time) {
@@ -13,11 +14,10 @@
         this.vertex = vertex;
         this.children = children;
 
-        this.addChild = addChild;
-        function addChild(childVertex) {
+        this.addChild = function addChild(childVertex) {
             var childNode = new Node(childVertex, []);
-            this.children.push(childNode);
-        }
+            children.push(childNode);
+        };
     }
 
     function BucketNode(vertex, treeNum) {
@@ -25,9 +25,11 @@
         this.treeNum = treeNum;
     }
 
-    var lifeline = [], util = {};
-
-    window.addEventListener('load', windowLoadHandler, false);
+    var lifeline = [],
+        util = {},
+        treeLifeline = [],  // tree-like representation of the lifeline
+        buckets = [],       // nodes per level
+        timePeriod = 1;
 
     function loadLifeline() {
         util.ajaxget('/lifeline.json', function (response) {
@@ -35,30 +37,26 @@
         }, false);
     }
 
-    var treeLifeline = [];  // tree-like representation of the lifeline
-    var buckets = [];       // nodes per level
-    var timePeriod = 1;
-
     function parseLifelineData() {
         _.each(lifeline, function (node) {
-            var vert = new Vertex(node.dstProcessId, node.dstThreadId, node.time);
-            var parent = new Vertex(node.srcProcessId, node.srcThreadId, node.time);
-            var p_bucket_node;
+            var vert = new Vertex(node.dstProcessId, node.dstThreadId, node.time),
+                parent = new Vertex(node.srcProcessId, node.srcThreadId, node.time),
+                parentBucketNode,
+                level = Math.floor(node.time/timePeriod);                           // actual tree level based on time
 
-            var level = Math.floor(node.time/timePeriod);                           // actual tree level based on time
             // find parent process: look through each level down to roots
             while (level >= 0) {
-                var bucket = buckets[level] ? buckets[level] : []; 
-                p_bucket_node = findParent(level, parent, bucket);
-                if (p_bucket_node) break;
+                var bucket = buckets[level] || [];
+                parentBucketNode = findParent(level, parent, bucket);
+                if (parentBucketNode) break;
                 level -= 1;
             }
 
             // have a parent, go to parent in identified tree and add the child -- update parent in bucket
-            if (p_bucket_node) {
-                var tree = treeLifeline[p_bucket_node.treeNum];                 // a root Node
-                addTreeChild(tree, 0, level, p_bucket_node.vertex, vert);
-                addToBucket(level+1, vert, p_bucket_node.treeNum);              // add child to the right bucket
+            if (parentBucketNode) {
+                var tree = treeLifeline[parentBucketNode.treeNum];                 // a root Node
+                addTreeChild(tree, 0, level, parentBucketNode.vertex, vert);
+                addToBucket(level+1, vert, parentBucketNode.treeNum);              // add child to the right bucket
 
                 // do not have a parent in our current trees, create a new root == level 0
             } else {
@@ -68,8 +66,9 @@
                 addToBucket(0, parent, treeLifeline.length-1);
                 addToBucket(1, vert, treeLifeline.length-1);
             }
-        }
+        });
     }
+
     // return tree, time
     // finding a parent - check all vertices on the level
     function findParent(level, vertex, bucket) {
@@ -77,7 +76,7 @@
             if (vertex.pid === bNode.vertex.pid && vertex.tid === bNode.vertex.tid) {
                 return bNode;
             }
-        }
+        });
         return 0;
     }
 
@@ -91,7 +90,7 @@
         } else {
             _.each(tree.children, function (child) {
                 addTreeChild(child, curLevel + 1, goalLevel, parentVertex, childVertex);
-            }
+            });
         }
     }
 
@@ -104,7 +103,7 @@
                     bNode.vertex.time = vertex.time;
                     return;
                 }
-            }
+            });
         } else {
             buckets[level] = [];
         }
