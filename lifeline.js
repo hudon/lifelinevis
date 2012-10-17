@@ -1,7 +1,7 @@
 (function () {
     'use strict';
-    /*jslint browser: true*/
-    /*global _*/
+    /*jslint nomen: true, browser: true*/
+    /*global _,console,d3*/
 
     // Vertex: a process thread; Edge: the event of sending/recieving a tag
     function Vertex(pid, tid, time) {
@@ -37,41 +37,9 @@
         }, false);
     }
 
-    function parseLifelineData() {
-        _.each(lifeline, function (node) {
-            var vert = new Vertex(node.dstProcessId, node.dstThreadId, node.time),
-                parent = new Vertex(node.srcProcessId, node.srcThreadId, node.time),
-                parentBucketNode,
-                level = Math.floor(node.time/timePeriod);                           // actual tree level based on time
-
-            // find parent process: look through each level down to roots
-            while (level >= 0) {
-                var bucket = buckets[level] || [];
-                parentBucketNode = findParent(level, parent, bucket);
-                if (parentBucketNode) break;
-                level -= 1;
-            }
-
-            // have a parent, go to parent in identified tree and add the child -- update parent in bucket
-            if (parentBucketNode) {
-                var tree = treeLifeline[parentBucketNode.treeNum];                 // a root Node
-                addTreeChild(tree, 0, level, parentBucketNode.vertex, vert);
-                addToBucket(level+1, vert, parentBucketNode.treeNum);              // add child to the right bucket
-
-                // do not have a parent in our current trees, create a new root == level 0
-            } else {
-                var rootNode = new Node(parent, []);
-                rootNode.addChild(vert);
-                treeLifeline.push(rootNode);
-                addToBucket(0, parent, treeLifeline.length-1);
-                addToBucket(1, vert, treeLifeline.length-1);
-            }
-        });
-    }
-
     // return tree, time
     // finding a parent - check all vertices on the level
-    function findParent(level, vertex, bucket) {
+    function findParent(vertex, bucket) {
         _.each(bucket, function (bNode) {
             if (vertex.pid === bNode.vertex.pid && vertex.tid === bNode.vertex.tid) {
                 return bNode;
@@ -95,7 +63,8 @@
     }
 
     function addToBucket(level, vertex, treeNum) {
-        var bucket = buckets[level] ? buckets[level] : [];
+        var bucket = buckets[level] || [],
+            bNode;
         if (bucket.length > 0) {
             _.each(bucket, function (bNode) {
                 if (vertex.pid === bNode.vertex.pid && vertex.tid === bNode.vertex.tid) { // check if similar node is already in the bucket
@@ -107,8 +76,45 @@
         } else {
             buckets[level] = [];
         }
-        var bNode = new BucketNode(vertex, treeNum);
+        bNode = new BucketNode(vertex, treeNum);
         buckets[level].push(bNode);
+    }
+
+    function parseLifelineData() {
+        _.each(lifeline, function (node) {
+            var vert = new Vertex(node.dstProcessId, node.dstThreadId, node.time),
+                parent = new Vertex(node.srcProcessId, node.srcThreadId, node.time),
+                parentBucketNode,
+                level = Math.floor(node.time / timePeriod),                           // actual tree level based on time
+                tree,
+                rootNode,
+                bucket;
+
+            // find parent process: look through each level down to roots
+            while (level >= 0) {
+                bucket = buckets[level] || [];
+                parentBucketNode = findParent(parent, bucket);
+                if (parentBucketNode) {
+                    break;
+                }
+                level -= 1;
+            }
+
+            // have a parent, go to parent in identified tree and add the child -- update parent in bucket
+            if (parentBucketNode) {
+                tree = treeLifeline[parentBucketNode.treeNum];                 // a root Node
+                addTreeChild(tree, 0, level, parentBucketNode.vertex, vert);
+                addToBucket(level + 1, vert, parentBucketNode.treeNum);              // add child to the right bucket
+
+                // do not have a parent in our current trees, create a new root == level 0
+            } else {
+                rootNode = new Node(parent, []);
+                rootNode.addChild(vert);
+                treeLifeline.push(rootNode);
+                addToBucket(0, parent, treeLifeline.length - 1);
+                addToBucket(1, vert, treeLifeline.length - 1);
+            }
+        });
     }
 
     function update(source, diagonal, tree, animationDuration, vis) {
@@ -124,62 +130,73 @@
             update(d, diagonal, tree, animationDuration, vis);
         }
 
-        var nodes = tree.nodes(source).reverse();
+        var nodes = tree.nodes(source).reverse(),
+            nodeIdentifier,
+            nodeEnter,
+            link,
+            node;
+
         console.log(nodes);
 
         // creates as many g.node as vertices in tree
-        var nodeIdentifier = 0;
-        var node = vis.selectAll("g.node")
-            .data(nodes, function(d) { return d.id || (d.id = ++nodeIdentifier); });
+        nodeIdentifier = 0;
+        node = vis.selectAll("g.node")
+            .data(nodes, function (d) {
+                nodeIdentifier += 1;
+                if (!d.id) {
+                    d.id = nodeIdentifier;
+                }
+                return d.id;
+            });
 
         // creating vertices in the tree (g with circle and text) 
-        var nodeEnter = node.enter()
+        nodeEnter = node.enter()
             .append("svg:g")
             .attr("class", "node");
 
         nodeEnter.append("svg:circle")
             .attr("r", 4.5)
-            .style("fill", function(d) { return d._children ? "lightsteelblue" : "#fff"; })
+            .style("fill", function (d) { return d._children ? "lightsteelblue" : "#fff"; })
             .on("click", click);
 
         nodeEnter.append("svg:text")
             .attr("x", -5)//function(d) { return d._children ? -8 : 8; }) --> used by original
             .attr("y", 18)
-            .text(function(d) { 
-                return "process : " + d.pid + " thread : " + d.tid; 
+            .text(function (d) {
+                return "process : " + d.pid + " thread : " + d.tid;
             });
 
         // Transition nodes to their new position (duration controls speed: higher == slower)
         nodeEnter.transition()
             .duration(animationDuration)
-            .attr("transform", function(d) { return "translate(" + d.y + "," + d.x + ")"; })
+            .attr("transform", function (d) { return "translate(" + d.y + "," + d.x + ")"; })
             .style("opacity", 1)
             .select("circle")
             .style("fill", "lightsteelblue");
 
         node.transition()
             .duration(animationDuration)
-            .attr("transform", function(d) { return "translate(" + d.y + "," + d.x + ")"; })
+            .attr("transform", function (d) { return "translate(" + d.y + "," + d.x + ")"; })
             .style("opacity", 1);
 
         node.exit().transition()
             .duration(animationDuration)
-            .attr("transform", function(d) { return "translate(" + source.y + "," + source.x + ")"; })
+            .attr("transform", function () { return "translate(" + source.y + "," + source.x + ")"; })
             .style("opacity", 1e-6)
             .remove();
 
         // form the edges between the vertices
-        var link = vis.selectAll("path.link")
-            .data(tree.links(nodes), function(d) { return d.target.id; });
+        link = vis.selectAll("path.link")
+            .data(tree.links(nodes), function (d) { return d.target.id; });
 
         // Enter any new links at the parent's previous position.
         link.enter().insert("svg:path", "g")
             .attr("class", "link")
-            .attr("d", function(d) {
+            .attr("d", function () {
                 var o = {x: source.x0, y: source.y0};
                 return diagonal({source: o, target: o});
             })
-        .transition()
+            .transition()
             .duration(animationDuration)
             .attr("d", diagonal);
 
@@ -191,14 +208,14 @@
         // Transition exiting nodes to the parent's new position.
         link.exit().transition()
             .duration(animationDuration)
-            .attr("d", function(d) {
+            .attr("d", function () {
                 var o = {x: source.x, y: source.y};
                 return diagonal({source: o, target: o});
             })
-        .remove();
+            .remove();
 
         // Stash the old positions for transition.
-        nodes.forEach(function(d) {
+        nodes.forEach(function (d) {
             d.x0 = d.x;
             d.y0 = d.y;
         });
@@ -206,16 +223,16 @@
 
 
     function drawLifelineTree() {
-        var w = 800//960,  the width and height of the whole svg arrea
-            , h = 700//2000;
-            , tree = d3.layout.tree().size([h, w - 160])
-            , animationDuration = 500
+        var w = 800,//960,  the width and height of the whole svg arrea
+            h = 700,//2000;
+            tree = d3.layout.tree().size([h, w - 160]),
+            animationDuration = 500,
 
-            , diagonal = d3.svg.diagonal()
-                .projection(function(d) { return [d.y, d.x]; })
+            diagonal = d3.svg.diagonal()
+                .projection(function (d) { return [d.y, d.x]; }),
 
             // creates an SVG canvas
-            , vis = d3.select("#lifeline")
+            vis = d3.select("#lifeline")
                 .append("svg:svg")
                 .attr("width", w)
                 .attr("height", h)
@@ -223,7 +240,7 @@
                 .attr("transform", "translate(20,0)");//moves the initial position of the svg:g element
 
         // want to draw from treeLifeline structure
-        d3.json("tree_example.json", function(json) {
+        d3.json("tree_example.json", function (json) {
             json.x0 = 300;//800;
             json.y0 = 0;
             update(json, diagonal, tree, animationDuration, vis);
