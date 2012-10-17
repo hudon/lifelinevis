@@ -7,7 +7,7 @@
         util = {},
         treeLifeline = [],  // tree-like representation of the lifeline
         buckets = [],       // nodes per level
-        timePeriod = 1;
+        timePeriod = 100;
 
     // Vertex: a process thread; Edge: the event of sending/recieving a tag
     function Vertex(pid, tid, time) {
@@ -32,7 +32,8 @@
     }
 
     function loadLifeline() {
-        util.ajaxget('/lifeline.json', function (response) {
+        util.ajaxget('/tagger.json', function (response) {
+        //util.ajaxget('/lifeline.json', function (response) {
             lifeline = JSON.parse(response);
         }, false);
     }
@@ -81,7 +82,23 @@
     }
 
     function parseLifelineData() {
-        _.each(lifeline, function (node) {
+        var minTime, timeNormalizedLifeline;
+
+        minTime = _.min(lifeline, function (node) {
+            return node.time;
+        }).time;
+
+        timeNormalizedLifeline = _.map(lifeline, function (node) {
+            var res = {};
+            res.srcProcessId = node.srcProcessId;
+            res.srcThreadId = node.srcThreadId;
+            res.dstProcessId = node.dstProcessId;
+            res.dstThreadId = node.dstThreadId;
+            res.time = Math.round(node.time / minTime) * 100;
+            return res;
+        });
+
+        _.each(timeNormalizedLifeline, function (node) {
             var vert = new Vertex(node.dstProcessId, node.dstThreadId, node.time),
                 parent = new Vertex(node.srcProcessId, node.srcThreadId, node.time),
                 parentBucketNode,
