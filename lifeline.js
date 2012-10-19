@@ -17,7 +17,9 @@
     }
 
     function Node(vertex, children) {
-        this.vertex = vertex;
+        this.pid = vertex.pid;
+        this.tid = vertex.tid;
+        this.time = vertex.time;
         this.children = children;
 
         this.addChild = function addChild(childVertex) {
@@ -47,10 +49,10 @@
     }
 
     function addTreeChildHelper(node, currLevel, goalLevel, parentVertex, childVertex) {
-        if (currLevel == goalLevel) {
-            if (node.vertex.pid === parentVertex.pid
-                && node.vertex.tid === parentVertex.tid
-                && node.vertex.time === parentVertex.time) {
+        if (currLevel === goalLevel) {
+            if (node.pid === parentVertex.pid
+                && node.tid === parentVertex.tid
+                && node.time === parentVertex.time) {
                     node.addChild(childVertex);
                 }
         } else {
@@ -70,8 +72,8 @@
             bNode;
 
         // check if similar node is already in the bucket
-        bNode = _.find(bucket, function (node) {
-            return vertex.pid === node.vertex.pid && vertex.tid === node.vertex.tid;
+        bNode = _.find(bucket, function (bucketNode) {
+            return vertex.pid === bucketNode.vertex.pid && vertex.tid === bucketNode.vertex.tid;
         });
 
         if (!bNode) {
@@ -157,7 +159,7 @@
         }
 
 
-        var nodes = tree.nodes(source).reverse(), // result is an array of objs with x and y locations (+vertex info)
+        var nodes = tree.nodes(root).reverse(), // result is an array of objs with x and y locations (+vertex info)
             nodeIdentifier,
             nodeEnter,  // the enter set of node elements (i.e. all new nodes on screen)
             link,
@@ -199,7 +201,7 @@
 
         // to each g element add a SVG text element (~~ another child)
         nodeEnter.append("svg:text")
-            .attr("x", -5)//function(d) { return d._children ? -8 : 8; }) --> used by original
+            .attr("x", -5)//function(d) { return d._children ? -8 : 8; }) //--> used by original
             .attr("y", 18)
             .text(function (d) {
                 return "process : " + d.pid + " thread : " + d.tid;
@@ -208,7 +210,8 @@
         // Transition the g elements to their new position (duration controls speed: higher == slower)
         nodeEnter.transition()
             .duration(animationDuration)
-            .attr("transform", function (d) { return "translate(" + d.y + "," + d.x + ")"; }) // translate to nodes x & y pos.
+             // translate nodes to x & y pos.
+            .attr("transform", function (d) { return "translate(" + d.y + "," + d.x + ")"; })
             .style("opacity", 1)
             .select("circle")
             .style("fill", "lightsteelblue");
@@ -230,9 +233,10 @@
 
         /****** Vertex connection edges ******/
 
-        // returns an array of objects representing the links from parent to child for each node ({source, target})
+        // returns an array of objects representing the links from parent
+        // to child for each node ({source, target})
         link = vis.selectAll("path.link")
-            .data(tree.links(nodes), function (d) { return d.target.id; }); 
+            .data(tree.links(nodes), function (d) { return d.target.id; });
 
         // form any new links
         link.enter().insert("svg:path", "g")
@@ -271,12 +275,13 @@
 
     function drawLifelineTree() {
         // TODO want to draw from treeLifeline structure
-        d3.json("tree_example.json", function (json) {
-            _.each(json, function (jsonTree) {
+        //d3.json("tree_example.json", function (json) {
+            //_.each(json, function (jsonTree) {
+            _.each(treeLifeline, function (jsonTree) {
 
-                var w = 800,//960,  the width and height of the whole svg arrea
+                var w = 960, // the width and height of the whole svg arrea
                     h = 700,//2000;
-                    tree = d3.layout.tree().size([h, w - 160]),
+                    tree = d3.layout.tree().size([h, w - 260]),
                     animationDuration = 500,
                     diagonal,
                     vis;
@@ -297,7 +302,7 @@
                 jsonTree.y0 = 0;
                 update(jsonTree, jsonTree, diagonal, tree, animationDuration, vis);
             });
-        });
+        //});
     }
 
     function windowLoadHandler() {
