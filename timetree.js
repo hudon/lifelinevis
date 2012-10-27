@@ -3,7 +3,8 @@
 var TimeTree = (function () {
     'use strict';
 
-    var buckets = [],       // nodes per level
+    // nodes per level
+    var buckets = [],
         timePeriod = 100;
 
     // Vertex: a process thread; Edge: the event of sending/receiving a tag
@@ -103,6 +104,8 @@ var TimeTree = (function () {
             nodeIdentifier,
             // the enter set of node elements (i.e. all new nodes on screen)
             nodeEnter,
+            nodeUpdate,
+            nodeExit,
             link,
             node;
 
@@ -114,6 +117,7 @@ var TimeTree = (function () {
                 nodes = tree.nodes(source[i]).reverse();
             }
         }*/
+        //TODO didn't normalize
 
         // creates as many g.node as vertices in tree
         nodeIdentifier = 0;
@@ -123,8 +127,8 @@ var TimeTree = (function () {
             // all nodes data ends up as placeholder nodes
             // for missing elements in enter()
             .data(nodes, function (d) {
-                nodeIdentifier += 1;
                 if (!d.id) {
+                    nodeIdentifier += 1;
                     d.id = nodeIdentifier;
                 }
                 return d.id;
@@ -136,13 +140,14 @@ var TimeTree = (function () {
         // returns a list of SVG g elements (with node object in their data attrib)
         nodeEnter = node.enter()
             .append("svg:g")
-            .attr("class", "node");
+            .attr("class", "node")
+            //TODO didn't transform
+            .on("click", click);
 
         // to each g elements add a SVG circle element (~~ as a child)
         nodeEnter.append("svg:circle")
-            .attr("r", 4.5)
-            .style("fill", function (d) { return d._children ? "lightsteelblue" : "#fff"; })
-            .on("click", click);
+            .attr("r", 1e-6)
+            .style("fill", function (d) { return d._children ? "lightsteelblue" : "#fff"; });
 
         // to each g element add a SVG text element (~~ another child)
         nodeEnter.append("svg:text")
@@ -154,18 +159,22 @@ var TimeTree = (function () {
 
         // Transition the g elements to their new position (duration controls
         // speed: higher == slower)
-        nodeEnter.transition()
+        nodeUpdate = node.transition()
             .duration(animationDuration)
              // translate nodes to x & y pos.
             .attr("transform", function (d) { return "translate(" + d.y + "," + d.x + ")"; })
-            .style("opacity", 1)
+            /*.style("opacity", 1)
             .select("circle")
-            .style("fill", "lightsteelblue");
+            .style("fill", "lightsteelblue");*/
+
+        nodeUpdate.select("circle")
+            .attr("r", 4.5)
+            .style("fill", function (d) { return d._children ? "lightsteelblue" : "#fff"; })
 
         /****** done with new node elements ******/
 
         // the update set (I believe)
-        node.transition()
+        nodeExit = node.transition()
             .duration(animationDuration)
             .attr("transform", function (d) { return "translate(" + d.y + "," + d.x + ")"; })
             .style("opacity", 1);
@@ -219,8 +228,8 @@ var TimeTree = (function () {
     }
 
     return {
-        parseLifelineData : function (lifeline) {
-            var minTime, timeNormalizedLifeline, treeLifeline;
+        parseLifelineData: function (lifeline) {
+            var minTime, treeLifeline;
 
             treeLifeline = [];
 
@@ -228,17 +237,12 @@ var TimeTree = (function () {
                 return node.time;
             }).time;
 
-            timeNormalizedLifeline = _.map(lifeline, function (node) {
-                var res = {};
-                res.srcProcessId = node.srcProcessId;
-                res.srcThreadId = node.srcThreadId;
-                res.dstProcessId = node.dstProcessId;
-                res.dstThreadId = node.dstThreadId;
-                res.time = Math.ceil(node.time / minTime) * 100;
-                return res;
+            // normalize the timestamps on the nodes
+            _.each(lifeline, function (node) {
+                node.time = Math.ceil(node.time / minTime) * 100;
             });
 
-            _.each(timeNormalizedLifeline, function (node) {
+            _.each(lifeline, function (node) {
                 var vert = new Vertex(node.dstProcessId, node.dstThreadId, node.time),
                     parent = new Vertex(node.srcProcessId, node.srcThreadId, node.time),
                     parentBucketNode,
@@ -282,9 +286,11 @@ var TimeTree = (function () {
         },
 
         drawLifelineTree: function (treeLifeline) {
-            // TODO want to draw from treeLifeline structure
+            // To pull tree lifeline from a sample json file instead,
+            // uncomment these two lines:
             //d3.json("tree_example.json", function (json) {
             //_.each(json, function (jsonTree) {
+
             _.each(treeLifeline, function (jsonTree) {
 
                 var w = 960, // the width and height of the whole svg arrea
