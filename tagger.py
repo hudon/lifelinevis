@@ -37,6 +37,7 @@ def assigntag(process_name):
 
 def to_json(showtag_output):
     i = -1
+    res = []
     jsons = []
     for line in showtag_output.readlines():
         i += 1
@@ -45,11 +46,17 @@ def to_json(showtag_output):
         elif i % 2 != 0:
             continue
         words = line.split()
-        json = {"tagName": words[0], "srcProcessId": words[1], "srcThreadId":
-                words[2], "dstProcessId": words[3], "dstThreadId":
-                words[4], "time": long(words[5]) }
-        jsons.append(str(json));
-    return "[" + string.join(jsons, ",\n") + "]"
+
+        r = []
+        r.append('"tagName":"' + words[0] + '"')
+        r.append('"srcProcessId":"' + words[1] + '"')
+        r.append('"srcThreadId":"' + words[2] + '"')
+        r.append('"dstProcessId":"' + words[3] + '"')
+        r.append('"dstThreadId":"' + words[4] + '"')
+        r.append('"time":' + words[5])
+
+        res.append("{" + string.join(r, ",") + "}")
+    return "[" + string.join(res, ",\n") + "]"
 
 def showtag():
     result = ""

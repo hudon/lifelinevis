@@ -97,9 +97,12 @@ var TimeTree = (function () {
         }
 
 
-        var nodes = tree.nodes(root).reverse(), // result is an array of objs with x and y locations (+vertex info)
+        // result is an array of objs with x and y
+        // locations (+vertex info)
+        var nodes = tree.nodes(root).reverse(),
             nodeIdentifier,
-            nodeEnter,  // the enter set of node elements (i.e. all new nodes on screen)
+            // the enter set of node elements (i.e. all new nodes on screen)
+            nodeEnter,
             link,
             node;
 
@@ -114,8 +117,12 @@ var TimeTree = (function () {
 
         // creates as many g.node as vertices in tree
         nodeIdentifier = 0;
-        node = vis.selectAll("g.node")    // selects elements that don't exist in order to create new ones == empty selection
-            .data(nodes, function (d) {   // all nodes data ends up as placeholder nodes for missing elements in enter()
+        // selects elements that don't exist in order to create
+        // new ones == empty selection
+        node = vis.selectAll("g.node")
+            // all nodes data ends up as placeholder nodes
+            // for missing elements in enter()
+            .data(nodes, function (d) {
                 nodeIdentifier += 1;
                 if (!d.id) {
                     d.id = nodeIdentifier;
@@ -142,10 +149,11 @@ var TimeTree = (function () {
             .attr("x", -5)//function(d) { return d._children ? -8 : 8; }) //--> used by original
             .attr("y", 18)
             .text(function (d) {
-                return "process : " + d.pid + " thread : " + d.tid;
+                return "(pid : " + d.pid + ", tid : " + d.tid + ")";
             });
 
-        // Transition the g elements to their new position (duration controls speed: higher == slower)
+        // Transition the g elements to their new position (duration controls
+        // speed: higher == slower)
         nodeEnter.transition()
             .duration(animationDuration)
              // translate nodes to x & y pos.
@@ -234,7 +242,8 @@ var TimeTree = (function () {
                 var vert = new Vertex(node.dstProcessId, node.dstThreadId, node.time),
                     parent = new Vertex(node.srcProcessId, node.srcThreadId, node.time),
                     parentBucketNode,
-                    level = Math.floor(node.time / timePeriod),                           // actual tree level based on time
+                    // actual tree level based on time
+                    level = Math.floor(node.time / timePeriod),
                     tree,
                     rootNode,
                     bucket;
@@ -249,14 +258,18 @@ var TimeTree = (function () {
                     level -= 1;
                 }
 
-                // have a parent, go to parent in identified tree and add the child -- update parent in bucket
+                // have a parent, go to parent in identified tree and add the
+                // child -- update parent in bucket
                 if (parentBucketNode) {
-                    tree = treeLifeline[parentBucketNode.treeNum];                 // a root Node
+                    // tree is a root Node
+                    tree = treeLifeline[parentBucketNode.treeNum];
                     addTreeChild(tree, level, parentBucketNode.vertex, vert);
-                    addToBucket(level + 1, vert, parentBucketNode.treeNum);              // add child to the right bucket
+                    // add child to the right bucket
+                    addToBucket(level + 1, vert, parentBucketNode.treeNum);
 
-                    // do not have a parent in our current trees, create a new root == level 0
                 } else {
+                    // we do not have a parent in our current trees,
+                    // create a new root at level 0
                     rootNode = new Node(parent, []);
                     rootNode.addChild(vert);
                     treeLifeline.push(rootNode);
