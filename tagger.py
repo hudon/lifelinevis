@@ -80,12 +80,12 @@ def usage():
 # TODO: do not print the 'L' on the right of long values for time (JSON)
 if __name__ == "__main__":
     try:
-        opts, args = getopt.getopt(sys.argv, "n")
+        opts, args = getopt.getopt(sys.argv[1:], "n")
     except getopt.GetoptError:
         usage()
     newprocess = ''
     for opt, arg in opts:
-        if opt == '-n':
+        if opt == "-n":
             newprocess = 'firefox'
         elif opt == '-h':
             usage()
