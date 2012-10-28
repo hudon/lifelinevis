@@ -18,6 +18,8 @@
 
         var timeTreeData = TimeTree.parseLifelineData(lifeline);
         TimeTree.drawLifelineTree(timeTreeData);
+
+        TagDag.draw();
     }
 
     window.addEventListener('load', windowLoadHandler, false);
