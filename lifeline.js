@@ -1,5 +1,5 @@
 /*jslint nomen: true, browser: true, devel: true*/
-/*global TimeTree*/
+/*global TagDag,TimeTree*/
 (function () {
     'use strict';
 
@@ -15,6 +15,7 @@
 
     function windowLoadHandler() {
         loadLifeline();
+
         var timeTreeData = TimeTree.parseLifelineData(lifeline);
         TimeTree.drawLifelineTree(timeTreeData);
     }
