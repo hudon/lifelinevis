@@ -223,13 +223,10 @@ var TimeTree = (function () {
                     parentVertex = new Vertex(node.srcProcessId, node.srcThreadId, node.time, node.realtime),
                 // Nodes contain tree-specific data (children, tree number,
                 // depth, etc.)
-                    childNode,
-                    parentNode,
+                    childNode, parentNode,
                 // Levels represent tree depth (based off time)
-                    childLevel,
-                    parentLevel,
-                    tree,
-                    bucket;
+                    childLevel, parentLevel,
+                    tree, bucket;
 
                 parentLevel = childLevel = Math.floor(node.time / timePeriod);
 
