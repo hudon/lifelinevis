@@ -5,7 +5,10 @@
     <script src="d3.v2.js"></script>
     <script src="timetree.js"></script>
     <script src="dag.js"></script>
+
     <script src="lifeline.js"></script>
+
+
     <style type="text/css">
         circle.node {
           cursor: pointer;
@@ -30,11 +33,62 @@
         text {
           font-size:14px;
         }
+
+        path.link {
+          fill: none;
+          stroke: #666;
+          stroke-width: 1.5px;
+        }
+
+        path.link.tag0 {
+          stroke: gray;
+        }
+
+        path.link.tag1 {
+          stroke-dasharray: 0,2 1;
+          stroke: green;
+        }
+
+        path.link.tag2 {
+          stroke-dasharray: 0,5 1;
+          stroke: orange;
+        }
+
+        path.link.tag3 {
+          stroke-dasharray: 0,7 1;
+          stroke: blue;
+        }
+
+        path.link.tag4 {
+          stroke-dasharray: 0,1 1;
+          stroke: teal;
+        }
+
     </style>
   </head>
   <body>
     <div id="lifeline">
     </div>
-
+    <form>
+      <input type="checkbox" value="tag0" onchange='toggleTag(this)' checked>tag0
+      <input type="checkbox" value="tag1" onchange='toggleTag(this)' checked>tag1
+      <input type="checkbox" value="tag2" onchange='toggleTag(this)' checked>tag2
+      <input type="checkbox" value="tag3" onchange='toggleTag(this)' checked>tag3
+      <input type="checkbox" value="tag4" onchange='toggleTag(this)' checked>tag4
+    </form>
+    <script type="text/javascript">
+      function toggleTag(cb) {
+        var tagVal = cb.value;
+        if (cb.checked) {
+          _.each(document.getElementsByClassName("link " + tagVal), function(l) {
+              l.style.display = "block";
+          });
+        } else {
+          _.each(document.getElementsByClassName("link " + tagVal), function(l) {
+              l.style.display = "none";
+          });
+        }
+      }
+    </script>
   </body>
 </html>

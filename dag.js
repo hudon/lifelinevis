@@ -5,41 +5,76 @@ var TagDag = (function () {
 
     function tempFunc() {
         var links = [
-            {source: "Microsoft", target: "Amazon", type: "licensing"},
-            {source: "Microsoft", target: "HTC", type: "licensing"},
-            {source: "Samsung", target: "Apple", type: "suit"},
-            {source: "Motorola", target: "Apple", type: "suit"},
-            {source: "Nokia", target: "Apple", type: "resolved"},
-            {source: "HTC", target: "Apple", type: "suit"},
-            {source: "Kodak", target: "Apple", type: "suit"},
-            {source: "Microsoft", target: "Barnes & Noble", type: "suit"},
-            {source: "Microsoft", target: "Foxconn", type: "suit"},
-            {source: "Oracle", target: "Google", type: "suit"},
-            {source: "Apple", target: "HTC", type: "suit"},
-            {source: "Microsoft", target: "Inventec", type: "suit"},
-            {source: "Samsung", target: "Kodak", type: "resolved"},
-            {source: "LG", target: "Kodak", type: "resolved"},
-            {source: "RIM", target: "Kodak", type: "suit"},
-            {source: "Sony", target: "LG", type: "suit"},
-            {source: "Kodak", target: "LG", type: "resolved"},
-            {source: "Apple", target: "Nokia", type: "resolved"},
-            {source: "Qualcomm", target: "Nokia", type: "resolved"},
-            {source: "Apple", target: "Motorola", type: "suit"},
-            {source: "Microsoft", target: "Motorola", type: "suit"},
-            {source: "Motorola", target: "Microsoft", type: "suit"},
-            {source: "Huawei", target: "ZTE", type: "suit"},
-            {source: "Ericsson", target: "ZTE", type: "suit"},
-            // added self loop:
-            {source: "Ericsson", target: "Ericsson", type: "suit"},
-            {source: "Kodak", target: "Samsung", type: "resolved"},
-            {source: "Apple", target: "Samsung", type: "suit"},
-            // Added duplicate links:
-            {source: "Kodak", target: "RIM", type: "suit"},
-            {source: "Kodak", target: "RIM", type: "suit"},
-            {source: "Kodak", target: "RIM", type: "suit"},
-            {source: "Kodak", target: "RIM", type: "suit"},
-            {source: "Kodak", target: "RIM", type: "suit"},
-            {source: "Nokia", target: "Qualcomm", type: "suit"}
+            {source: "pid: 925735, tid: 2", target: "pid: 20489, tid: 1", type: "tag0", l: "0"},
+            {source: "pid: 925735, tid: 2", target: "pid: 20489, tid: 3", type: "tag0", l: "0"},
+            {source: "pid: 925735, tid: 2", target: "pid: 20489, tid: 1", type: "tag0", l: "1"},
+            {source: "pid: 925735, tid: 2", target: "pid: 20489, tid: 1", type: "tag0", l: "2"},
+            {source: "pid: 925735, tid: 2", target: "pid: 20489, tid: 1", type: "tag0", l: "3"},
+            {source: "pid: 925735, tid: 2", target: "pid: 20489, tid: 3", type: "tag0", l: "1"},
+            {source: "pid: 20489, tid: 1", target: "pid: 925735, tid: 0", type: "tag0", l: "0"},
+            {source: "pid: 20489, tid: 1", target: "pid: 925735, tid: 0", type: "tag0", l: "1"},
+            {source: "pid: 20489, tid: 1", target: "pid: 925735, tid: 0", type: "tag0", l: "2"},
+            {source: "pid: 20489, tid: 3", target: "pid: 925735, tid: 0", type: "tag0", l: "0"},
+            {source: "pid: 925735, tid: 0", target: "pid: 20489, tid: 1", type: "tag0", l: "0"},
+            {source: "pid: 925735, tid: 0", target: "pid: 925735, tid: 0", type: "tag0", l: "0"},
+            {source: "pid: 925735, tid: 0", target: "pid: 20489, tid: 3", type: "tag0", l: "0"},
+            {source: "pid: 925735, tid: 0", target: "pid: 925735, tid: 0", type: "tag0", l: "1"},
+
+            {source: "pid: 20489, tid: 3", target: "pid: 925735, tid: 0", type: "tag1", l: "1"},
+            {source: "pid: 925735, tid: 0", target: "pid: 20489, tid: 1", type: "tag1", l: "1"},
+            {source: "pid: 925735, tid: 0", target: "pid: 925735, tid: 0", type: "tag1", l: "2"},
+
+            {source: "pid: 925735, tid: 0", target: "pid: 20489, tid: 3", type: "tag2", l: "1"},
+            {source: "pid: 925735, tid: 0", target: "pid: 925735, tid: 0", type: "tag2", l: "3"},
+
+            {source: "pid: 925735, tid: 1", target: "pid: 20489, tid: 3", type: "tag3", l: "0"},
+            {source: "pid: 925735, tid: 1", target: "pid: 20489, tid: 3", type: "tag3", l: "1"},
+            {source: "pid: 925735, tid: 1", target: "pid: 20489, tid: 1", type: "tag3", l: "0"},
+            {source: "pid: 925735, tid: 1", target: "pid: 20489, tid: 1", type: "tag3", l: "1"},
+
+            {source: "pid: 20489, tid: 1", target: "pid: 925735, tid: 0", type: "tag4", l: "3"},
+            {source: "pid: 925735, tid: 0", target: "pid: 20489, tid: 1", type: "tag4", l: "2"},
+            {source: "pid: 925735, tid: 0", target: "pid: 925735, tid: 0", type: "tag4", l: "3"},
+            {source: "pid: 925735, tid: 0", target: "pid: 20489, tid: 3", type: "tag4", l: "2"},
+            {source: "pid: 925735, tid: 0", target: "pid: 925735, tid: 0", type: "tag4", l: "4"},
+            {source: "pid: 925735, tid: 0", target: "pid: 20489, tid: 1", type: "tag4", l: "3"},
+            {source: "pid: 925735, tid: 0", target: "pid: 925735, tid: 0", type: "tag4", l: "5"},
+            {source: "pid: 20489, tid: 3", target: "pid: 925735, tid: 0", type: "tag4", l: "2"},
+            // {source: "HTC", target: "Apple", type: "suit", l: "0"},
+            // {source: "Kodak", target: "Apple", type: "suit", l: "0"},
+            // {source: "Microsoft", target: "Barnes & Noble", type: "suit", l: "0"},
+            // {source: "Microsoft", target: "Foxconn", type: "suit", l: "0"},
+            // {source: "Oracle", target: "Google", type: "suit", l: "0"},
+            // {source: "Apple", target: "HTC", type: "suit", l: "0"},
+            // {source: "Microsoft", target: "Inventec", type: "suit", l: "0"},
+            // {source: "Samsung", target: "Kodak", type: "resolved", l: "0"},
+            // {source: "LG", target: "Kodak", type: "resolved", l: "0"},
+            // {source: "RIM", target: "Kodak", type: "suit", l: "0"},
+            // {source: "Sony", target: "LG", type: "suit", l: "0"},
+            // {source: "Kodak", target: "LG", type: "resolved", l: "0"},
+            // {source: "Apple", target: "Nokia", type: "resolved", l: "0"},
+            // {source: "Qualcomm", target: "Nokia", type: "resolved", l: "0"},
+            // {source: "Apple", target: "Motorola", type: "suit", l: "0"},
+            // {source: "Microsoft", target: "Motorola", type: "suit", l: "0"},
+            // {source: "Motorola", target: "Microsoft", type: "suit", l: "0"},
+            // {source: "Huawei", target: "ZTE", type: "suit", l: "0"},
+            // {source: "Ericsson", target: "ZTE", type: "suit", l: "0"},
+            // {source: "Ericsson", target: "ZTE", type: "suit", l: "1"},
+            // {source: "Ericsson", target: "ZTE", type: "suit", l: "2"},
+            // {source: "Ericsson", target: "ZTE", type: "suit", l: "3"},
+            // {source: "Ericsson", target: "ZTE", type: "suit", l: "4"},
+            // {source: "Ericsson", target: "ZTE", type: "suit", l: "5"},
+            // // added self loop:
+            // {source: "Ericsson", target: "Ericsson", type: "suit", l: "0"},
+            // {source: "Kodak", target: "Samsung", type: "resolved", l: "0"},
+            // {source: "Apple", target: "Samsung", type: "suit", l: "0"},
+            // // Added duplicate links:
+            // {source: "Kodak", target: "RIM", type: "suit", l: "0"},
+            // {source: "Kodak", target: "RIM", type: "suit", l: "1"},
+            // {source: "Kodak", target: "RIM", type: "suit", l: "2"},
+            // {source: "Kodak", target: "RIM", type: "suit", l: "3"},
+            // {source: "Kodak", target: "RIM", type: "suit", l: "4"},
+            // {source: "Nokia", target: "Qualcomm", type: "suit", l: "0"}
         ];
 
         var nodes = {};
@@ -57,7 +92,7 @@ var TagDag = (function () {
             .nodes(d3.values(nodes))
             .links(links)
             .size([w, h])
-            .linkDistance(90)
+            .linkDistance(350)
             .charge(-400)
             .on("tick", tick)
             .start();
@@ -98,14 +133,14 @@ var TagDag = (function () {
 
         // A copy of the text with a thick white stroke for legibility.
         text.append("svg:text")
-            .attr("x", 8)
-            .attr("y", ".31em")
+            .attr("x", 18)
+            .attr("y", ".35em")
             .attr("class", "shadow")
             .text(function(d) { return d.name; });
 
         text.append("svg:text")
-            .attr("x", 8)
-            .attr("y", ".31em")
+            .attr("x", 18)
+            .attr("y", ".35em")
             .text(function(d) { return d.name; });
 
         // Use elliptical arc path segments to doubly-encode directionality.
@@ -125,13 +160,13 @@ var TagDag = (function () {
                 "q0,45 30,30"
                 //"q" + b*Math.sin(a) + "," + b*Math.cos(a) + " " + b*Math.sin(a+da) + "," + b*Math.cos(a+da)
                 + " " + " T " + d.target.x + "," + d.target.y;
-                } else {
-                    // TODO remove random(). I added this to remind us that the paths
-                    // from 2 nodes can't all be the same. If they're the same,
-                    // they'll overlap and hide eachother.
-                    //dr = dr + (60 * Math.random() - 30)
+                } else if (d.l == 0) {
                     return "M" + d.source.x + "," + d.source.y + "A" + dr + ","
-                        + dr + " 0 0,1 " + d.target.x + "," + d.target.y;
+                        + dr + " 0 0,1 " + d.target.x+ "," + d.target.y;
+                } else {
+                    return "M" + d.source.x + "," + d.source.y +
+                       "q0," + 5 * d.l + " " + 5 * d.l + "," + 0
+                        + " " + " T " + d.target.x + "," + d.target.y;
                 }
             });
 
