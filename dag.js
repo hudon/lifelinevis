@@ -91,9 +91,11 @@ var TagDag = (function () {
         var force = d3.layout.force()
             .nodes(d3.values(nodes))
             .links(links)
-            .size([w, h])
+            .size([w, h])           // available layout size - affects the gravitational center & init rand pos
             .linkDistance(350)
-            .charge(-400)
+            .charge(-80)            // -ve: node repultion; +ve: node attraction
+            .friction(0.7)
+            .gravity(0.01)
             .on("tick", tick)
             .start();
 
@@ -166,7 +168,7 @@ var TagDag = (function () {
                 } else {
                     return "M" + d.source.x + "," + d.source.y +
                        "q0," + 5 * d.l + " " + 5 * d.l + "," + 0
-                        + " " + " T " + d.target.x + "," + d.target.y;
+                        + " " + " T " + d.target.x + 15 + "," + d.target.y + 15;
                 }
             });
 
