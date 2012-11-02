@@ -1,0 +1,13 @@
+!SESSION 2012-10-29 01:24:15.167 -----------------------------------------------
+eclipse.buildId=M20110909-1335
+java.version=1.6.0_35
+java.vendor=Apple Inc.
+BootLoader constants: OS=macosx, ARCH=x86_64, WS=cocoa, NL=en_US
+Framework arguments:  -product org.eclipse.epp.package.java.product -keyring /Users/gretacutulenco/.eclipse_keyring -showlocation
+Command-line arguments:  -os macosx -ws cocoa -arch x86_64 -product org.eclipse.epp.package.java.product -keyring /Users/gretacutulenco/.eclipse_keyring -showlocation
+
+!ENTRY org.eclipse.core.net 1 0 2012-10-29 01:25:01.561
+!MESSAGE System property http.nonProxyHosts has been set to local|*.local|169.254/16|*.169.254/16 by an external source. This value will be overwritten using the values from the preferences
+
+!ENTRY com.android.ide.eclipse.ddms 4 0 2012-10-29 01:25:07.581
+!MESSAGE DDMS files not found: /Users/gretacutulenco/Downloads/eclipse/Eclipse.app/Contents/MacOS/platform-tools/adb /Users/gretacutulenco/Downloads/eclipse/Eclipse.app/Contents/MacOS/tools/hprof-conv /Users/gretacutulenco/Downloads/eclipse/Eclipse.app/Contents/MacOS/tools/traceview 
