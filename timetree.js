@@ -167,8 +167,8 @@ var TimeTree = (function () {
 
         // returns an array of objects representing the links from parent
         // to child for each node ({source, target})
-        link = vis.selectAll("path.link")
-            .data(tree.links(nodes), function (d) { return d.target.id + " tagtype: " + d.target.tagtype; });
+        link = vis.selectAll("path.treelink")
+            .data(tree.links(nodes), function (d) { return d.target.id });
 
         // form any new links
         link.enter().insert("svg:path", "g")

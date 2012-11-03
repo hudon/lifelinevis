@@ -86,7 +86,7 @@ var TagDag = (function () {
         });
 
         var w = 1260,
-            h = 500;
+            h = 800;
 
         var force = d3.layout.force()
             .nodes(d3.values(nodes))
