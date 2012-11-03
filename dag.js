@@ -168,7 +168,7 @@ var TagDag = (function () {
                 } else {
                     return "M" + d.source.x + "," + d.source.y +
                        "q0," + 5 * d.l + " " + 5 * d.l + "," + 0
-                        + " " + " T " + d.target.x + 15 + "," + d.target.y + 15;
+                        + " " + " T " + d.target.x + "," + d.target.y;
                 }
             });
 

@@ -20,6 +20,7 @@
         TimeTree.drawLifelineTree(timeTreeData);
 
         TagDag.draw();
+        Coocur.draw();
     }
 
     window.addEventListener('load', windowLoadHandler, false);

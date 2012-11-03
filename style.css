@@ -1,0 +1,75 @@
+circle.node {
+  cursor: pointer;
+  fill: #fff;
+  stroke: steelblue;
+  stroke-width: 1.5px;
+}
+
+path.link {
+  fill: none;
+  stroke: #ccc;
+  stroke-width: 1.5px;
+}
+
+circle {
+  cursor: pointer;
+  fill: #fff;
+  stroke: steelblue;
+  stroke-width: 1.5px;
+}
+
+text {
+  font-size:12px;
+}
+
+path.link {
+  fill: none;
+  stroke: #666;
+  stroke-width: 1.5px;
+}
+
+path.link.tag0 {
+  stroke: gray;
+}
+
+path.link.tag1 {
+  stroke-dasharray: 0,2 1;
+  stroke: green;
+}
+
+path.link.tag2 {
+  stroke-dasharray: 0,5 1;
+  stroke: orange;
+}
+
+path.link.tag3 {
+  stroke-dasharray: 0,7 1;
+  stroke: blue;
+}
+
+path.link.tag4 {
+  stroke-dasharray: 0,1 1;
+  stroke: teal;
+}
+
+#cooccur svg {
+  font: 10px sans-serif;
+}
+
+.axis path, .axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.background {
+  fill: #eee;
+}
+
+line {
+  stroke: #fff;
+}
+
+text.active {
+  fill: red;
+}
