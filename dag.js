@@ -86,7 +86,7 @@ var TagDag = (function () {
         });
 
         var w = 1260,
-            h = 800;
+            h = 500;
 
         var force = d3.layout.force()
             .nodes(d3.values(nodes))
@@ -99,7 +99,7 @@ var TagDag = (function () {
             .on("tick", tick)
             .start();
 
-        var svg = d3.select("#lifeline").append("svg:svg")
+        var svg = d3.select("#daglifeline").append("svg:svg")
             .attr("width", w)
             .attr("height", h);
 

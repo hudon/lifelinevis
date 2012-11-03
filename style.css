@@ -1,3 +1,13 @@
+form {
+  width: 350px;
+  height: 50px;
+  border: 1px solid;
+  padding-top: 20px;
+}
+form input {
+  margin-left: 15px;
+}
+
 circle.node {
   cursor: pointer;
   fill: #fff;
@@ -5,7 +15,7 @@ circle.node {
   stroke-width: 1.5px;
 }
 
-path.link {
+path.treelink {
   fill: none;
   stroke: #ccc;
   stroke-width: 1.5px;
@@ -28,26 +38,26 @@ path.link {
   stroke-width: 1.5px;
 }
 
-path.link.tag0 {
+path.link.tag0, path.treelink.tag0 {
   stroke: gray;
 }
 
-path.link.tag1 {
+path.link.tag1, path.treelink.tag1 {
   stroke-dasharray: 0,2 1;
   stroke: green;
 }
 
-path.link.tag2 {
+path.link.tag2, path.treelink.tag2 {
   stroke-dasharray: 0,5 1;
   stroke: orange;
 }
 
-path.link.tag3 {
+path.link.tag3, path.treelink.tag3 {
   stroke-dasharray: 0,7 1;
   stroke: blue;
 }
 
-path.link.tag4 {
+path.link.tag4, path.treelink.tag4 {
   stroke-dasharray: 0,1 1;
   stroke: teal;
 }

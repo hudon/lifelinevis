@@ -13,14 +13,15 @@
 
   </head>
   <body>
-    <div id="lifeline">
-    </div>
+    <div id="treelifeline"></div>
+    <div id="treelegend" style="width: 200px; padding:15px; border: 1px solid; margin-bottom: 20px;"></div>
+    <div id="daglifeline"></div>
     <form>
-      <input type="checkbox" value="tag0" onchange='toggleTag(this)' checked>tag0
-      <input type="checkbox" value="tag1" onchange='toggleTag(this)' checked>tag1
-      <input type="checkbox" value="tag2" onchange='toggleTag(this)' checked>tag2
-      <input type="checkbox" value="tag3" onchange='toggleTag(this)' checked>tag3
-      <input type="checkbox" value="tag4" onchange='toggleTag(this)' checked>tag4
+      <input type="checkbox" value="tag0" onchange='toggleTag(this)' checked> <span>tag0</span>
+      <input type="checkbox" value="tag1" onchange='toggleTag(this)' checked> <span>tag1</span>
+      <input type="checkbox" value="tag2" onchange='toggleTag(this)' checked> <span>tag2</span>
+      <input type="checkbox" value="tag3" onchange='toggleTag(this)' checked> <span>tag3</span>
+      <input type="checkbox" value="tag4" onchange='toggleTag(this)' checked> <span>tag4</span>
     </form>
     <script type="text/javascript">
       function toggleTag(cb) {

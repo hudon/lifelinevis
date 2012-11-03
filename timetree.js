@@ -9,11 +9,12 @@ var TimeTree = (function () {
         timePeriod = 100;
 
     // Vertex: a process thread; Edge: the event of sending/receiving a tag
-    function Vertex(pid, tid, time, realtime) {
+    function Vertex(pid, tid, time, realtime, tagtype) {
         this.pid = pid;
         this.tid = tid;
         this.time = time;
         this.realtime = realtime;
+        this.tagtype = tagtype;
     }
 
     function Node(vertex, children) {
@@ -24,6 +25,8 @@ var TimeTree = (function () {
         this.time = vertex.time;
         // 'realtime' is never scaled
         this.realtime = vertex.realtime;
+        // for visualization of different tags in the tree
+        this.tagtype = vertex.tagtype;
         this.children = children;
 
         this.bucketLevel = 0;
@@ -165,11 +168,13 @@ var TimeTree = (function () {
         // returns an array of objects representing the links from parent
         // to child for each node ({source, target})
         link = vis.selectAll("path.link")
-            .data(tree.links(nodes), function (d) { return d.target.id; });
+            .data(tree.links(nodes), function (d) { return d.target.id + " tagtype: " + d.target.tagtype; });
 
         // form any new links
         link.enter().insert("svg:path", "g")
-            .attr("class", "link")
+            .attr("class", function(d) {
+                return "treelink tag" + d.target.tagtype;
+            })
             .attr("d", function () {
                 var o = {x: source.x0, y: source.y0};
                 return diagonal({source: o, target: o});
@@ -219,8 +224,8 @@ var TimeTree = (function () {
 
             _.each(lifeline, function (node) {
                 // Vertices contain just the event data
-                var childVertex = new Vertex(node.dstProcessId, node.dstThreadId, node.time, node.realtime),
-                    parentVertex = new Vertex(node.srcProcessId, node.srcThreadId, node.time, node.realtime),
+                var childVertex = new Vertex(node.dstProcessId, node.dstThreadId, node.time, node.realtime, node.tagName),
+                    parentVertex = new Vertex(node.srcProcessId, node.srcThreadId, node.time, node.realtime, node.tagName),
                 // Nodes contain tree-specific data (children, tree number,
                 // depth, etc.)
                     childNode, parentNode,
@@ -283,18 +288,70 @@ var TimeTree = (function () {
             });
 
             // creates an SVG canvas
-            vis = d3.select("#lifeline")
+            vis = d3.select("#treelifeline")
                 .append("svg:svg")
                 .attr("width", w)
                 .attr("height", h)
-                .append("svg:g")
                 .attr("transform", "translate(20,0)"); //moves the initial position of the svg:g element
 
             dummyNode.x0 = 300;//800;
             dummyNode.y0 = 0;
             update(dummyNode, dummyNode, diagonal, tree, animationDuration, vis);
 
-            //drawTimeline(w, h, vis);
+            var temp = d3.select("#treelegend")
+                .append("svg:svg")
+                .attr("width", 200)
+                .attr("height", 100)
+
+            var legend = [
+                {   "name":"tag0",
+                    "mult": 0,
+                    "source": {x: 10, y: 30},
+                    "target": {x: 10, y: 140}
+                },{
+                    "name":"tag1",
+                    "mult": 1,
+                    "source": {x: 10, y: 30},
+                    "target": {x: 10, y: 140}
+                }, {
+                    "name": "tag2",
+                    "mult": 2,
+                    "source": {x: 10, y: 30},
+                    "target": {x: 10, y: 140}
+                }, {
+                    "name": "tag3",
+                    "mult": 3,
+                    "source": {x: 10, y: 30},
+                    "target": {x: 10, y: 140}
+                }, {
+                    "name": "tag4",
+                    "mult": 4,
+                    "source": {x: 10, y: 30},
+                    "target": {x: 10, y: 140}
+                }]
+
+            var link = temp.selectAll("path.link").data(legend);
+
+            var linkenter = link.enter().append("svg:g")
+                .attr("class", "node")
+                .attr("transform", function (d) { return "translate(" + 0 + "," + 0 + (20 * d.mult) + ")"; })
+
+            linkenter.append("svg:text")
+                .attr("x", 0)
+                .attr("y", 10)
+                .text(function (d) {
+                    return d.name;
+                });
+
+            linkenter.append("svg:path")
+                .attr("class", function(d) {
+                    return "treelink " + d.name;
+                })
+                .attr("d", function (d) {
+                    var o = {x: d.source.x, y: d.source.y};
+                    return diagonal({source: o, target: o});
+                })
+                .attr("d", diagonal);
         }
     };
 }());
