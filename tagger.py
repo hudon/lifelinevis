@@ -35,6 +35,19 @@ def assigntag(process_name):
     except OSError:
         print("Error: failed to assign tag")
 
+def get_proc_name(pid):
+    ps = subprocess.Popen(["ps","-p", pid, "-o", "comm"], stdout=subprocess.PIPE)
+    ps.wait()
+    line_num = 0
+    for line in ps.stdout:
+        line_num += 1
+        tokens = line.split()
+        if line_num > 1:
+            path = tokens[0]
+            executable = path.split("/")[-1]
+            return executable
+    return ""
+
 def to_json(showtag_output):
     i = -1
     res = []
@@ -49,10 +62,15 @@ def to_json(showtag_output):
 
         r = []
         r.append('"tagName":"' + words[0] + '"')
+
+        r.append('"srcProcessName":"' + get_proc_name(words[1]) + '"')
         r.append('"srcProcessId":"' + words[1] + '"')
         r.append('"srcThreadId":"' + words[2] + '"')
+
+        r.append('"dstProcessName":"' + get_proc_name(words[3]) + '"')
         r.append('"dstProcessId":"' + words[3] + '"')
         r.append('"dstThreadId":"' + words[4] + '"')
+
         r.append('"time":' + words[5])
 
         res.append("{" + string.join(r, ",") + "}")
@@ -83,8 +101,7 @@ def usage():
     print '        still be printed to tagger.json'
     sys.exit(2)
 
-# TODO: print out double quotes instead of single quotes (JSON)
-# TODO: do not print the 'L' on the right of long values for time (JSON)
+#TODO get process name
 if __name__ == "__main__":
     try:
         opts, args = getopt.getopt(sys.argv[1:], "n")

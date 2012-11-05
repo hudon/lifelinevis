@@ -3,21 +3,19 @@
 (function () {
     'use strict';
 
-    var lifeline = [],
-        util = {};
+    var util = {};
 
-    function loadLifeline() {
-        // 'lifeline.json' can also be used for test data
+    function loadLifeline(handler) {
         util.ajaxget('/tagger.json', function (response) {
-            lifeline = JSON.parse(response);
+            handler(JSON.parse(response));
         }, false);
     }
 
     function windowLoadHandler() {
-        loadLifeline();
-
-        var timeTreeData = TimeTree.parseLifelineData(lifeline);
-        TimeTree.drawLifelineTree(timeTreeData);
+        loadLifeline(function (lifeline) {
+            var timeTreeData = TimeTree.parseLifelineData(lifeline);
+            TimeTree.drawLifelineTree(timeTreeData);
+        });
 
         TagDag.draw();
         Coocur.draw();
