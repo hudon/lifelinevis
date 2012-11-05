@@ -168,11 +168,11 @@ var TimeTree = (function () {
         // returns an array of objects representing the links from parent
         // to child for each node ({source, target})
         link = vis.selectAll("path.treelink")
-            .data(tree.links(nodes), function (d) { return d.target.id });
+            .data(tree.links(nodes), function (d) { return d.target.id; });
 
         // form any new links
         link.enter().insert("svg:path", "g")
-            .attr("class", function(d) {
+            .attr("class", function (d) {
                 return "treelink tag" + d.target.tagtype;
             })
             .attr("d", function () {
@@ -228,10 +228,13 @@ var TimeTree = (function () {
                     parentVertex = new Vertex(node.srcProcessId, node.srcThreadId, node.time, node.realtime, node.tagName),
                 // Nodes contain tree-specific data (children, tree number,
                 // depth, etc.)
-                    childNode, parentNode,
+                    childNode,
+                    parentNode,
                 // Levels represent tree depth (based off time)
-                    childLevel, parentLevel,
-                    tree, bucket;
+                    childLevel,
+                    parentLevel,
+                    tree,
+                    bucket;
 
                 parentLevel = childLevel = Math.floor(node.time / timePeriod);
 
@@ -276,7 +279,11 @@ var TimeTree = (function () {
                 tree = d3.layout.tree().size([h, w - 760]),
                 animationDuration = 500,
                 diagonal,
-                vis;
+                vis,
+                temp,
+                link,
+                linkenter,
+                legend;
 
             dummyNode = new Node(new Vertex());
             _.each(treeLifeline, function (tree) {
@@ -298,18 +305,19 @@ var TimeTree = (function () {
             dummyNode.y0 = 0;
             update(dummyNode, dummyNode, diagonal, tree, animationDuration, vis);
 
-            var temp = d3.select("#treelegend")
+            temp = d3.select("#treelegend")
                 .append("svg:svg")
                 .attr("width", 200)
-                .attr("height", 100)
+                .attr("height", 100);
 
-            var legend = [
-                {   "name":"tag0",
+            legend = [
+                {
+                    "name": "tag0",
                     "mult": 0,
                     "source": {x: 10, y: 30},
                     "target": {x: 10, y: 140}
-                },{
-                    "name":"tag1",
+                }, {
+                    "name": "tag1",
                     "mult": 1,
                     "source": {x: 10, y: 30},
                     "target": {x: 10, y: 140}
@@ -328,13 +336,13 @@ var TimeTree = (function () {
                     "mult": 4,
                     "source": {x: 10, y: 30},
                     "target": {x: 10, y: 140}
-                }]
+                }];
 
-            var link = temp.selectAll("path.link").data(legend);
+            link = temp.selectAll("path.link").data(legend);
 
-            var linkenter = link.enter().append("svg:g")
+            linkenter = link.enter().append("svg:g")
                 .attr("class", "node")
-                .attr("transform", function (d) { return "translate(" + 0 + "," + 0 + (20 * d.mult) + ")"; })
+                .attr("transform", function (d) { return "translate(0," + (20 * d.mult) + ")"; });
 
             linkenter.append("svg:text")
                 .attr("x", 0)
@@ -344,7 +352,7 @@ var TimeTree = (function () {
                 });
 
             linkenter.append("svg:path")
-                .attr("class", function(d) {
+                .attr("class", function (d) {
                     return "treelink " + d.name;
                 })
                 .attr("d", function (d) {

@@ -1,5 +1,5 @@
 /*jslint nomen: true, browser: true, devel: true*/
-/*global TagDag,TimeTree*/
+/*global TagDag,TimeTree,Coocur*/
 (function () {
     'use strict';
 

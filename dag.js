@@ -1,10 +1,48 @@
 /*jslint nomen: true, browser: true, devel: true*/
 /*global _,d3*/
 var TagDag = (function () {
+    'use strict';
     //TODO look at:http://bl.ocks.org/1153292
 
     function tempFunc() {
-        var links = [
+        var links, nodes, w, h, force, path, svg, circle, text;
+
+        // Use elliptical arc path segments to doubly-encode directionality.
+        function tick() {
+            path.attr("d", function (d) {
+                var dx, dy, dr, a, da, b;
+
+                dx = d.target.x - d.source.x;
+                dy = d.target.y - d.source.y;
+                dr = Math.sqrt(dx * dx + dy * dy);
+
+                if (d.target.name === d.source.name) {
+                    a = Math.atan2(dx, dy);
+                    da = 0.4;
+                    b = 1;
+                    return "M" + d.target.x + "," + d.target.y + "q0,45 30,30"
+                        //"q" + b*Math.sin(a) + "," + b*Math.cos(a) + " " + b*Math.sin(a+da) + "," + b*Math.cos(a+da)
+                        + " " + " T " + d.target.x + "," + d.target.y;
+                }
+                if (d.l === "0") {
+                    return "M" + d.source.x + "," + d.source.y + "A" + dr + ","
+                        + dr + " 0 0,1 " + d.target.x + "," + d.target.y;
+                }
+                return "M" + d.source.x + "," + d.source.y +
+                    "q0," + 5 * d.l + " " + 5 * d.l + ",0 " +
+                    " T " + d.target.x + "," + d.target.y;
+            });
+
+            circle.attr("transform", function (d) {
+                return "translate(" + d.x + "," + d.y + ")";
+            });
+
+            text.attr("transform", function (d) {
+                return "translate(" + d.x + "," + d.y + ")";
+            });
+        }
+
+        links = [
             {source: "pid: 925735, tid: 2", target: "pid: 20489, tid: 1", type: "tag0", l: "0"},
             {source: "pid: 925735, tid: 2", target: "pid: 20489, tid: 3", type: "tag0", l: "0"},
             {source: "pid: 925735, tid: 2", target: "pid: 20489, tid: 1", type: "tag0", l: "1"},
@@ -77,18 +115,26 @@ var TagDag = (function () {
             // {source: "Nokia", target: "Qualcomm", type: "suit", l: "0"}
         ];
 
-        var nodes = {};
+        nodes = {};
 
         // Compute the distinct nodes from the links.
-        links.forEach(function(link) {
-            link.source = nodes[link.source] || (nodes[link.source] = {name: link.source});
-            link.target = nodes[link.target] || (nodes[link.target] = {name: link.target});
+        _.each(links, function (link) {
+            if (nodes[link.source]) {
+                link.source = nodes[link.source];
+            } else {
+                link.source = nodes[link.source] = {name: link.source};
+            }
+            if (nodes[link.target]) {
+                link.target = nodes[link.target];
+            } else {
+                link.target = nodes[link.target] = {name: link.target};
+            }
         });
 
-        var w = 1260,
-            h = 800;
+        w = 1260;
+        h = 800;
 
-        var force = d3.layout.force()
+        force = d3.layout.force()
             .nodes(d3.values(nodes))
             .links(links)
             .size([w, h])           // available layout size - affects the gravitational center & init rand pos
@@ -99,7 +145,7 @@ var TagDag = (function () {
             .on("tick", tick)
             .start();
 
-        var svg = d3.select("#daglifeline").append("svg:svg")
+        svg = d3.select("#daglifeline").append("svg:svg")
             .attr("width", w)
             .attr("height", h);
 
@@ -117,19 +163,19 @@ var TagDag = (function () {
             .append("svg:path")
             .attr("d", "M0,-5L10,0L0,5");
 
-        var path = svg.append("svg:g").selectAll("path")
+        path = svg.append("svg:g").selectAll("path")
             .data(force.links())
             .enter().append("svg:path")
-            .attr("class", function(d) { return "link " + d.type; })
-            .attr("marker-end", function(d) { return "url(#" + d.type + ")"; });
+            .attr("class", function (d) { return "link " + d.type; })
+            .attr("marker-end", function (d) { return "url(#" + d.type + ")"; });
 
-        var circle = svg.append("svg:g").selectAll("circle")
+        circle = svg.append("svg:g").selectAll("circle")
             .data(force.nodes())
             .enter().append("svg:circle")
             .attr("r", 6)
             .call(force.drag);
 
-        var text = svg.append("svg:g").selectAll("g")
+        text = svg.append("svg:g").selectAll("g")
             .data(force.nodes())
             .enter().append("svg:g");
 
@@ -138,48 +184,13 @@ var TagDag = (function () {
             .attr("x", 18)
             .attr("y", ".35em")
             .attr("class", "shadow")
-            .text(function(d) { return d.name; });
+            .text(function (d) { return d.name; });
 
         text.append("svg:text")
             .attr("x", 18)
             .attr("y", ".35em")
-            .text(function(d) { return d.name; });
+            .text(function (d) { return d.name; });
 
-        // Use elliptical arc path segments to doubly-encode directionality.
-        function tick() {
-            path.attr("d", function(d) {
-                var dx, dy, dr, a, da, b;
-
-                dx = d.target.x - d.source.x;
-                dy = d.target.y - d.source.y;
-                dr = Math.sqrt(dx * dx + dy * dy);
-
-                if (d.target.name === d.source.name) {
-                    a = Math.atan2(dx, dy);
-                    da = 0.4;
-                    b = 1;
-                    return "M" + d.target.x + "," + d.target.y +
-                "q0,45 30,30"
-                //"q" + b*Math.sin(a) + "," + b*Math.cos(a) + " " + b*Math.sin(a+da) + "," + b*Math.cos(a+da)
-                + " " + " T " + d.target.x + "," + d.target.y;
-                } else if (d.l == 0) {
-                    return "M" + d.source.x + "," + d.source.y + "A" + dr + ","
-                        + dr + " 0 0,1 " + d.target.x+ "," + d.target.y;
-                } else {
-                    return "M" + d.source.x + "," + d.source.y +
-                       "q0," + 5 * d.l + " " + 5 * d.l + "," + 0
-                        + " " + " T " + d.target.x + "," + d.target.y;
-                }
-            });
-
-            circle.attr("transform", function(d) {
-                return "translate(" + d.x + "," + d.y + ")";
-            });
-
-            text.attr("transform", function(d) {
-                return "translate(" + d.x + "," + d.y + ")";
-            });
-        }
     }
     return {
         parseLifeline: function (lifeline) {
