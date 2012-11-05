@@ -1,23 +1,27 @@
 /*jslint nomen: true, browser: true, devel: true*/
 /*global _,d3*/
+'use strict';
 var TimeTree = (function () {
-    'use strict';
-
     // nodes per level
     var buckets = [],
         nodeIdentifier = 0,
-        timePeriod = 100;
+        timePeriod = 100,
+        Node,
+        Vertex;
 
     // Vertex: a process thread; Edge: the event of sending/receiving a tag
-    function Vertex(pid, tid, time, realtime, tagtype) {
+    Vertex = _.makeClass();
+    Vertex.prototype.init = function (pid, tid, time, realtime, tagtype, name) {
         this.pid = pid;
         this.tid = tid;
         this.time = time;
         this.realtime = realtime;
         this.tagtype = tagtype;
+        this.name = name;
     }
 
-    function Node(vertex, children) {
+    Node = _.makeClass();
+    Node.prototype.init = function (vertex, children) {
         children = children || [];
         this.pid = vertex.pid;
         this.tid = vertex.tid;
@@ -28,15 +32,13 @@ var TimeTree = (function () {
         // for visualization of different tags in the tree
         this.tagtype = vertex.tagtype;
         this.children = children;
-
         this.bucketLevel = 0;
-
-        this.addChild = function addChild(childVertex, grandchildren) {
-            var childNode = new Node(childVertex, grandchildren);
-            children.push(childNode);
-            return childNode;
-        };
     }
+    Node.prototype.addChild = function (childVertex, grandchildren) {
+        var childNode = Node(childVertex, grandchildren);
+        this.children.push(childNode);
+        return childNode;
+    };
 
     // finding a parent - check all vertices on the level
     function findParent(vertex, bucket) {
@@ -224,8 +226,8 @@ var TimeTree = (function () {
 
             _.each(lifeline, function (node) {
                 // Vertices contain just the event data
-                var childVertex = new Vertex(node.dstProcessId, node.dstThreadId, node.time, node.realtime, node.tagName),
-                    parentVertex = new Vertex(node.srcProcessId, node.srcThreadId, node.time, node.realtime, node.tagName),
+                var childVertex = Vertex(node.dstProcessId, node.dstThreadId, node.time, node.realtime, node.tagName, node.dstProcessName),
+                    parentVertex = Vertex(node.srcProcessId, node.srcThreadId, node.time, node.realtime, node.tagName, node.srcProcessName),
                 // Nodes contain tree-specific data (children, tree number,
                 // depth, etc.)
                     childNode,
@@ -253,7 +255,7 @@ var TimeTree = (function () {
                 if (!parentNode) {
                     // we do not have a parent in our current trees,
                     // create a new root at level 0
-                    parentNode = new Node(parentVertex, []);
+                    parentNode = Node(parentVertex, []);
                     parentNode.time = 0;
                     treeLifeline.push(parentNode);
                     addToBucket(0, parentNode);
@@ -285,7 +287,7 @@ var TimeTree = (function () {
                 linkenter,
                 legend;
 
-            dummyNode = new Node(new Vertex());
+            dummyNode = Node(Vertex());
             _.each(treeLifeline, function (tree) {
                 dummyNode.addChild(tree, tree.children);
             });

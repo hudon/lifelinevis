@@ -1,14 +1,6 @@
 /*jslint nomen: true, browser: true, devel: true*/
 /*global _,d3*/
 'use strict';
-// Passes "this" as an argument
-function passThis(targetFunction) {
-    return function () {
-        var args = Array.prototype.slice.call(arguments);
-        args.push(this);
-        return targetFunction.apply(this, args);
-    };
-}
 var Coocur = (function () {
     function drawFunc() {
         var margin, width, height, x, z, c, svg;
@@ -95,7 +87,7 @@ var Coocur = (function () {
                 .enter().append("g")
                 .attr("class", "row")
                 .attr("transform", function (d, i) { return "translate(0," + x(i) + ")"; })
-                .each(passThis(prepareRow));
+                .each(_.passThis(prepareRow));
 
             row.append("line")
                 .attr("x2", width);

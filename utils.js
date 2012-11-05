@@ -1,28 +1,28 @@
-/*jslint nomen: true, browser: true, devel: true*/
-/*global _,TagDag,TimeTree,Coocur*/
+/*jslint nomen: true,browser:true*/
+/*global _*/
 (function () {
-    'use strict';
-
-    function loadLifeline(handler) {
-        _.ajaxget('/tagger.json', function (response) {
-            handler(JSON.parse(response));
-        }, false);
-    }
-
-    function windowLoadHandler() {
-        loadLifeline(function (lifeline) {
-            var timeTreeData = TimeTree.parseLifelineData(lifeline);
-            TimeTree.drawLifelineTree(timeTreeData);
-        });
-
-        TagDag.draw();
-        Coocur.draw();
-    }
-
-    window.addEventListener('load', windowLoadHandler, false);
-
-    /* Utilities */
     _.mixin({
+        // makeClass - By John Resig (MIT Licensed)
+        makeClass: function () {
+            return function (args) {
+                if (this instanceof arguments.callee) {
+                    if (typeof this.init == "function") {
+                        this.init.apply(this,
+                            (typeof args != 'undefined') && args.callee ? args : arguments);
+                    }
+                } else {
+                    return new arguments.callee(arguments);
+                }
+            };
+        },
+        // Passes "this" as an argument
+        passThis: function (targetFunction) {
+            return function () {
+                var args = Array.prototype.slice.call(arguments);
+                args.push(this);
+                return targetFunction.apply(this, args);
+            };
+        },
         ajaxget: function (url, callback, async) {
             var r = _.getAjaxRequest(callback);
             r.open("GET", url, async);
@@ -57,4 +57,3 @@
         }
     });
 }());
-
