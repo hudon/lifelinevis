@@ -61,10 +61,20 @@ var StackedThreads = (function () {
             },
             series: [{
                 name: 'tag0',
-                data: [4, 6, 3, 1]
+                data: [4, 6, 3, 0],
+                stack: 'send'
             }, {
                 name: 'tag1',
-                data: [0, 0, 0, 0]
+                data: [2, 4, 5, 1],
+                stack: 'send'
+            },{
+                name: 'tag0',
+                data: [1, 2, 5, 4],
+                stack: 'receive'
+            },{
+                name: 'tag1',
+                data: [3, 8, 2, 1],
+                stack: 'receive'
             }]
         });
     }

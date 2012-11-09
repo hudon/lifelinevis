@@ -25,6 +25,7 @@ var TimeTree = (function () {
         children = children || [];
         this.pid = vertex.pid;
         this.tid = vertex.tid;
+        this.name = vertex.name;
         // 'time' might be scaled later for visualization
         this.time = vertex.time;
         // 'realtime' is never scaled
@@ -171,7 +172,7 @@ var TimeTree = (function () {
             .attr("y", 18)
             .text(function (d) {
                 if (!d.pid) { return ""; }
-                return "pid: " + d.pid + ", tid: " + d.tid + ", time: " + d.time;
+                return "name: " + d.name + ", tid: " + d.tid + ", time: " + d.time;
             });
 
         // Transition the g elements to their new position (duration controls
