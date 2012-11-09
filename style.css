@@ -5,6 +5,10 @@ div#treelegend {
   margin-bottom: 20px;
 }
 
+#treelifeline svg {
+  padding-left: 15px;
+}
+
 form {
   width: 350px;
   height: 50px;

@@ -3,6 +3,7 @@
 'use strict';
 var StackedThreads = (function () {
     function drawFunc() {
+        var colors = Highcharts.getOptions().colors;
         var chart = new Highcharts.Chart({
             chart: {
                 renderTo: 'stackedThreads',
@@ -51,19 +52,23 @@ var StackedThreads = (function () {
             series: [{
                 name: 'send tag0',
                 data: [4, 6, 3, 0],
-                stack: 'send'
+                stack: 'send',
+                color: colors[0]
             }, {
                 name: 'send tag1',
                 data: [2, 4, 5, 1],
-                stack: 'send'
+                stack: 'send',
+                color: colors[1]
             },{
-                name: 'recieve tag0',
+                name: 'receive tag0',
                 data: [1, 2, 5, 4],
-                stack: 'recieve'
+                stack: 'receive',
+                color: colors[0]
             },{
-                name: 'recieve tag1',
+                name: 'receive tag1',
                 data: [3, 8, 2, 1],
-                stack: 'recieve'
+                stack: 'receive',
+                color: colors[1]
             }]
         });
     }
