@@ -99,7 +99,6 @@ var TimeTree = (function () {
             update(root, d, diagonal, tree, animationDuration, vis);
         }
 
-
         var nodes, nodeEnter, nodeUpdate, nodeExit, link, node;
 
         // result is an array of objs with x and y
@@ -238,6 +237,57 @@ var TimeTree = (function () {
         });
     }
 
+    function createLegend(tags) {
+        var legendVis, legend, link, tagCount, linkenter, diagonal, id;
+
+        diagonal = d3.svg.diagonal().projection(function (d) {
+            return [d.y, d.x];
+        });
+
+        legendVis = d3.select("#treelegend")
+            .append("svg:svg")
+            .attr("width", 200)
+            .attr("height", 100);
+
+        legend = [];
+
+        id = 0;
+        _.each(tags, function (value, key, list) {
+            var tag = {};
+            tag.name = key;
+            tag.source = {x: 10, y: 30};
+            tag.target = {x: 10, y: 140};
+            tag.id = id;
+            id += 1;
+            legend.push(tag);
+        });
+
+        link = legendVis.selectAll("path.link").data(legend);
+
+        linkenter = link.enter().append("svg:g")
+            .attr("class", "node")
+            .attr("transform", function (d) {
+                return "translate(0," + (20 * d.id) + ")";
+            });
+
+        linkenter.append("svg:text")
+            .attr("x", 0)
+            .attr("y", 10)
+            .text(function (d) {
+                return 'tag "' + d.name + '"';
+            });
+
+        linkenter.append("svg:path")
+            .attr("class", function (d) {
+                return "link tag" + d.name;
+            })
+            .attr("d", function (d) {
+                var o = {x: d.source.x, y: d.source.y};
+                return diagonal({source: o, target: o});
+            })
+            .attr("d", diagonal);
+    }
+
     return {
         parseLifelineData: function (lifeline) {
             var minTime, treeLifeline;
@@ -300,13 +350,11 @@ var TimeTree = (function () {
 
             return treeLifeline;
         },
-
         drawLifelineTree: function (treeLifeline, tags) {
             // To pull tree lifeline from a sample json file instead,
             // uncomment these two lines:
             //d3.json("tree_example.json", function (json) {
             //_.each(json, function (jsonTree) {
-
 
             var dummyNode,
                 w = 1760, // the width and height of the whole svg arrea
@@ -314,12 +362,7 @@ var TimeTree = (function () {
                 tree = d3.layout.tree().size([h, w - 760]),
                 animationDuration = 500,
                 diagonal,
-                vis,
-                legendVis,
-                link,
-                linkenter,
-                legend,
-                tagCount;
+                vis;
 
             dummyNode = new Node(new Vertex());
             _.each(treeLifeline, function (tree) {
@@ -340,62 +383,9 @@ var TimeTree = (function () {
 
             dummyNode.x0 = 300;//800;
             dummyNode.y0 = 0;
+
             update(dummyNode, dummyNode, diagonal, tree, animationDuration, vis);
-
-            legendVis = d3.select("#treelegend")
-                .append("svg:svg")
-                .attr("width", 200)
-                .attr("height", 100);
-
-            legend = [
-                {
-                    "name": "tag0",
-                    "source": {x: 10, y: 30},
-                    "target": {x: 10, y: 140}
-                }, {
-                    "name": "tag1",
-                    "source": {x: 10, y: 30},
-                    "target": {x: 10, y: 140}
-                }, {
-                    "name": "tag2",
-                    "source": {x: 10, y: 30},
-                    "target": {x: 10, y: 140}
-                }, {
-                    "name": "tag3",
-                    "source": {x: 10, y: 30},
-                    "target": {x: 10, y: 140}
-                }, {
-                    "name": "tag4",
-                    "source": {x: 10, y: 30},
-                    "target": {x: 10, y: 140}
-                }];
-
-
-            link = legendVis.selectAll("path.link").data(legend);
-
-            tagCount = -1;
-            linkenter = link.enter().append("svg:g")
-                .attr("transform", function (d) {
-                    tagCount += 1;
-                    return "translate(0," + (20 * tagCount) + ")";
-                });
-
-            linkenter.append("svg:text")
-                .attr("x", 0)
-                .attr("y", 10)
-                .text(function (d) {
-                    return d.name;
-                });
-
-            linkenter.append("svg:path")
-                .attr("class", function (d) {
-                    return "treelink " + d.name;
-                })
-                .attr("d", function (d) {
-                    var o = {x: d.source.x, y: d.source.y};
-                    return diagonal({source: o, target: o});
-                })
-                .attr("d", diagonal);
+            createLegend(tags);
         }
     };
 }());
