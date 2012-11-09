@@ -130,11 +130,24 @@ var TimeTree = (function () {
             .attr("transform", function (d) { return "translate(" + source.y0 + "," + source.x0 + ")"; })
             .on("click", click);
 
+        function mouseover(p) {
+            d3.selectAll(".node text").classed("active", function (d, i) {
+                    return i === p.y;
+            });
+            d3.selectAll("circle text").classed("active", function (d, i) { return i === p.x; });
+        }
+
+        function mouseout() {
+            d3.selectAll("text").classed("active", false);
+        }
+
         // to each new g elements add a SVG circle element, colour it if it
         // has children
         nodeEnter.append("svg:circle")
             .attr("r", 1e-6)
-            .style("fill", function (d) { return d._children ? "lightsteelblue" : "#fff"; });
+            .style("fill", function (d) { return d._children ? "lightsteelblue" : "#fff"; })
+            .on("mouseover", mouseover)
+            .on("mouseout", mouseout);
 
         // to each g element add a SVG text element
         nodeEnter.append("svg:text")
@@ -142,7 +155,7 @@ var TimeTree = (function () {
             .attr("y", 18)
             .text(function (d) {
                 if (!d.pid) { return ""; }
-                return "pid: " + d.pid + ", tid: " + d.tid + ", time: " + d.time + ")";
+                return "pid: " + d.pid + ", tid: " + d.tid + ", time: " + d.time;
             });
 
         // Transition the g elements to their new position (duration controls
@@ -306,6 +319,8 @@ var TimeTree = (function () {
             dummyNode.x0 = 300;//800;
             dummyNode.y0 = 0;
             update(dummyNode, dummyNode, diagonal, tree, animationDuration, vis);
+
+
 
             temp = d3.select("#treelegend")
                 .append("svg:svg")

@@ -17,6 +17,7 @@
 
         TagDag.draw();
         Coocur.draw();
+        StackedThreads.draw();
     }
 
     window.addEventListener('load', windowLoadHandler, false);
