@@ -23,6 +23,26 @@
                 return targetFunction.apply(this, args);
             };
         },
+        generator: function (elements) {
+            var defaultElem = elements[0];
+
+            return {
+                getWith: function (num) {
+                    var i = parseInt(num) % elements.length;
+                    if (elements.length === 0) {
+                        return defaultElem;
+                    }
+                    return elements[i];
+                },
+                popRand: function () {
+                    if (elements.length === 0) {
+                        return defaultElem;
+                    }
+                    elements = _.shuffle(elements);
+                    return elements.pop();
+                }
+            };
+        },
         ajaxget: function (url, callback, async) {
             var r = _.getAjaxRequest(callback);
             r.open("GET", url, async);
