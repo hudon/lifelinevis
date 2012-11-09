@@ -23,12 +23,17 @@
 
 
     function stylizeTagLinks(tags) {
-        var colorGen = _.generator(["green", "orange", "blue", "teal"]);
+        var colorGen;
+        colorGen = _.generator(["green", "orange", "blue", "teal"]);
+
         _.each(tags, function (values, key, list) {
             var style = document.createElement('style');
             style.type = 'text/css';
             style.innerHTML = '.tag' + key + ' { stroke:'
-                + colorGen.getWith(key) + ' }';
+                + colorGen.getWith(key) + ' } ';
+            if (Math.random() > 0.7) {
+                style.innerHTML += '.tag' + key + ' { stroke-dasharray:15,5 } ';
+            }
             document.getElementsByTagName('head')[0].appendChild(style);
         });
     }

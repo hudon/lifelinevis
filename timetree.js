@@ -99,7 +99,7 @@ var TimeTree = (function () {
             update(root, d, diagonal, tree, animationDuration, vis);
         }
 
-        var nodes, nodeEnter, nodeUpdate, nodeExit, link, node;
+        var nodes, nodeEnter, nodeUpdate, nodeExit, link, node, colorGen;
 
         // result is an array of objs with x and y
         // locations (+vertex info)
@@ -137,13 +137,13 @@ var TimeTree = (function () {
         */
 
         // green, blue, orange, pink, teal, red,
-        var colors = ['#009933', '#0000FF', '#CC6600', '#FF00FF', '#00FFFF','#CC0000',];
+        colorGen = _.generator(['#009933', '#0000FF', '#CC6600', '#FF00FF', '#00FFFF','#CC0000',]);
 
         function addSelection(p) {
             d3.selectAll(".node text").style("fill", function (d, i) {
-                if (p.pid == d.pid) {
+                if (p.pid === d.pid) {
                     d3.select(this).style('font-weight', 'bold');
-                    return colors[parseInt(d.tid) % colors.length];
+                    return colorGen.getWith(d.tid);
                 } else {
                     return '#F8F8F8';
                 }
