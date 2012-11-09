@@ -94,6 +94,7 @@ var TimeTree = (function () {
                 d.children = d._children;
                 d._children = null;
             }
+            removeSelection();
             update(root, d, diagonal, tree, animationDuration, vis);
         }
 
@@ -130,24 +131,39 @@ var TimeTree = (function () {
             .attr("transform", function (d) { return "translate(" + source.y0 + "," + source.x0 + ")"; })
             .on("click", click);
 
-        function mouseover(p) {
-            d3.selectAll(".node text").classed("active", function (d, i) {
-                return i === p.y;
+        /*
+            Select all instances of a process in the tree on hover
+            Give selections with different tids different colors
+        */
+
+        // green, blue, orange, pink, teal, red,
+        var colors = ['#009933', '#0000FF', '#CC6600', '#FF00FF', '#00FFFF','#CC0000',];
+
+        function addSelection(p) {
+            d3.selectAll(".node text").style("fill", function (d, i) {
+                if (p.pid == d.pid) {
+                    d3.select(this).style('font-weight', 'bold');
+                    return colors[parseInt(d.tid) % colors.length];
+                } else {
+                    return '#F8F8F8';
+                }
             });
-            d3.selectAll("circle text").classed("active", function (d, i) { return i === p.x; });
         }
 
-        function mouseout() {
-            d3.selectAll("text").classed("active", false);
+        function removeSelection() {
+            d3.selectAll(".node text").style("fill", 'black')
+                .style('font-weight', 'normal');
         }
+
+        //***************
 
         // to each new g elements add a SVG circle element, colour it if it
         // has children
         nodeEnter.append("svg:circle")
             .attr("r", 1e-6)
             .style("fill", function (d) { return d._children ? "lightsteelblue" : "#fff"; })
-            .on("mouseover", mouseover)
-            .on("mouseout", mouseout);
+            .on("mouseover", addSelection)
+            .on("mouseout", removeSelection);
 
         // to each g element add a SVG text element
         nodeEnter.append("svg:text")
@@ -358,7 +374,6 @@ var TimeTree = (function () {
 
             tagCount = -1;
             linkenter = link.enter().append("svg:g")
-                .attr("class", "node")
                 .attr("transform", function (d) {
                     tagCount += 1;
                     return "translate(0," + (20 * tagCount) + ")";
