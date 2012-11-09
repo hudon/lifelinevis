@@ -265,7 +265,6 @@ var TimeTree = (function () {
         link = legendVis.selectAll("path.link").data(legend);
 
         linkenter = link.enter().append("svg:g")
-            .attr("class", "node")
             .attr("transform", function (d) {
                 return "translate(0," + (20 * d.id) + ")";
             });

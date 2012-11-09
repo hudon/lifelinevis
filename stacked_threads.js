@@ -32,21 +32,10 @@ var StackedThreads = (function () {
                     }
                 }
             },
-            legend: {
-                align: 'right',
-                x: -100,
-                verticalAlign: 'top',
-                y: 20,
-                floating: true,
-                backgroundColor: (Highcharts.theme && Highcharts.theme.legendBackgroundColorSolid) || 'white',
-                borderColor: '#CCC',
-                borderWidth: 1,
-                shadow: false
-            },
             tooltip: {
                 formatter: function() {
                     return '<b>'+ this.x +'</b><br/>'+
-                        this.series.name +': '+ this.y +'<br/>'+
+                        this.series.name + ': '+ this.y +'<br/>'+
                         'Total: '+ this.point.stackTotal;
                 }
             },
@@ -60,21 +49,21 @@ var StackedThreads = (function () {
                 }
             },
             series: [{
-                name: 'tag0',
+                name: 'send tag0',
                 data: [4, 6, 3, 0],
                 stack: 'send'
             }, {
-                name: 'tag1',
+                name: 'send tag1',
                 data: [2, 4, 5, 1],
                 stack: 'send'
             },{
-                name: 'tag0',
+                name: 'recieve tag0',
                 data: [1, 2, 5, 4],
-                stack: 'receive'
+                stack: 'recieve'
             },{
-                name: 'tag1',
+                name: 'recieve tag1',
                 data: [3, 8, 2, 1],
-                stack: 'receive'
+                stack: 'recieve'
             }]
         });
     }
