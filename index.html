@@ -21,18 +21,20 @@
     <div>
         <h2>Tag propagation over time</h2>
         <p style="width:800px;">
-            A tree node represents a process thread.
-            An edge between two nodes represents communication between them.
-            The parent is always the process that sends the tag,
-            and the child is the receiving process.
-            The tree nodes are placed in time buckets based on the time that the
-            tag was sent from parent to child.
-            Clicking on a tree node compresses all the descendants of the node.
-            Hovering over a node highlights all the occurences of the process
-            in the tree. Different threads of the same process are highlighted
-            using a different color.
-            The different colors of the edges indicate propagation of some
-            specific tag (refer to the legend).
+            A tree node represents a process thread.  An edge between two
+            nodes represents communication between them.  The parent is the
+            process that sends the tag, and the child is the receiving
+            process.  The tree nodes are placed in time buckets based on the
+            time that the tag was received at.
+        </p>
+        <p style="width:800px;">
+          Here, real data is used after assigning a tag to firefox threads and
+          waiting for a few seconds. The data
+        </p>
+        <p style="width:800px;">
+        Aside from visual enhancements, a worthwhile extension to the graph
+        could be focusing on certain time periods (e.g. if there is one hour's
+        worth of data, view only what happened during the 30th minute).
         </p>
     </div>
     <div id="treelifeline"></div>
@@ -40,12 +42,17 @@
     <div>
         <h2>Tag propagation graph</h2>
         <p style="width:800px;">
-            A tree node represents a process thread.
-            An edge between two nodes represents communication between them.
-            The nodes can be moved to more convenient locations by clicking
-            and dragging them. The different colors of the edges indicate
-            propagation of some specific tag. Use the checkboxes at the bottom
-            to isolate specific tags.
+          Here, every process thread is a node. Edges are formed between
+          nodes that have communicated with eachother.
+        <p style="width:800px;">
+          The different tags are shown as edges with different colors. These
+          colors are the same as the ones used in the tree above for the same
+          tags. Use the checkboxes below to show only certain tags.
+        </p>
+        <p style="width:800px;">
+          Variations on this graph could include representing multiple
+          connections through edge thickness as opposed to multiple edges and
+          adding communication direction.
         </p>
     </div>
     <div id="daglifeline"></div>
@@ -53,15 +60,12 @@
     <div>
         <h2>Thread communication frequency matrix</h2>
         <p style="width:800px;">
-            The processes listed on the left side of the graph are the source
-            processes (send a tag). The processes on the top of the graph are
-            the target processes (recieve a tag). The colored squares in the
-            graph represent communication between the source and the target
-            process. Hovering oher a square highlights the processes involved
-            in the communication. The intensity of the colour represents the
-            total interations (more intence means more interactions).
-            <br> <b>NOTE:</b> Data used for this graph is static at the moment,
-            thus may vary from the tree data.
+            The processes are listed on the vertical axis (sent a tag) and on
+            the horizontal axis (received a tag).  The colored squares in the
+            graph represent the amount of communication between the source and
+            the target process. Hovering over a square highlights the
+            processes involved in the communication.
+            <br> <b>NOTE:</b> Data used here differs from the above two.
             <!--br> <b>NOTE:</b> The 'Order' functionality does not yet have much
             semantic meaning in examining the data. </br-->
         </p>
@@ -86,8 +90,7 @@
             number of tags sent by the process. The right stacked bar measures
             the number of tags recieved by the process. Different colors within
             the bar represent different tags.
-            <br> <b>NOTE:</b> Data used for this graph is static at the moment,
-            thus may vary from the tree data.
+            <br> <b>NOTE:</b> Data used here is not real data.
         </p>
     </div>
     <div id="stackedThreads"></div>

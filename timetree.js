@@ -312,6 +312,10 @@ var TimeTree = (function () {
                 node.time = Math.ceil(node.time / minTime) * 100;
             });
 
+            /*lifeline = _.sortBy(lifeline, function (node) {
+                return node.time;
+            });*/
+
             _.each(lifeline, function (node) {
                 // Vertices contain just the event data
                 var childVertex, parentVertex,
@@ -366,7 +370,7 @@ var TimeTree = (function () {
 
             var dummyNode,
                 w = 1760, // the width and height of the whole svg arrea
-                h = 800,//2000;
+                h = 1000,//2000;
                 tree = d3.layout.tree().size([h, w - 760]),
                 animationDuration = 500,
                 diagonal,
