@@ -46,8 +46,6 @@
             and dragging them. The different colors of the edges indicate
             propagation of some specific tag. Use the checkboxes at the bottom
             to isolate specific tags.
-            <br> <b>NOTE:</b> data used for this graph is static at the moment,
-            thus may vary from the tree data.
         </p>
     </div>
     <div id="daglifeline"></div>
@@ -64,12 +62,12 @@
             total interations (more intence means more interactions).
             <br> <b>NOTE:</b> Data used for this graph is static at the moment,
             thus may vary from the tree data.
-            <br> <b>NOTE:</b> The 'Order' functionality does not yet have much
-            semantic meaning in examining the data.
+            <!--br> <b>NOTE:</b> The 'Order' functionality does not yet have much
+            semantic meaning in examining the data. </br-->
         </p>
     </div>
 
-    <p>Order:
+    <p style="display:none;">Order:
       <select id="order">
         <option value="name">by Name</option>
         <option value="count">by Frequency</option>
@@ -87,8 +85,7 @@
             of interactions for the tread. The left stacked bar measures the
             number of tags sent by the process. The right stacked bar measures
             the number of tags recieved by the process. Different colors within
-            the bar represent different tags. Clicking on the items in the legend
-            either removes or adds the data item to the graph.
+            the bar represent different tags.
             <br> <b>NOTE:</b> Data used for this graph is static at the moment,
             thus may vary from the tree data.
         </p>

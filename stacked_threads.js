@@ -30,6 +30,9 @@ var StackedThreads = (function () {
                     style: {
                         fontWeight: 'bold',
                         color: (Highcharts.theme && Highcharts.theme.textColor) || 'gray'
+                    },
+                    formatter: function() {
+                        return  this.stack;
                     }
                 }
             },
@@ -46,29 +49,36 @@ var StackedThreads = (function () {
                     dataLabels: {
                         enabled: true,
                         color: (Highcharts.theme && Highcharts.theme.dataLabelsColor) || 'white'
+                    },
+                    events: {
+                        legendItemClick: function () {
+                            return false; // <== returning false will cancel the default action
+                        }
                     }
                 }
             },
             series: [{
-                name: 'send tag0',
+                name: 'tag0',
                 data: [4, 6, 3, 0],
                 stack: 'send',
                 color: colors[0]
             }, {
-                name: 'send tag1',
+                name: 'tag1',
                 data: [2, 4, 5, 1],
                 stack: 'send',
                 color: colors[1]
             },{
-                name: 'receive tag0',
+                name: 'tag0',
                 data: [1, 2, 5, 4],
                 stack: 'receive',
-                color: colors[0]
+                color: colors[0],
+                showInLegend: false
             },{
-                name: 'receive tag1',
+                name: 'tag1',
                 data: [3, 8, 2, 1],
                 stack: 'receive',
-                color: colors[1]
+                color: colors[1],
+                showInLegend: false
             }]
         });
     }
