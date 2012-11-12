@@ -132,7 +132,7 @@ var Coocur = (function () {
                     .attr("transform", function (d, i) { return "translate(" + x(i) + ")rotate(-90)"; });
             }
 
-            timeout = setTimeout(function () {
+            /*timeout = setTimeout(function () {
                 order("group");
                 d3.select("#order").property("selectedIndex", 2).node().focus();
             }, 5000);
@@ -140,7 +140,7 @@ var Coocur = (function () {
             d3.select("#order").on("change", function () {
                 clearTimeout(timeout);
                 order(this.value);
-            });
+            });*/
 
         });
     }

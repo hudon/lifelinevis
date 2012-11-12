@@ -137,7 +137,7 @@ var TimeTree = (function () {
         */
 
         // green, blue, orange, pink, teal, red,
-        colorGen = _.generator(['#009933', '#0000FF', '#CC6600', '#FF00FF', '#00FFFF','#CC0000',]);
+        colorGen = _.generator(['#009933', '#0000FF', '#CC6600', '#FF4422', '#00FFFF','#CC0000',]);
 
         function addSelection(p) {
             d3.selectAll(".node text").style("fill", function (d, i) {
@@ -145,14 +145,15 @@ var TimeTree = (function () {
                     d3.select(this).style('font-weight', 'bold');
                     return colorGen.getWith(d.tid);
                 } else {
-                    return '#F8F8F8';
+                    d3.select(this).style('opacity', '0.15');
+                    return 'black';
                 }
             });
         }
 
         function removeSelection() {
             d3.selectAll(".node text").style("fill", 'black')
-                .style('font-weight', 'normal');
+                .style('font-weight', 'normal').style('opacity', '1');
         }
 
         //***************
