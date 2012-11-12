@@ -142,7 +142,12 @@ var TimeTree = (function () {
         function addSelection(p) {
             d3.selectAll(".node text").style("fill", function (d, i) {
                 if (p.pid === d.pid) {
-                    d3.select(this).style('font-weight', 'bold');
+                    d3.select(this)
+                    .style('font-weight', 'bold')
+                    .text(function(d) {
+                        return "name: " + d.name + " pid: " + d.pid +
+                        " tid: " + d.tid + " time: " + d.time;
+                    });
                     return colorGen.getWith(d.tid);
                 } else {
                     d3.select(this).style('opacity', '0.15');
@@ -153,7 +158,10 @@ var TimeTree = (function () {
 
         function removeSelection() {
             d3.selectAll(".node text").style("fill", 'black')
-                .style('font-weight', 'normal').style('opacity', '1');
+                .style('font-weight', 'normal').style('opacity', '1')
+                .text(function(d) {
+                    return d.name;
+                });
         }
 
         //***************
@@ -168,11 +176,11 @@ var TimeTree = (function () {
 
         // to each g element add a SVG text element
         nodeEnter.append("svg:text")
-            .attr("x", -5)
-            .attr("y", 18)
+            .attr("x", -2)
+            .attr("y", 15)
             .text(function (d) {
                 if (!d.pid) { return ""; }
-                return "name: " + d.name + ", tid: " + d.tid + ", time: " + d.time;
+                return d.name;
             });
 
         // Transition the g elements to their new position (duration controls
