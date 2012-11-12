@@ -11,6 +11,7 @@ div#treelegend {
 
 form {
   height: 50px;
+  width: 700px;
   border: 1px solid;
   padding-top: 20px;
 }

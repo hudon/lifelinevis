@@ -264,8 +264,8 @@ var TimeTree = (function () {
         _.each(tags, function (value, key, list) {
             var tag = {};
             tag.name = key;
-            tag.source = {x: 10, y: 30};
-            tag.target = {x: 10, y: 140};
+            tag.source = {x: 10, y: 60};
+            tag.target = {x: 10, y: 160};
             tag.id = id;
             id += 1;
             legend.push(tag);
