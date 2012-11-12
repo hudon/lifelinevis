@@ -20,7 +20,7 @@ var Coocur = (function () {
             .append("g")
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-        d3.json("procs.json", function (procs) {
+        d3.json("co_occurrence_data.json", function (procs) {
             var matrix, nodes, n, orders, row, column, timeout;
 
             function mouseover(p) {
@@ -150,12 +150,12 @@ var Coocur = (function () {
             /*timeout = setTimeout(function () {
                 order("group");
                 d3.select("#order").property("selectedIndex", 2).node().focus();
-            }, 5000);
+            }, 5000);*/
 
             d3.select("#order").on("change", function () {
                 clearTimeout(timeout);
                 order(this.value);
-            });*/
+            });
         });
     }
     return {
