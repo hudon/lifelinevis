@@ -2,9 +2,40 @@
 /*global _,d3*/
 var TagDag = (function () {
     'use strict';
-    //TODO look at:http://bl.ocks.org/1153292
 
-    function tempFunc() {
+    var dagCheckboxTempl;
+
+    function toggleTag(e) {
+        var tagVal, links, checkbox;
+        checkbox = e.target;
+        tagVal = checkbox.value;
+        links = document.getElementsByClassName('link ' + tagVal);
+        if (checkbox.checked) {
+            _.each(links, function(l) {
+                l.style.display = "block";
+            });
+        } else {
+            _.each(links, function(l) {
+                l.style.display = "none";
+            });
+        }
+    }
+
+    dagCheckboxTempl = _.template('<input type="checkbox" value="<%= tagname %>" checked> <span> <%= tagname %> </span>');
+
+    function drawCheckboxes(links) {
+        var uniqueTagNames;
+        uniqueTagNames = _.union(_.pluck(links, 'type'));
+        _.each(uniqueTagNames, function (tagName) {
+            var form, checkbox;
+            form = document.getElementById('dagcheckboxes');
+            checkbox = dagCheckboxTempl({ tagname: tagName });
+            form.innerHTML += checkbox;
+        });
+        $('#dagcheckboxes>input').change(toggleTag);
+    }
+
+    function drawDag() {
         var links, nodes, w, h, force, path, svg, circle, text;
 
         // Use elliptical arc path segments to doubly-encode directionality.
@@ -78,41 +109,6 @@ var TagDag = (function () {
             {source: "pid: 925735, tid: 0", target: "pid: 20489, tid: 1", type: "tag4", l: "3"},
             {source: "pid: 925735, tid: 0", target: "pid: 925735, tid: 0", type: "tag4", l: "5"},
             {source: "pid: 20489, tid: 3", target: "pid: 925735, tid: 0", type: "tag4", l: "2"},
-            // {source: "HTC", target: "Apple", type: "suit", l: "0"},
-            // {source: "Kodak", target: "Apple", type: "suit", l: "0"},
-            // {source: "Microsoft", target: "Barnes & Noble", type: "suit", l: "0"},
-            // {source: "Microsoft", target: "Foxconn", type: "suit", l: "0"},
-            // {source: "Oracle", target: "Google", type: "suit", l: "0"},
-            // {source: "Apple", target: "HTC", type: "suit", l: "0"},
-            // {source: "Microsoft", target: "Inventec", type: "suit", l: "0"},
-            // {source: "Samsung", target: "Kodak", type: "resolved", l: "0"},
-            // {source: "LG", target: "Kodak", type: "resolved", l: "0"},
-            // {source: "RIM", target: "Kodak", type: "suit", l: "0"},
-            // {source: "Sony", target: "LG", type: "suit", l: "0"},
-            // {source: "Kodak", target: "LG", type: "resolved", l: "0"},
-            // {source: "Apple", target: "Nokia", type: "resolved", l: "0"},
-            // {source: "Qualcomm", target: "Nokia", type: "resolved", l: "0"},
-            // {source: "Apple", target: "Motorola", type: "suit", l: "0"},
-            // {source: "Microsoft", target: "Motorola", type: "suit", l: "0"},
-            // {source: "Motorola", target: "Microsoft", type: "suit", l: "0"},
-            // {source: "Huawei", target: "ZTE", type: "suit", l: "0"},
-            // {source: "Ericsson", target: "ZTE", type: "suit", l: "0"},
-            // {source: "Ericsson", target: "ZTE", type: "suit", l: "1"},
-            // {source: "Ericsson", target: "ZTE", type: "suit", l: "2"},
-            // {source: "Ericsson", target: "ZTE", type: "suit", l: "3"},
-            // {source: "Ericsson", target: "ZTE", type: "suit", l: "4"},
-            // {source: "Ericsson", target: "ZTE", type: "suit", l: "5"},
-            // // added self loop:
-            // {source: "Ericsson", target: "Ericsson", type: "suit", l: "0"},
-            // {source: "Kodak", target: "Samsung", type: "resolved", l: "0"},
-            // {source: "Apple", target: "Samsung", type: "suit", l: "0"},
-            // // Added duplicate links:
-            // {source: "Kodak", target: "RIM", type: "suit", l: "0"},
-            // {source: "Kodak", target: "RIM", type: "suit", l: "1"},
-            // {source: "Kodak", target: "RIM", type: "suit", l: "2"},
-            // {source: "Kodak", target: "RIM", type: "suit", l: "3"},
-            // {source: "Kodak", target: "RIM", type: "suit", l: "4"},
-            // {source: "Nokia", target: "Qualcomm", type: "suit", l: "0"}
         ];
 
         nodes = {};
@@ -191,13 +187,12 @@ var TagDag = (function () {
             .attr("y", ".35em")
             .text(function (d) { return d.name; });
 
+        drawCheckboxes(links);
     }
     return {
         parseLifeline: function (lifeline) {
 
         },
-        draw: tempFunc
-        //draw: function (dagData) {
-        //}
+        draw: drawDag
     };
 }());

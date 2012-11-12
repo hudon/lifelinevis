@@ -51,30 +51,7 @@
         </p>
     </div>
     <div id="daglifeline"></div>
-    <!-- TODO: put this stuff in JS files for extensibility/maintainability -->
-    <form>
-      <input type="checkbox" value="tag0" onchange='toggleTag(this)' checked> <span>tag0</span>
-      <input type="checkbox" value="tag1" onchange='toggleTag(this)' checked> <span>tag1</span>
-      <input type="checkbox" value="tag2" onchange='toggleTag(this)' checked> <span>tag2</span>
-      <input type="checkbox" value="tag3" onchange='toggleTag(this)' checked> <span>tag3</span>
-      <input type="checkbox" value="tag4" onchange='toggleTag(this)' checked> <span>tag4</span>
-    </form>
-    <script type="text/javascript">
-      function toggleTag(cb) {
-        var tagVal = cb.value;
-        if (cb.checked) {
-          _.each(document.getElementsByClassName("link " + tagVal), function(l) {
-              l.style.display = "block";
-          });
-        } else {
-          _.each(document.getElementsByClassName("link " + tagVal), function(l) {
-              l.style.display = "none";
-          });
-        }
-      }
-    </script>
-    <!-- TODO: put this stuff in JS -->
-
+    <form id="dagcheckboxes"> </form>
     <div>
         <h2>Thread communication frequency matrix</h2>
         <p style="width:800px;">
