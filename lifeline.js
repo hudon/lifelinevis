@@ -41,12 +41,12 @@
     function windowLoadHandler() {
         loadLifeline(function (lifeline) {
             var tags, timeTreeData;
+
             timeTreeData = TimeTree.parseLifelineData(lifeline);
             tags = countTags(lifeline);
-
             TimeTree.drawLifelineTree(timeTreeData, tags);
 
-            TagDag.draw();
+            TagDag.draw(TagDag.parseLifeline(lifeline));
 
             stylizeTagLinks(tags);
         });

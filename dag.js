@@ -1,5 +1,5 @@
 /*jslint nomen: true, browser: true, devel: true*/
-/*global _,d3*/
+/*global $,_,d3*/
 var TagDag = (function () {
     'use strict';
 
@@ -11,17 +11,18 @@ var TagDag = (function () {
         tagVal = checkbox.value;
         links = document.getElementsByClassName('link ' + tagVal);
         if (checkbox.checked) {
-            _.each(links, function(l) {
+            _.each(links, function (l) {
                 l.style.display = "block";
             });
         } else {
-            _.each(links, function(l) {
+            _.each(links, function (l) {
                 l.style.display = "none";
             });
         }
     }
 
-    dagCheckboxTempl = _.template('<input type="checkbox" value="<%= tagname %>" checked> <span> <%= tagname %> </span>');
+    dagCheckboxTempl = _.template('<input type="checkbox" value="<%= tagname %>"'
+           + ' checked> <span> tag:<%= tagname %> </span>');
 
     function drawCheckboxes(links) {
         var uniqueTagNames;
@@ -35,17 +36,18 @@ var TagDag = (function () {
         $('#dagcheckboxes>input').change(toggleTag);
     }
 
-    function drawDag() {
-        var links, nodes, w, h, force, path, svg, circle, text;
+    function drawDag(links) {
+        var nodes, w, h, force, path, svg, circle, text;
 
         // Use elliptical arc path segments to doubly-encode directionality.
         function tick() {
             path.attr("d", function (d) {
-                var dx, dy, dr, a, da, b;
+                var num, dx, dy, dr, a, da, b;
 
                 dx = d.target.x - d.source.x;
                 dy = d.target.y - d.source.y;
                 dr = Math.sqrt(dx * dx + dy * dy);
+                num = d.occurrenceNumber;
 
                 if (d.target.name === d.source.name) {
                     a = Math.atan2(dx, dy);
@@ -55,12 +57,12 @@ var TagDag = (function () {
                         //"q" + b*Math.sin(a) + "," + b*Math.cos(a) + " " + b*Math.sin(a+da) + "," + b*Math.cos(a+da)
                         + " " + " T " + d.target.x + "," + d.target.y;
                 }
-                if (d.l === "0") {
+                if (num === 0) {
                     return "M" + d.source.x + "," + d.source.y + "A" + dr + ","
                         + dr + " 0 0,1 " + d.target.x + "," + d.target.y;
                 }
                 return "M" + d.source.x + "," + d.source.y +
-                    "q0," + 5 * d.l + " " + 5 * d.l + ",0 " +
+                    "q0," + 5 * num + " " + 5 * num + ",0 " +
                     " T " + d.target.x + "," + d.target.y;
             });
 
@@ -72,44 +74,6 @@ var TagDag = (function () {
                 return "translate(" + d.x + "," + d.y + ")";
             });
         }
-
-        links = [
-            {source: "pid: 925735, tid: 2", target: "pid: 20489, tid: 1", type: "tag0", l: "0"},
-            {source: "pid: 925735, tid: 2", target: "pid: 20489, tid: 3", type: "tag0", l: "0"},
-            {source: "pid: 925735, tid: 2", target: "pid: 20489, tid: 1", type: "tag0", l: "1"},
-            {source: "pid: 925735, tid: 2", target: "pid: 20489, tid: 1", type: "tag0", l: "2"},
-            {source: "pid: 925735, tid: 2", target: "pid: 20489, tid: 1", type: "tag0", l: "3"},
-            {source: "pid: 925735, tid: 2", target: "pid: 20489, tid: 3", type: "tag0", l: "1"},
-            {source: "pid: 20489, tid: 1", target: "pid: 925735, tid: 0", type: "tag0", l: "0"},
-            {source: "pid: 20489, tid: 1", target: "pid: 925735, tid: 0", type: "tag0", l: "1"},
-            {source: "pid: 20489, tid: 1", target: "pid: 925735, tid: 0", type: "tag0", l: "2"},
-            {source: "pid: 20489, tid: 3", target: "pid: 925735, tid: 0", type: "tag0", l: "0"},
-            {source: "pid: 925735, tid: 0", target: "pid: 20489, tid: 1", type: "tag0", l: "0"},
-            {source: "pid: 925735, tid: 0", target: "pid: 925735, tid: 0", type: "tag0", l: "0"},
-            {source: "pid: 925735, tid: 0", target: "pid: 20489, tid: 3", type: "tag0", l: "0"},
-            {source: "pid: 925735, tid: 0", target: "pid: 925735, tid: 0", type: "tag0", l: "1"},
-
-            {source: "pid: 20489, tid: 3", target: "pid: 925735, tid: 0", type: "tag1", l: "1"},
-            {source: "pid: 925735, tid: 0", target: "pid: 20489, tid: 1", type: "tag1", l: "1"},
-            {source: "pid: 925735, tid: 0", target: "pid: 925735, tid: 0", type: "tag1", l: "2"},
-
-            {source: "pid: 925735, tid: 0", target: "pid: 20489, tid: 3", type: "tag2", l: "1"},
-            {source: "pid: 925735, tid: 0", target: "pid: 925735, tid: 0", type: "tag2", l: "3"},
-
-            {source: "pid: 925735, tid: 1", target: "pid: 20489, tid: 3", type: "tag3", l: "0"},
-            {source: "pid: 925735, tid: 1", target: "pid: 20489, tid: 3", type: "tag3", l: "1"},
-            {source: "pid: 925735, tid: 1", target: "pid: 20489, tid: 1", type: "tag3", l: "0"},
-            {source: "pid: 925735, tid: 1", target: "pid: 20489, tid: 1", type: "tag3", l: "1"},
-
-            {source: "pid: 20489, tid: 1", target: "pid: 925735, tid: 0", type: "tag4", l: "3"},
-            {source: "pid: 925735, tid: 0", target: "pid: 20489, tid: 1", type: "tag4", l: "2"},
-            {source: "pid: 925735, tid: 0", target: "pid: 925735, tid: 0", type: "tag4", l: "3"},
-            {source: "pid: 925735, tid: 0", target: "pid: 20489, tid: 3", type: "tag4", l: "2"},
-            {source: "pid: 925735, tid: 0", target: "pid: 925735, tid: 0", type: "tag4", l: "4"},
-            {source: "pid: 925735, tid: 0", target: "pid: 20489, tid: 1", type: "tag4", l: "3"},
-            {source: "pid: 925735, tid: 0", target: "pid: 925735, tid: 0", type: "tag4", l: "5"},
-            {source: "pid: 20489, tid: 3", target: "pid: 925735, tid: 0", type: "tag4", l: "2"},
-        ];
 
         nodes = {};
 
@@ -162,7 +126,7 @@ var TagDag = (function () {
         path = svg.append("svg:g").selectAll("path")
             .data(force.links())
             .enter().append("svg:path")
-            .attr("class", function (d) { return "link " + d.type; })
+            .attr("class", function (d) { return "link tag" + d.type; })
             .attr("marker-end", function (d) { return "url(#" + d.type + ")"; });
 
         circle = svg.append("svg:g").selectAll("circle")
@@ -189,10 +153,34 @@ var TagDag = (function () {
 
         drawCheckboxes(links);
     }
-    return {
-        parseLifeline: function (lifeline) {
 
-        },
+    function parseLifeline(lifeline) {
+        var links, multiOccurrences;
+        multiOccurrences = {};
+        links = _.map(lifeline, function (lifeEvent) {
+            var link = {};
+            link.source = 'pid: ' + lifeEvent.srcProcessId + ', tid: ' + lifeEvent.srcThreadId;
+            link.target = 'pid: ' + lifeEvent.dstProcessId + ', tid: ' + lifeEvent.dstThreadId;
+            link.type = lifeEvent.tagName;
+
+            // multioccurences -> link.source -> link.target -> number of
+            // occurrences for that edge
+            if (!_.has(multiOccurrences, link.source)) {
+                multiOccurrences[link.source] = {};
+            }
+            if (!_.has(multiOccurrences[link.source], link.target)) {
+                multiOccurrences[link.source][link.target] = 0;
+            }
+            link.occurrenceNumber = multiOccurrences[link.source][link.target];
+            multiOccurrences[link.source][link.target] += 1;
+
+            return link;
+        });
+        return links;
+    }
+
+    return {
+        parseLifeline: parseLifeline,
         draw: drawDag
     };
 }());
