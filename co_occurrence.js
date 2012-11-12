@@ -20,12 +20,12 @@ var Coocur = (function () {
             .append("g")
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-        d3.json("procs.json", function (miserables) {
+        d3.json("procs.json", function (procs) {
             var matrix, nodes, n, orders, row, column, timeout;
 
             function mouseover(p) {
-                d3.selectAll(".row text").classed("active", function (d, i) { return i === p.y; });
-                d3.selectAll(".column text").classed("active", function (d, i) { return i === p.x; });
+                d3.selectAll(".row .axis_label").classed("active", function (d, i) { return i === p.y; });
+                d3.selectAll(".column .axis_label").classed("active", function (d, i) { return i === p.x; });
             }
 
             function mouseout() {
@@ -40,14 +40,31 @@ var Coocur = (function () {
                     .attr("x", function (d) { return x(d.x); })
                     .attr("width", x.rangeBand())
                     .attr("height", x.rangeBand())
-                    .style("fill-opacity", function (d) { return z(d.z); })
-                    .style("fill", function (d) { return nodes[d.x].group === nodes[d.y].group ? c(nodes[d.x].group) : null; })
+                    .style("fill-opacity", function (d) {
+                        return z(d.z);
+                    })
+                    .style("fill", function (d) {
+                        return nodes[d.x].group === nodes[d.y].group ? c(nodes[d.x].group) : null;
+                    })
                     .on("mouseover", mouseover)
-                    .on("mouseout", mouseout);
+                    .on("mouseout", mouseout)
+                    .text(function(d, i) {
+                        return d.z;
+                    });
+
+                d3.select(domElem).selectAll("text")
+                    .data(row.filter(function (d) { return d.z; }))
+                    .enter().append("text")
+                    .attr("class", "cell")
+                    .attr("class", "cell_text")
+                    .text(function(d, i) {
+                        return d.z;
+                    }).attr("x", function (d) { return x(d.x) + x.rangeBand() / 2.3; })
+                    .attr("y", function (d) { return x.rangeBand() / 1.8; });
             }
 
             matrix = [];
-            nodes = miserables.nodes;
+            nodes = procs.nodes;
             n = nodes.length;
 
             // Compute index per node.
@@ -58,13 +75,9 @@ var Coocur = (function () {
             });
 
             // Convert links to matrix; count character occurrences.
-            miserables.links.forEach(function (link) {
+            procs.links.forEach(function (link) {
                 matrix[link.source][link.target].z += link.value;
-                //matrix[link.target][link.source].z += link.value;
-                //matrix[link.source][link.source].z += link.value;
-                //matrix[link.target][link.target].z += link.value;
                 nodes[link.source].count += link.value;
-                //nodes[link.target].count += link.value;
             });
 
             // Precompute the orders.
@@ -97,6 +110,7 @@ var Coocur = (function () {
                 .attr("y", x.rangeBand() / 2)
                 .attr("dy", ".32em")
                 .attr("text-anchor", "end")
+                .attr("class", "axis_label")
                 .text(function (d, i) { return nodes[i].name; });
 
             column = svg.selectAll(".column")
@@ -113,6 +127,7 @@ var Coocur = (function () {
                 .attr("y", x.rangeBand() / 2)
                 .attr("dy", ".32em")
                 .attr("text-anchor", "start")
+                .attr("class", "axis_label")
                 .text(function (d, i) { return nodes[i].name; });
 
             function order(value) {
@@ -141,7 +156,6 @@ var Coocur = (function () {
                 clearTimeout(timeout);
                 order(this.value);
             });*/
-
         });
     }
     return {
