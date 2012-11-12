@@ -9,7 +9,7 @@ var TagDag = (function () {
         var tagVal, links, checkbox;
         checkbox = e.target;
         tagVal = checkbox.value;
-        links = document.getElementsByClassName('link ' + tagVal);
+        links = document.getElementsByClassName('link tag' + tagVal);
         if (checkbox.checked) {
             _.each(links, function (l) {
                 l.style.display = "block";
@@ -91,14 +91,14 @@ var TagDag = (function () {
             }
         });
 
-        w = 1260;
-        h = 800;
+        w = 1060;
+        h = 600;
 
         force = d3.layout.force()
             .nodes(d3.values(nodes))
             .links(links)
             .size([w, h])           // available layout size - affects the gravitational center & init rand pos
-            .linkDistance(350)
+            .linkDistance(250)
             .charge(-80)            // -ve: node repultion; +ve: node attraction
             .friction(0.7)
             .gravity(0.01)
