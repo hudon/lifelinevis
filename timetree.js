@@ -136,18 +136,28 @@ var TimeTree = (function () {
             Give selections with different tids different colors
         */
 
+        var tooltip = d3.select("#treelifeline").append("div")
+              .attr("class", "tooltip")
+              .style("opacity", -1)
+
         // green, blue, orange, pink, teal, red,
-        colorGen = _.generator(['#009933', '#0000FF', '#CC6600', '#FF4422', '#00FFFF','#CC0000',]);
+        colorGen = _.generator(['#009933', '#0000FF', '#FF9933', '#FF4422', '#00FFFF','#FF0000',]);
 
         function addSelection(p) {
-            d3.selectAll(".node text").style("fill", function (d, i) {
+            if (p.name) {
+                tooltip.text("name: " + p.name + " pid: " + p.pid +
+                        " tid: " + p.tid + " time: " + p.time)
+                    .transition()
+                    .duration(300)
+                    .style("opacity", 1)
+
+                tooltip.style("left", d3.event.pageX - 55 +  "px")
+                   .style("top", d3.event.pageY - 35 + "px")
+
+            }
+
+            d3.selectAll(".node circle").style("fill", function (d, i) {
                 if (p.pid === d.pid) {
-                    d3.select(this)
-                    .style('font-weight', 'bold')
-                    .text(function(d) {
-                        return "name: " + d.name + " pid: " + d.pid +
-                        " tid: " + d.tid + " time: " + d.time;
-                    });
                     return colorGen.getWith(d.tid);
                 } else {
                     d3.select(this).style('opacity', '0.15');
@@ -157,11 +167,12 @@ var TimeTree = (function () {
         }
 
         function removeSelection() {
-            d3.selectAll(".node text").style("fill", 'black')
-                .style('font-weight', 'normal').style('opacity', '1')
-                .text(function(d) {
-                    return d.name;
-                });
+            tooltip.transition()
+                   .duration(500)
+                   .style("opacity", -1)
+
+            d3.selectAll(".node circle").style("fill", 'white')
+                .style('opacity', '1');
         }
 
         //***************
@@ -177,7 +188,7 @@ var TimeTree = (function () {
         // to each g element add a SVG text element
         nodeEnter.append("svg:text")
             .attr("x", -2)
-            .attr("y", 15)
+            .attr("y", 18)
             .text(function (d) {
                 if (!d.pid) { return ""; }
                 return d.name;
@@ -192,7 +203,7 @@ var TimeTree = (function () {
 
         // Re-colour the nodes (since last colouring only affected new ones)
         nodeUpdate.select("circle")
-            .attr("r", 4.5)
+            .attr("r", 6.5)
             .style("fill", function (d) { return d._children ? "lightsteelblue" : "#fff"; });
 
         // The exit() set is all the elements that were not matched with
