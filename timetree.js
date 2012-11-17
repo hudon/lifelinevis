@@ -5,9 +5,11 @@ var TimeTree = (function () {
     // nodes per level
     var buckets = [],
         nodeIdentifier = 0,
-        timePeriod = 100,
+        timePeriod = 70,
         Node,
-        Vertex;
+        Vertex,
+        lifelineOrig,
+        treeTags;
 
     // Vertex: a process thread; Edge: the event of sending/receiving a tag
     Vertex = _.makeClass();
@@ -325,8 +327,8 @@ var TimeTree = (function () {
             // normalize the timestamps on the nodes
             _.each(lifeline, function (node) {
                 node.realtime = node.time;
-                node.time = Math.ceil(node.time / minTime) * 100;
-                //node.time = (node.time / minTime) * 100;
+                // node.time = Math.ceil(node.time / minTime) * 100;
+                node.time = (node.time / minTime) * 100;
             });
 
 
@@ -381,6 +383,7 @@ var TimeTree = (function () {
                 addToBucket(childLevel, childNode);
             });
 
+            lifelineOrig = treeLifeline;
             return treeLifeline;
         },
         drawLifelineTree: function (treeLifeline, tags) {
@@ -388,6 +391,8 @@ var TimeTree = (function () {
             // uncomment these two lines:
             //d3.json("tree_example.json", function (json) {
             //_.each(json, function (jsonTree) {
+
+            treeTags = tags;
 
             var dummyNode,
                 w = 1760, // the width and height of the whole svg arrea
@@ -419,6 +424,16 @@ var TimeTree = (function () {
 
             update(dummyNode, dummyNode, diagonal, tree, animationDuration, vis);
             createLegend(tags);
+        },
+        updateBucketResolution: function(resolution) {
+            timePeriod = resolution;
+            d3.select("#treelifeline svg")
+                .remove("svg:svg")
+
+            d3.select("#treelegend svg")
+                .remove("svg:svg")
+
+            TimeTree.drawLifelineTree(lifelineOrig, treeTags);
         }
     };
 }());

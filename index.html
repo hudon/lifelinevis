@@ -38,6 +38,12 @@
         </p>
     </div>
     <div id="treelifeline"></div>
+    <div id="slider"> 0
+        <input id="slide" type="range"
+            min="5" max="200" step="10" value="100"
+            onchange="TimeTree.updateBucketResolution(this.value)" />
+         200
+    </div><br/>
     <div id="treelegend"></div>
     <div>
         <h2>Tag Propagation Graph</h2>
