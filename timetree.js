@@ -2,52 +2,38 @@
 /*global _,d3*/
 'use strict';
 var TimeTree = (function () {
-    // nodes per level
-    var buckets = [],
-        nodeIdentifier = 0,
-        timePeriod = 70,
-        Node,
-        Vertex,
-        lifelineOrig,
-        treeTags;
+    var buckets, nodeIdentifier, timePeriod, Node, lifelineOrig, treeTags;
 
-    // Vertex: a process thread; Edge: the event of sending/receiving a tag
-    Vertex = _.makeClass();
-    Vertex.prototype.init = function (pid, tid, time, realtime, tagname, name) {
-        this.pid = pid;
-        this.tid = tid;
-        this.time = time;
-        this.realtime = realtime;
-        this.tagname = tagname;
-        this.name = name;
-    };
+    timePeriod = 100;
+    nodeIdentifier = 0;
+    // Every bucket is a group of nodes that we will be aligning vertically
+    // because their timings are similar
+    buckets = [];
 
     Node = _.makeClass();
-    Node.prototype.init = function (vertex, children) {
+    Node.prototype.init = function (pname, pid, tid, vistime,
+            time, tagname, children) {
         children = children || [];
-        this.pid = vertex.pid;
-        this.tid = vertex.tid;
-        this.name = vertex.name;
-        // 'time' might be scaled later for visualization
-        this.time = vertex.time;
-        // 'realtime' is never scaled
-        this.realtime = vertex.realtime;
+        this.pid = pid;
+        this.pname = pname;
+        this.tid = tid;
+        this.time = time;
+        // Vis time is the time used for visualization (scaled or translated
+        // real time)
+        this.vistime = vistime;
         // for visualization of different tags in the tree
-        this.tagname = vertex.tagname;
+        this.tagname = tagname;
         this.children = children;
         this.bucketLevel = 0;
     };
-    Node.prototype.addChild = function (childVertex, grandchildren) {
-        var childNode = new Node(childVertex, grandchildren);
-        childNode.bucketLevel = childVertex.bucketLevel;
+    Node.prototype.addChild = function (childNode, grandchildren) {
         this.children.push(childNode);
-        return childNode;
     };
 
-    // finding a parent - check all vertices on the level
-    function findParent(vertex, bucket) {
+    // finding a parent - check all nodes on the level
+    function findParent(node, bucket) {
         return _.find(bucket, function (bNode) {
-            return vertex.pid === bNode.pid && vertex.tid === bNode.tid && vertex.tagname === bNode.tagname;
+            return node.pid === bNode.pid && node.tid === bNode.tid && node.tagname === bNode.tagname;
         });
     }
 
@@ -147,9 +133,15 @@ var TimeTree = (function () {
         colorGen = _.generator(['#009933', '#0000FF', '#FF9933', '#FF4422', '#00FFFF','#FF0000',]);
 
         function addSelection(p) {
-            if (p.name) {
-                tooltip.text("name: " + p.name + " pid: " + p.pid +
-                        " tid: " + p.tid + " time: " + p.time + " level: " + p.bucketLevel)
+            var tooltiptext;
+            if (p.pname) {
+                tooltiptext = "name: " + p.pname + " pid: " + p.pid +
+                        " tid: " + p.tid;
+                if (p.time) {
+                    tooltiptext += " time: " + p.time;
+                }
+                //tooltiptext += " level: " + p.bucketLevel; //debugging
+                tooltip.text(tooltiptext)
                     .transition()
                     .duration(300)
                     .style("opacity", 1)
@@ -194,7 +186,7 @@ var TimeTree = (function () {
             .attr("y", 18)
             .text(function (d) {
                 if (!d.pid) { return ""; }
-                return d.name;
+                return d.pname;
             });
 
         // Transition the g elements to their new position (duration controls
@@ -324,61 +316,53 @@ var TimeTree = (function () {
                 return node.time;
             }).time;
 
-            // normalize the timestamps on the nodes
+            // Save original time and copy a scaled version of it so that we
+            // can deal with smaller numbers.
             _.each(lifeline, function (node) {
-                node.realtime = node.time;
-                // node.time = Math.ceil(node.time / minTime) * 100;
-                node.time = (node.time / minTime) * 100;
+                node.vistime = (node.time / minTime) * 100;
             });
 
-
-
             _.each(lifeline, function (node) {
-                // Vertices contain just the event data
-                var childVertex, parentVertex,
-                    // Nodes contain tree-specific data (children, tree number,
-                    // depth, etc.)
-                    childNode,
-                    parentNode,
-                    // Levels represent tree depth (based off time)
-                    childLevel,
-                    parentLevel,
-                    tree,
-                    bucket;
+                var existingParent, childNode, parentNode, childLevel, parentLevel, tree, bucket;
 
-                childVertex = new Vertex(node.dstProcessId, node.dstThreadId,
-                        node.time, node.realtime, node.tagName, node.dstProcessName);
+                childNode = new Node(node.dstProcessName, node.dstProcessId, node.dstThreadId,
+                        node.vistime, node.time, node.tagName);
 
-                parentVertex = new Vertex(node.srcProcessId, node.srcThreadId,
-                        node.time, node.realtime, node.tagName, node.srcProcessName);
+                // Technically, the 'vistime' and the 'time' here would be wrong
+                // since they are at the parent. However, this node will only
+                // be used if we are not able to find an existing node in the
+                // tree to act as parent. Child nodes have the correct time on them (the time
+                // at which a tag was received)
+                parentNode = new Node(node.srcProcessName, node.srcProcessId, node.srcThreadId,
+                        undefined, undefined, node.tagName);
 
-                parentLevel = childLevel = Math.floor(node.time / timePeriod);
+                // Decide which bucket the child should be in based off of how
+                // many time periods (buckets) fit before it.
+                parentLevel = childLevel = Math.round(node.vistime / timePeriod);
 
                 // find parent process: look through each level down to roots
-                var tempLevel = parentLevel - 1;
-
                 while (parentLevel > 0) {
+                    // Levels represent tree depth (based off time)
                     parentLevel -= 1;
+                    // select bucket and ensure one exists
                     bucket = buckets[parentLevel] || [];
-                    parentNode = findParent(parentVertex, bucket);
-                    if (parentNode) {
+                    // there might exist a prent already
+                    existingParent = findParent(parentNode, bucket);
+                    if (typeof existingParent !== 'undefined') {
+                        parentNode = existingParent;
                         break;
                     }
                 }
 
-                // have a parent, go to parent in identified tree and add the
-                // child -- update parent in bucket
-                if (!parentNode) {
-                    // we do not have a parent in our current trees,
-                    // create a new root at level 0
-                    parentNode = new Node(parentVertex, []);
-                    parentNode.bucketLevel = tempLevel;
-                    //parentNode.time = 0;
+                // If we're not using the existing parent, there is additional
+                // setup to do for the new parent
+                if (typeof existingParent === 'undefined') {
+                    parentNode.bucketLevel = childLevel - 1;
+                    addToBucket(parentNode.bucketLevel, parentNode);
                     treeLifeline.push(parentNode);
-                    //addToBucket(0, parentNode);
-                    addToBucket(tempLevel, parentNode);
                 }
-                childNode = parentNode.addChild(childVertex);
+
+                parentNode.addChild(childNode);
                 childNode.bucketLevel = childLevel;
                 addToBucket(childLevel, childNode);
             });
@@ -402,7 +386,7 @@ var TimeTree = (function () {
                 diagonal,
                 vis;
 
-            dummyNode = new Node(new Vertex());
+            dummyNode = new Node();
             _.each(treeLifeline, function (tree) {
                 dummyNode.addChild(tree, tree.children);
             });
