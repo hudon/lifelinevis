@@ -75,6 +75,18 @@ var TimeTree = (function () {
      * @param {Object} source - The source node of the update
     */
     function update(root, source, diagonal, tree, animationDuration, vis) {
+        var nodes, nodeEnter, nodeUpdate, nodeExit, link, node, colorGen, tooltip;
+
+        // Remove the highlighting of nodes on mouseout
+        function removeSelection() {
+            tooltip.transition()
+                   .duration(500)
+                   .style("opacity", -1);
+
+            d3.selectAll(".node circle").style("fill", 'white')
+                .style('opacity', '1');
+        }
+
         // Toggle children on click.
         function click(d) {
             if (d.children) {
@@ -87,8 +99,6 @@ var TimeTree = (function () {
             removeSelection();
             update(root, d, diagonal, tree, animationDuration, vis);
         }
-
-        var nodes, nodeEnter, nodeUpdate, nodeExit, link, node, colorGen;
 
         // result is an array of objs with x and y
         // locations (+vertex info)
@@ -117,24 +127,27 @@ var TimeTree = (function () {
             .append("svg:g")
             .attr("class", "node")
             // this transform ensures the new nodes spawn from source
-            .attr("transform", function (d) { return "translate(" + source.y0 + "," + source.x0 + ")"; })
+            .attr("transform", function (d) {
+                return "translate(" + source.y0 + "," + source.x0 + ")";
+            })
             .on("click", click);
 
-        /*
-            Select all instances of a process in the tree on hover
-            Give selections with different tids different colors
-        */
 
-        var tooltip = d3.select("#treelifeline").append("div")
+        // We only keep 1 tooltip that we move around when we're highlighting
+        // individual nodes
+        tooltip = d3.select("#treelifeline").append("div")
               .attr("class", "tooltip")
-              .style("opacity", -1)
+              .style("opacity", -1);
 
         // green, blue, orange, pink, teal, red,
-        colorGen = _.generator(['#009933', '#0000FF', '#FF9933', '#FF4422', '#00FFFF','#FF0000',]);
+        colorGen = _.generator(['#009933', '#0000FF', '#FF9933', '#FF4422', '#00FFFF', '#FF0000']);
 
+        // Select all instances of a process in the tree on hover
+        // Give selections with different tids different colors
         function addSelection(p) {
             var tooltiptext;
-            if (p.pname) {
+            // do not put tooltip on root node (will not have pid)
+            if (p.pid) {
                 tooltiptext = "name: " + p.pname + " pid: " + p.pid +
                         " tid: " + p.tid;
                 if (p.time) {
@@ -144,30 +157,20 @@ var TimeTree = (function () {
                 tooltip.text(tooltiptext)
                     .transition()
                     .duration(300)
-                    .style("opacity", 1)
+                    .style("opacity", 1);
 
                 tooltip.style("left", d3.event.pageX - 55 +  "px")
-                   .style("top", d3.event.pageY - 35 + "px")
+                    .style("top", d3.event.pageY - 35 + "px");
 
             }
 
             d3.selectAll(".node circle").style("fill", function (d, i) {
                 if (p.pid === d.pid) {
                     return colorGen.getWith(d.tid);
-                } else {
-                    d3.select(this).style('opacity', '0.15');
-                    return 'black';
                 }
+                d3.select(this).style('opacity', '0.15');
+                return 'black';
             });
-        }
-
-        function removeSelection() {
-            tooltip.transition()
-                   .duration(500)
-                   .style("opacity", -1)
-
-            d3.selectAll(".node circle").style("fill", 'white')
-                .style('opacity', '1');
         }
 
         //***************
@@ -409,13 +412,13 @@ var TimeTree = (function () {
             update(dummyNode, dummyNode, diagonal, tree, animationDuration, vis);
             createLegend(tags);
         },
-        updateBucketResolution: function(resolution) {
+        updateBucketResolution: function (resolution) {
             timePeriod = resolution;
             d3.select("#treelifeline svg")
-                .remove("svg:svg")
+                .remove("svg:svg");
 
             d3.select("#treelegend svg")
-                .remove("svg:svg")
+                .remove("svg:svg");
 
             TimeTree.drawLifelineTree(lifelineOrig, treeTags);
         }
