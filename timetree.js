@@ -69,7 +69,8 @@ var TimeTree = (function () {
             .attr("class", "timeline")
             .attr("stroke", "steelblue")
             .attr("stroke-width", 3);
-    }*/
+    }
+*/
 
     /**
      * Updates the tree visualization
@@ -135,17 +136,15 @@ var TimeTree = (function () {
             })
             .on("click", click);
 
-
-        // We only keep 1 tooltip that we move around when we're highlighting
-        // individual nodes
-        tooltip = d3.select("#treelifeline").append("div")
+        // Single tooltip used to display extra information about a node
+        var tooltip = d3.select("#treelifeline").append("div")
               .attr("class", "tooltip")
               .style("opacity", -1);
 
         // green, blue, orange, pink, teal, red,
         colorGen = _.generator(['#009933', '#0000FF', '#FF9933', '#FF4422', '#00FFFF', '#FF0000']);
 
-        // Select all instances of a process in the tree on hover
+        // Select all instances of a process (the nodes/circles) in the tree on hover
         // Give selections with different tids different colors
         function addSelection(p) {
             var tooltiptext;
