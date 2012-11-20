@@ -1,15 +1,22 @@
 /*jslint nomen: true, browser: true, devel: true*/
 /*global $,_,d3*/
 'use strict';
-var TimeTree = (function () {
-    var visBucketSize, resolution, Node, lifelineOrig, treeTagsOrig;
 
+var TimeTree;
+
+TimeTree = _.makeClass();
+
+TimeTree.prototype.init = function (resolution, lifeline, tags) {
     // A high resolution means more levels and less things per bucket. A low
     // resolution means more things in 1 bucket
-    // visBucketSize is how big a bucket is visually. This value with
-    // some computation will result in the distance between two levels.
-    visBucketSize = 100;
-    resolution = 1;
+    this.resolution = resolution;
+    this.lifeline = lifeline;
+    this.tags = tags;
+};
+
+// Prepares the lifeline data to be displayed as a tree
+TimeTree.prototype.parseTreeData = (function () {
+    var Node;
 
     // Every bucket is a group of nodes that we will be aligning vertically
     // because their timings are similar
@@ -44,38 +51,145 @@ var TimeTree = (function () {
         buckets[level] = buckets[level] || [];
         buckets[level].push(node);
     }
-/*
-    function drawTimeline(width, graphHeight, graphSVG) {
-        var line, lineVis, lineData, level;
 
-        lineData = [];
-        for (level = 0; level < buckets.length; level += 1) {
-            lineData.push(resolution * level * 1.3 + 150);
-        }
+    function parseLifelineData(lifeline, resolution) {
+        var minTime, treeLifeline, buckets, dummyNode;
 
-        lineVis = d3.select("#lifeline")
-            .append("svg:svg")
-            .attr("width", width)
-            .attr("height", 150);
+        treeLifeline = [];
+        buckets = [];
 
-        line = d3.svg.line()
-            .x(function (d) { return d; })
-            .y(function (d) { return 0; });
+        lifeline = _.sortBy(lifeline, function (node) {
+            return node.time;
+        });
 
-        lineVis.selectAll(".timeline")
-            .data(lineData)
-            .enter().append("svg:path")
-            .attr("d", line(lineData))
-            .attr("class", "timeline")
-            .attr("stroke", "steelblue")
-            .attr("stroke-width", 3);
+        minTime = _.min(lifeline, function (node) {
+            return node.time;
+        }).time;
+
+        // Save original time and copy a scaled version of it so that we
+        // can deal with smaller numbers.
+        _.each(lifeline, function (node) {
+            node.vistime = node.time / minTime;
+        });
+
+        _.each(lifeline, function (node) {
+            var existingParent, childNode, parentNode, childLevel, parentLevel, tree, bucket;
+
+            childNode = new Node(node.dstProcessName, node.dstProcessId, node.dstThreadId,
+                    node.vistime, node.time, node.tagName);
+
+            // Technically, the 'vistime' and the 'time' here would be wrong
+            // since they are at the parent. However, this node will only
+            // be used if we are not able to find an existing node in the
+            // tree to act as parent. Child nodes have the correct time on them (the time
+            // at which a tag was received)
+            parentNode = new Node(node.srcProcessName, node.srcProcessId, node.srcThreadId,
+                    undefined, undefined, node.tagName);
+
+            // Decide which bucket the child should be in based off of how
+            // many time periods (buckets) fit before it.
+            parentLevel = childLevel = Math.round(node.vistime * resolution);
+
+            // find parent process: look through each level down to roots
+            while (parentLevel > 0) {
+                // Levels represent tree depth (based off time)
+                parentLevel -= 1;
+                // select bucket and ensure one exists
+                bucket = buckets[parentLevel] || [];
+                // there might exist a prent already
+                existingParent = findParent(parentNode, bucket);
+                if (typeof existingParent !== 'undefined') {
+                    parentNode = existingParent;
+                    break;
+                }
+            }
+
+            // If we're not using the existing parent, there is additional
+            // setup to do for the new parent
+            if (typeof existingParent === 'undefined') {
+                parentNode.bucketLevel = childLevel - 1;
+                addToBucket(buckets, parentNode.bucketLevel, parentNode);
+                treeLifeline.push(parentNode);
+            }
+
+            parentNode.addChild(childNode);
+            childNode.bucketLevel = childLevel;
+            addToBucket(buckets, childLevel, childNode);
+        });
+
+        dummyNode = new Node();
+        _.each(treeLifeline, function (tree) {
+            dummyNode.addChild(tree, tree.children);
+        });
+
+        return dummyNode;
     }
-*/
+
+    return parseLifelineData;
+}());
+
+// This redraws the tree and the legend
+TimeTree.prototype.drawTree = (function () {
+    var visBucketSize;
+
+    // visBucketSize is how big a bucket is visually. This value with
+    // some computation will result in the distance between two levels.
+    visBucketSize = 100;
+
+    function createLegend(tags) {
+        var legendVis, legend, link, tagCount, linkenter, diagonal, id;
+
+        diagonal = d3.svg.diagonal().projection(function (d) {
+            return [d.y, d.x];
+        });
+
+        legendVis = d3.select("#treelegend")
+            .append("svg:svg")
+            .attr("width", 200)
+            .attr("height", 100);
+
+        legend = [];
+
+        id = 0;
+        _.each(tags, function (value, key, list) {
+            var tag = {};
+            tag.name = key;
+            tag.source = {x: 10, y: 60};
+            tag.target = {x: 10, y: 160};
+            tag.id = id;
+            id += 1;
+            legend.push(tag);
+        });
+
+        link = legendVis.selectAll("path.link").data(legend);
+
+        linkenter = link.enter().append("svg:g")
+            .attr("transform", function (d) {
+                return "translate(0," + (20 * d.id) + ")";
+            });
+
+        linkenter.append("svg:text")
+            .attr("x", 0)
+            .attr("y", 10)
+            .text(function (d) {
+                return 'tag "' + d.name + '"';
+            });
+
+        linkenter.append("svg:path")
+            .attr("class", function (d) {
+                return "link tag" + d.name;
+            })
+            .attr("d", function (d) {
+                var o = {x: d.source.x, y: d.source.y};
+                return diagonal({source: o, target: o});
+            })
+            .attr("d", diagonal);
+    }
 
     /**
      * Updates the tree visualization
-     * @param {Object} root - The root node of the tree
-     * @param {Object} source - The source node of the update
+     * @param root - The root node of the tree
+     * @param source - The source node of the update
     */
     function update(root, source, diagonal, tree, animationDuration, vis) {
         var nodeIdentifier, nodes, nodeEnter, nodeUpdate, nodeExit, link, node, colorGen, tooltip;
@@ -257,193 +371,73 @@ var TimeTree = (function () {
         });
     }
 
-    function createLegend(tags) {
-        var legendVis, legend, link, tagCount, linkenter, diagonal, id;
+    function drawLifelineTree() {
+        var tags, lifeline, treeLifeline;
+
+        tags = this.tags;
+        lifeline = this.lifeline;
+        treeLifeline = this.parseTreeData(this.lifeline, this.resolution);
+
+        var w = 1760, // the width and height of the whole svg arrea
+            h = 1000,//2000;
+            tree = d3.layout.tree().size([h, w - 760]),
+            animationDuration = 500,
+            diagonal,
+            vis;
+
 
         diagonal = d3.svg.diagonal().projection(function (d) {
             return [d.y, d.x];
         });
 
-        legendVis = d3.select("#treelegend")
+        // creates an SVG canvas
+        vis = d3.select("#treelifeline")
             .append("svg:svg")
-            .attr("width", 200)
-            .attr("height", 100);
+            .attr("width", w)
+            .attr("height", h)
+             //moves the initial position of the svg:g element
+            .attr("transform", "translate(20,0)");
 
-        legend = [];
+        treeLifeline.x0 = 300;
+        treeLifeline.y0 = 0;
 
-        id = 0;
-        _.each(tags, function (value, key, list) {
-            var tag = {};
-            tag.name = key;
-            tag.source = {x: 10, y: 60};
-            tag.target = {x: 10, y: 160};
-            tag.id = id;
-            id += 1;
-            legend.push(tag);
-        });
-
-        link = legendVis.selectAll("path.link").data(legend);
-
-        linkenter = link.enter().append("svg:g")
-            .attr("transform", function (d) {
-                return "translate(0," + (20 * d.id) + ")";
-            });
-
-        linkenter.append("svg:text")
-            .attr("x", 0)
-            .attr("y", 10)
-            .text(function (d) {
-                return 'tag "' + d.name + '"';
-            });
-
-        linkenter.append("svg:path")
-            .attr("class", function (d) {
-                return "link tag" + d.name;
-            })
-            .attr("d", function (d) {
-                var o = {x: d.source.x, y: d.source.y};
-                return diagonal({source: o, target: o});
-            })
-            .attr("d", diagonal);
+        update(treeLifeline, treeLifeline, diagonal, tree, animationDuration, vis);
+        createLegend(tags);
     }
 
-    function parseLifelineData(lifeline) {
-        var minTime, treeLifeline, buckets;
+    return drawLifelineTree;
+}());
 
-        lifelineOrig = lifeline;
-        treeLifeline = [];
-        buckets = [];
-
-        lifeline = _.sortBy(lifeline, function (node) {
-            return node.time;
-        });
-
-        minTime = _.min(lifeline, function (node) {
-            return node.time;
-        }).time;
-
-        // Save original time and copy a scaled version of it so that we
-        // can deal with smaller numbers.
-        _.each(lifeline, function (node) {
-            node.vistime = node.time / minTime;
-        });
-
-        _.each(lifeline, function (node) {
-            var existingParent, childNode, parentNode, childLevel, parentLevel, tree, bucket;
-
-            childNode = new Node(node.dstProcessName, node.dstProcessId, node.dstThreadId,
-                    node.vistime, node.time, node.tagName);
-
-            // Technically, the 'vistime' and the 'time' here would be wrong
-            // since they are at the parent. However, this node will only
-            // be used if we are not able to find an existing node in the
-            // tree to act as parent. Child nodes have the correct time on them (the time
-            // at which a tag was received)
-            parentNode = new Node(node.srcProcessName, node.srcProcessId, node.srcThreadId,
-                    undefined, undefined, node.tagName);
-
-            // Decide which bucket the child should be in based off of how
-            // many time periods (buckets) fit before it.
-            parentLevel = childLevel = Math.round(node.vistime * resolution);
-
-            // find parent process: look through each level down to roots
-            while (parentLevel > 0) {
-                // Levels represent tree depth (based off time)
-                parentLevel -= 1;
-                // select bucket and ensure one exists
-                bucket = buckets[parentLevel] || [];
-                // there might exist a prent already
-                existingParent = findParent(parentNode, bucket);
-                if (typeof existingParent !== 'undefined') {
-                    parentNode = existingParent;
-                    break;
-                }
-            }
-
-            // If we're not using the existing parent, there is additional
-            // setup to do for the new parent
-            if (typeof existingParent === 'undefined') {
-                parentNode.bucketLevel = childLevel - 1;
-                addToBucket(buckets, parentNode.bucketLevel, parentNode);
-                treeLifeline.push(parentNode);
-            }
-
-            parentNode.addChild(childNode);
-            childNode.bucketLevel = childLevel;
-            addToBucket(buckets, childLevel, childNode);
-        });
-
-        return treeLifeline;
-    }
+// Draws entire canvas. This should just be called once, whereas users might
+// want to redraw (.drawTree) the tree/legend if the resolution or data changes.
+TimeTree.prototype.draw = function () {
+    var timeTree;
+    timeTree = this;
 
     function updateBucketResolution(res) {
-        var parsedData;
-        resolution = res;
-
+        // remove lifeline
         d3.select("#treelifeline svg")
             .remove("svg:svg");
 
+        // remove legend
         d3.select("#treelegend svg")
             .remove("svg:svg");
 
-        // Use the raw lifeline and tag information that was passed to draw
-        // and parse originally to create a new tree (we run the parser again
-        // on the same data but the resolution is different)
-        parsedData = parseLifelineData(lifelineOrig);
-        TimeTree.drawLifelineTree(parsedData, treeTagsOrig);
+        timeTree.resolution = res;
+        timeTree.drawTree();
     }
 
-    // Any UI setup that only happens once gets done here:
-    $(function () {
-
-        $("#treelifeline-slide").PPSlider({width: 300, max: 5,
-            onChanged: function () {
-                updateBucketResolution($(this).val());
-            },
-            initialResolution: 1
-        });
+    $("#treelifeline-slide").PPSlider({
+        width: 300,
+        max: 5,
+        initialResolution: 1,
+        onChanged: function () {
+            updateBucketResolution($(this).val());
+        }
     });
 
-    return {
-        parseLifelineData: parseLifelineData,
-        drawLifelineTree: function (treeLifeline, tags) {
-            // To pull tree lifeline from a sample json file instead,
-            // uncomment these two lines:
-            //d3.json("tree_example.json", function (json) {
-            //_.each(json, function (jsonTree) {
+    // draw the initial tree
+    this.drawTree();
+};
 
-            treeTagsOrig = tags;
 
-            var dummyNode,
-                w = 1760, // the width and height of the whole svg arrea
-                h = 1000,//2000;
-                tree = d3.layout.tree().size([h, w - 760]),
-                animationDuration = 500,
-                diagonal,
-                vis;
-
-            dummyNode = new Node();
-            _.each(treeLifeline, function (tree) {
-                dummyNode.addChild(tree, tree.children);
-            });
-
-            diagonal = d3.svg.diagonal().projection(function (d) {
-                return [d.y, d.x];
-            });
-
-            // creates an SVG canvas
-            vis = d3.select("#treelifeline")
-                .append("svg:svg")
-                .attr("width", w)
-                .attr("height", h)
-                 //moves the initial position of the svg:g element
-                .attr("transform", "translate(20,0)");
-
-            dummyNode.x0 = 300;//800;
-            dummyNode.y0 = 0;
-
-            update(dummyNode, dummyNode, diagonal, tree, animationDuration, vis);
-            createLegend(tags);
-        }
-    };
-}());

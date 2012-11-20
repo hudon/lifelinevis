@@ -40,11 +40,12 @@
 
     function windowLoadHandler() {
         loadLifeline(function (lifeline) {
-            var tags, timeTreeData;
+            var tags, timeTree;
 
-            timeTreeData = TimeTree.parseLifelineData(lifeline);
             tags = countTags(lifeline);
-            TimeTree.drawLifelineTree(timeTreeData, tags);
+            timeTree = new TimeTree(1, lifeline, tags);
+
+            timeTree.draw();
 
             TagDag.draw(TagDag.parseLifeline(lifeline));
 
