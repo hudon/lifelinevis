@@ -2,13 +2,13 @@
 <html>
   <head>
     <script src="underscore-min.js"></script>
+    <script src="jquery-1.7.2.min.js"></script>
     <script src="d3.v2.js"></script>
     <script src="utils.js"></script>
     <script src="timetree.js"></script>
     <script src="dag.js"></script>
     <script src="co_occurrence.js"></script>
 
-    <script src="jquery-1.7.2.min.js"></script>
     <script src="highcharts.js"></script>
     <script src="stacked_threads.js"></script>
 
@@ -41,9 +41,8 @@
     </div>
     <div id="treelifeline"></div>
     <div id="slider"> 0
-        <input id="slide" type="range"
-            min="5" max="200" step="10" value="100"
-            onchange="TimeTree.updateBucketResolution(this.value)" />
+        <input id="treelifeline-slide" type="range"
+          min="5" max="200" step="10" value="100"/>
          200
     </div><br/>
     <div id="treelegend"></div>
