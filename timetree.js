@@ -2,14 +2,14 @@
 /*global $,_,d3*/
 'use strict';
 var TimeTree = (function () {
-    var timePeriodGraphSize, timePeriod, Node, lifelineOrig, treeTagsOrig;
+    var visBucketSize, resolution, Node, lifelineOrig, treeTagsOrig;
 
-    // timePeriod inversily proportional to resolution. A high timePeriod
-    // means bigger buckets, basically.
-    // timePeriodGraphSize is how big a bucket is visually. This value with
+    // A high resolution means more levels and less things per bucket. A low
+    // resolution means more things in 1 bucket
+    // visBucketSize is how big a bucket is visually. This value with
     // some computation will result in the distance between two levels.
-    timePeriodGraphSize = 100;
-    timePeriod = 100;
+    visBucketSize = 100;
+    resolution = 1;
 
     // Every bucket is a group of nodes that we will be aligning vertically
     // because their timings are similar
@@ -50,7 +50,7 @@ var TimeTree = (function () {
 
         lineData = [];
         for (level = 0; level < buckets.length; level += 1) {
-            lineData.push(timePeriod * level * 1.3 + 150);
+            lineData.push(resolution * level * 1.3 + 150);
         }
 
         lineVis = d3.select("#lifeline")
@@ -108,7 +108,7 @@ var TimeTree = (function () {
 
         nodes.forEach(function (d) {
             if (d.parent) {
-                d.y = (d.bucketLevel * timePeriodGraphSize + timePeriodGraphSize) * 1.3;
+                d.y = (d.bucketLevel * visBucketSize + visBucketSize) * 1.3;
             }
         });
 
@@ -326,7 +326,7 @@ var TimeTree = (function () {
         // Save original time and copy a scaled version of it so that we
         // can deal with smaller numbers.
         _.each(lifeline, function (node) {
-            node.vistime = (node.time / minTime) * 100;
+            node.vistime = node.time / minTime;
         });
 
         _.each(lifeline, function (node) {
@@ -345,7 +345,7 @@ var TimeTree = (function () {
 
             // Decide which bucket the child should be in based off of how
             // many time periods (buckets) fit before it.
-            parentLevel = childLevel = Math.round(node.vistime / timePeriod);
+            parentLevel = childLevel = Math.round(node.vistime * resolution);
 
             // find parent process: look through each level down to roots
             while (parentLevel > 0) {
@@ -377,9 +377,9 @@ var TimeTree = (function () {
         return treeLifeline;
     }
 
-    function updateBucketResolution(resolution) {
+    function updateBucketResolution(res) {
         var parsedData;
-        timePeriod = resolution;
+        resolution = res;
 
         d3.select("#treelifeline svg")
             .remove("svg:svg");
@@ -389,7 +389,7 @@ var TimeTree = (function () {
 
         // Use the raw lifeline and tag information that was passed to draw
         // and parse originally to create a new tree (we run the parser again
-        // on the same data but the timePeriod is different)
+        // on the same data but the resolution is different)
         parsedData = parseLifelineData(lifelineOrig);
         TimeTree.drawLifelineTree(parsedData, treeTagsOrig);
     }
