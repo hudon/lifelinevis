@@ -20,7 +20,7 @@ def assigntag(process_name):
             process_name = "firefox"
         firefox = subprocess.Popen(process_name)
         firefox.wait()
-        time.sleep(5)
+        time.sleep(12)
         ps = subprocess.Popen(["ps","-elf", "-o tid,pid,comm"], stdout=subprocess.PIPE)
         grep = subprocess.Popen(["grep", process_name], stdin=ps.stdout,
                 stdout=subprocess.PIPE)
@@ -95,13 +95,12 @@ def printJSON(lifeline):
 
 def usage():
     print 'python tagger.py [-n]'
-    print '  -n    use this option to start firefox and assign tags to it'
-    print '        without the option, no process will be started and'
+    print '  -n    use this option to start firefox and assign tags to it.'
+    print '        Without the option, no process will be started and'
     print '        tags will not be assigned (but a new lifeline will'
     print '        still be printed to tagger.json'
     sys.exit(2)
 
-#TODO get process name
 if __name__ == "__main__":
     try:
         opts, args = getopt.getopt(sys.argv[1:], "n")
