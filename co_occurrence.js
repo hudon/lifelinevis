@@ -20,7 +20,7 @@ var Coocur = (function () {
             .append("g")
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-        d3.json("co_occurrence_data.json", function (procs) {
+        d3.json("data/co_occurrence_data.json", function (procs) {
             var matrix, nodes, n, orders, row, column, timeout;
 
             function mouseover(p) {

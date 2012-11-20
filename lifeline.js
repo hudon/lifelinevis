@@ -4,7 +4,7 @@
     'use strict';
 
     function loadLifeline(handler) {
-        _.ajaxget('/tagger.json', function (response) {
+        _.ajaxget('/data/tagger.json', function (response) {
             handler(JSON.parse(response));
         }, false);
     }
