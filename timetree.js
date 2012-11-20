@@ -395,8 +395,11 @@ var TimeTree = (function () {
 
     // Any UI setup that only happens once gets done here:
     $(function () {
-        $('#treelifeline-slide').change(function () {
-            updateBucketResolution($(this).val());
+
+        $("#treelifeline-slide").PPSlider({width: 300, max: 5,
+            onChanged: function () {
+                updateBucketResolution($(this).val());
+            }
         });
     });
 

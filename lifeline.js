@@ -53,9 +53,6 @@
 
         Coocur.draw();
         StackedThreads.draw();
-
-        $("#treelifeline-slide").PPSlider({width: 300, max: 10});
-
     }
 
     window.addEventListener('load', windowLoadHandler, false);
