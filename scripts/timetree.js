@@ -294,8 +294,8 @@ TimeTree.prototype.drawTree = (function () {
                 if (p.time) {
                     tooltiptext += " time: " + p.time;
                 }
-                tooltiptext += " level: " + p.bucketLevel; //debugging
-                tooltiptext += " connections: " + p.numConnections; //debugging
+                //tooltiptext += " level: " + p.bucketLevel; //debugging
+                //tooltiptext += " connections: " + p.numConnections; //debugging
                 tooltip.text(tooltiptext)
                     .transition()
                     .duration(300)
