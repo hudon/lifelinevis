@@ -55,7 +55,7 @@ TimeTree.prototype.parseTreeData = (function () {
     function findNode(node, container, nodeLevel) {
         return _.find(container, function (cNode) {
             return node.pid === cNode.pid && node.tid === cNode.tid &&
-            node.tagname === cNode.tagname && nodeLevel === cNode.bucketLevel;
+                node.tagname === cNode.tagname && nodeLevel === cNode.bucketLevel;
         });
     }
 
@@ -85,7 +85,8 @@ TimeTree.prototype.parseTreeData = (function () {
         });
 
         _.each(lifeline, function (node) {
-            var existingParent, childNode, parentNode, childLevel, parentLevel, tree, bucket;
+            var existingChildren, existingNode, existingParent, childNode,
+                parentNode, childLevel, parentLevel, tree, bucket;
 
             childNode = new Node(node.dstProcessName, node.dstProcessId, node.dstThreadId,
                     node.vistime, node.time, node.tagName);
@@ -125,9 +126,12 @@ TimeTree.prototype.parseTreeData = (function () {
             }
 
             if (mode === "collapse") {
-                var existingChildren = parentNode.children;
-                var existingNode = findNode(childNode, existingChildren, childLevel);
+                existingChildren = parentNode.children;
+                existingNode = findNode(childNode, existingChildren, childLevel);
 
+                // If we find a node, this means we have found a duplication
+                // parent-child relationship, so we'll just increment the
+                // weight of the edge
                 if (typeof existingNode !== 'undefined') {
                     existingNode.numConnections += 1;
                 } else {
@@ -217,7 +221,8 @@ TimeTree.prototype.drawTree = (function () {
      * @param source - The source node of the update
     */
     function update(root, source, diagonal, tree, animationDuration, vis) {
-        var nodeIdentifier, nodes, nodeEnter, nodeUpdate, nodeExit, link, node, colorGen, tooltip;
+        var nodeIdentifier, nodes, nodeEnter,
+            nodeUpdate, nodeExit, link, node, colorGen, tooltip;
 
         // Remove the highlighting of nodes on mouseout
         function removeSelection() {
@@ -248,7 +253,7 @@ TimeTree.prototype.drawTree = (function () {
 
         nodes.forEach(function (d) {
             if (d.parent) {
-                d.y = (d.bucketLevel * visBucketSize + visBucketSize) ;
+                d.y = d.bucketLevel * visBucketSize + visBucketSize;
             }
         });
 
@@ -276,9 +281,9 @@ TimeTree.prototype.drawTree = (function () {
             .on("click", click);
 
         // Single tooltip used to display extra information about a node
-        var tooltip = d3.select("#treelifeline").append("div")
-              .attr("class", "tooltip")
-              .style("opacity", -1);
+        tooltip = d3.select("#treelifeline").append("div")
+            .attr("class", "tooltip")
+            .style("opacity", -1);
 
         // green, blue, orange, pink, teal, red,
         colorGen = _.generator(['#009933', '#0000FF', '#FF9933', '#FF4422', '#00FFFF', '#FF0000']);
@@ -408,21 +413,18 @@ TimeTree.prototype.drawTree = (function () {
         return _.max(childLevels);
     }
 
-    function drawLifelineTree(mode) {
-        var maxLevel, tags, lifeline, treeLifeline;
+    function drawLifelineTree(tags, treeLifeline, mode) {
+        var w, h, tree, animationDuration, diagonal, vis, maxLevel;
 
-        tags = this.tags;
-        lifeline = this.lifeline;
-        treeLifeline = this.parseTreeData(this.lifeline, this.resolution, mode);
+        //treeLifeline = this.parseTreeData(lifeline, resolution, mode);
         maxLevel = getMaxLevel(treeLifeline);
 
         // set the width dynamically
-        var w = (maxLevel + 1) * visBucketSize + visBucketSize,
-            h = 900,//2000;
-            tree = d3.layout.tree().size([h, w - 760]),
-            animationDuration = 500,
-            diagonal,
-            vis;
+        w = (maxLevel + 1) * visBucketSize + visBucketSize;
+        h = 900;
+
+        tree = d3.layout.tree().size([h, w - 760]);
+        animationDuration = 500;
 
         diagonal = d3.svg.diagonal().projection(function (d) {
             return [d.y, d.x];
@@ -449,7 +451,7 @@ TimeTree.prototype.drawTree = (function () {
 // Draws entire canvas. This should just be called once, whereas users might
 // want to redraw (.drawTree) the tree/legend if the resolution or data changes.
 TimeTree.prototype.draw = function () {
-    var timeTree;
+    var timeTree, treeLifeline;
     timeTree = this;
 
     function updateChildDisplay(mode) {
@@ -459,10 +461,12 @@ TimeTree.prototype.draw = function () {
         d3.select("#treelegend svg")
             .remove("svg:svg");
 
-        timeTree.drawTree(mode);
+        treeLifeline = timeTree.parseTreeData(timeTree.lifeline, timeTree.resolution, mode);
+        timeTree.drawTree(timeTree.tags, treeLifeline, mode);
     }
 
     function updateBucketResolution(res) {
+        var mode;
         // remove lifeline
         d3.select("#treelifeline svg")
             .remove("svg:svg");
@@ -472,8 +476,9 @@ TimeTree.prototype.draw = function () {
             .remove("svg:svg");
 
         timeTree.resolution = res;
-        var mode = $("input[name='mode']:checked").val();
-        timeTree.drawTree(mode);
+        mode = $("input[name='mode']:checked").val();
+        treeLifeline = timeTree.parseTreeData(timeTree.lifeline, timeTree.resolution, mode);
+        timeTree.drawTree(timeTree.tags, treeLifeline, mode);
     }
 
     $("#treelifeline-slide").PPSlider({
@@ -485,13 +490,14 @@ TimeTree.prototype.draw = function () {
         }
     });
 
-    $("input[name='mode']").change(function() {
+    $("input[name='mode']").change(function () {
         var mode = $("input[name='mode']:checked").val();
         updateChildDisplay(mode);
-    })
+    });
 
     // draw the initial tree
-    this.drawTree();
+    treeLifeline = this.parseTreeData(this.lifeline, this.resolution);
+    this.drawTree(this.tags, treeLifeline, this.resolution);
 };
 
 
