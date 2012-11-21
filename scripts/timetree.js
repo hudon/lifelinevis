@@ -36,6 +36,9 @@ TimeTree.prototype.parseTreeData = (function () {
         this.children = children;
         this.bucketLevel = 0;
 
+        // This is the weight of the edge from this node to the parent. A
+        // weight of X means that there were X identical edges found while
+        // building the tree.
         this.numConnections = 1;
     };
     Node.prototype.addChild = function (childNode, grandchildren) {
@@ -407,7 +410,6 @@ TimeTree.prototype.drawTree = (function () {
             animationDuration = 500,
             diagonal,
             vis;
-
 
         diagonal = d3.svg.diagonal().projection(function (d) {
             return [d.y, d.x];
