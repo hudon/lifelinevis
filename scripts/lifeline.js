@@ -21,7 +21,6 @@
         return tagNames;
     }
 
-
     function stylizeTagLinks(tags) {
         var colorGen;
         colorGen = _.generator(["green", "orange", "blue", "teal"]);
@@ -43,9 +42,9 @@
             var tags, timeTree;
 
             tags = countTags(lifeline);
-            timeTree = new TimeTree(1, lifeline, tags);
+            //timeTree = new TimeTree(1, lifeline, tags);
 
-            timeTree.draw();
+            //timeTree.draw();
 
             TagDag.draw(TagDag.parseLifeline(lifeline));
 
