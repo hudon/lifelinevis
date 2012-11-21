@@ -12,7 +12,7 @@ define([
         TimeTreeModel, timetreeParser, timetreeDrawer) {
     'use strict';
 
-    var TimeTreeView, OptionsView, TreeView;
+    var ContainerView, OptionsView, TreeView;
 
     OptionsView = Backbone.View.extend({
         template: _.template(optionsTemplate),
@@ -93,7 +93,7 @@ define([
         }
     });
 
-    TimeTreeView = Backbone.View.extend({
+    ContainerView = Backbone.View.extend({
         template: _.template(timetreeTemplate),
 
         model: new TimeTreeModel,
@@ -120,6 +120,6 @@ define([
         }
     });
 
-    return TimeTreeView;
+    return ContainerView;
 });
 
