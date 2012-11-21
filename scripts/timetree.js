@@ -365,7 +365,11 @@ TimeTree.prototype.drawTree = (function () {
         // returns an array of objects representing the links from parent
         // to child for each node ({source, target})
         link = vis.selectAll("path.treelink")
-            .data(tree.links(nodes), function (d) { return d.target.id; });
+            .data(tree.links(nodes), function (d) {
+                return d.target.id;
+            });
+
+
 
         // form any new links
         link.enter().insert("svg:path", "g")
@@ -380,12 +384,14 @@ TimeTree.prototype.drawTree = (function () {
             .duration(animationDuration)
             .attr("d", diagonal);
 
+
+
         // Transition links to their new position.
         link.transition()
             .duration(animationDuration)
             .attr("d", diagonal);
 
-        // remove any of the links that are no longer necessary
+                // remove any of the links that are no longer necessary
         link.exit().transition()
             .duration(animationDuration)
             .attr("d", function () {
@@ -393,6 +399,36 @@ TimeTree.prototype.drawTree = (function () {
                 return diagonal({source: o, target: o});
             })
             .remove();
+
+        var labels = vis.selectAll("text.connection")
+            .data(tree.links(nodes), function (d) {
+                return d.target.id;
+            });
+
+        labels.enter().append("text")
+            .text(function(d) {
+                if (d.target.numConnections > 1)
+                    return d.target.numConnections;
+            })
+            .attr('class', 'connection')
+            .transition()
+            .duration(animationDuration)
+            .attr("transform", function (d) {
+                return "translate(" + (d.target.y + d.source.y - 6) / 2 + "," +
+                    (d.target.x + d.source.x - 6) / 2 + ")";
+            });
+
+        labels.transition()
+            .duration(animationDuration)
+            .attr("transform", function (d) {
+                return "translate(" + (d.target.y + d.source.y - 6) / 2 + "," +
+                    (d.target.x + d.source.x - 6) / 2 + ")";
+            });
+
+        labels.exit().remove();
+
+
+
 
         /****** done with edge construction ******/
 
