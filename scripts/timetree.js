@@ -159,7 +159,7 @@ TimeTree.prototype.drawTree = (function () {
 
     // visBucketSize is how big a bucket is visually. This value with
     // some computation will result in the distance between two levels.
-    visBucketSize = 100;
+    visBucketSize = 130;
 
     function createLegend(tags) {
         var legendVis, legend, link, tagCount, linkenter, diagonal, id;
@@ -248,7 +248,7 @@ TimeTree.prototype.drawTree = (function () {
 
         nodes.forEach(function (d) {
             if (d.parent) {
-                d.y = (d.bucketLevel * visBucketSize + visBucketSize) * 1.3;
+                d.y = (d.bucketLevel * visBucketSize + visBucketSize) ;
             }
         });
 
@@ -397,14 +397,27 @@ TimeTree.prototype.drawTree = (function () {
         });
     }
 
+    function getMaxLevel(tree) {
+        var childLevels;
+        if (typeof tree.children === 'undefined' || tree.children.length === 0) {
+            return tree.bucketLevel;
+        }
+        childLevels = _.map(tree.children, function (child) {
+            return getMaxLevel(child);
+        });
+        return _.max(childLevels);
+    }
+
     function drawLifelineTree(mode) {
-        var tags, lifeline, treeLifeline;
+        var maxLevel, tags, lifeline, treeLifeline;
 
         tags = this.tags;
         lifeline = this.lifeline;
         treeLifeline = this.parseTreeData(this.lifeline, this.resolution, mode);
+        maxLevel = getMaxLevel(treeLifeline);
 
-        var w = 1760, // the width and height of the whole svg arrea
+        // set the width dynamically
+        var w = (maxLevel + 1) * visBucketSize + visBucketSize,
             h = 1000,//2000;
             tree = d3.layout.tree().size([h, w - 760]),
             animationDuration = 500,
