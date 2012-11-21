@@ -295,9 +295,15 @@ TimeTree.prototype.drawTree = (function () {
             .on("click", click);
 
         // Single tooltip used to display extra information about a node
-        tooltip = d3.select("#treelifeline").append("div")
-            .attr("class", "tooltip")
-            .style("opacity", -1);
+        tooltip = document.getElementsByClassName("tooltip");
+        if (tooltip.length) {
+            tooltip = d3.select("#treelifeline .tooltip");
+        } else {
+            tooltip = d3.select("#treelifeline").append("div")
+                .attr("class", "tooltip")
+                .style("opacity", -1);
+        }
+
 
         // green, blue, orange, pink, teal, red,
         colorGen = _.generator(['#009933', '#0000FF', '#FF9933', '#FF4422', '#00FFFF', '#FF0000']);
@@ -506,15 +512,13 @@ TimeTree.prototype.draw = function () {
 
     function update() {
         // remove lifeline
-        d3.select("#treelifeline svg")
-            .remove("svg:svg");
+        d3.select("#treelifeline svg").remove("svg:svg");
 
         // remove legend
-        d3.select("#treelegend svg")
-            .remove("svg:svg");
+        d3.select("#treelegend svg").remove("svg:svg");
 
-        treeLifeline = timeTree.parseTreeData(timeTree.lifeline, timeTree.resolution, mode,
-            start, end);
+        treeLifeline = timeTree.parseTreeData(timeTree.lifeline,
+            timeTree.resolution, mode, start, end);
         timeTree.drawTree(timeTree.tags, treeLifeline, mode);
     }
 
