@@ -220,6 +220,7 @@ TimeTree.prototype.drawTree = (function () {
      * @param root - The root node of the tree
      * @param source - The source node of the update
     */
+    // TODO break this function up...
     function update(root, source, diagonal, tree, animationDuration, vis) {
         var nodeIdentifier, nodes, nodeEnter,
             nodeUpdate, nodeExit, link, node, colorGen, tooltip;
@@ -396,7 +397,7 @@ TimeTree.prototype.drawTree = (function () {
         /****** done with edge construction ******/
 
         // Stash the old positions for transition.
-        nodes.forEach(function (d) {
+        _.each(nodes, function (d) {
             d.x0 = d.x;
             d.y0 = d.y;
         });
@@ -416,7 +417,6 @@ TimeTree.prototype.drawTree = (function () {
     function drawLifelineTree(tags, treeLifeline, mode) {
         var w, h, tree, animationDuration, diagonal, vis, maxLevel;
 
-        //treeLifeline = this.parseTreeData(lifeline, resolution, mode);
         maxLevel = getMaxLevel(treeLifeline);
 
         // set the width dynamically
