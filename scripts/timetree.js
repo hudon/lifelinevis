@@ -64,8 +64,8 @@ TimeTree.prototype.parseTreeData = (function () {
         buckets[level].push(node);
     }
 
-    function parseLifelineData(lifeline, resolution, mode) {
-        var minTime, treeLifeline, buckets, dummyNode;
+    function parseLifelineData(lifeline, resolution, mode, start, end) {
+        var minTime, treeLifeline, buckets, dummyNode, startTime, endTime;
 
         treeLifeline = [];
         buckets = [];
@@ -83,6 +83,19 @@ TimeTree.prototype.parseTreeData = (function () {
         _.each(lifeline, function (node) {
             node.vistime = node.time / minTime;
         });
+
+        if ((typeof start !== 'undefined') && (typeof end !== 'undefined')) {
+            startTime = parseInt(start);
+            endTime = parseInt(end);
+
+            if (startTime > 0 && endTime >= startTime) {
+                lifeline = _.filter(lifeline, function (node) {
+                    return startTime < node.time && node.time < endTime;
+                });
+            } else {
+                // TODO error
+            }
+        }
 
         _.each(lifeline, function (node) {
             var existingChildren, existingNode, existingParent, childNode,
@@ -487,22 +500,11 @@ TimeTree.prototype.drawTree = (function () {
 // Draws entire canvas. This should just be called once, whereas users might
 // want to redraw (.drawTree) the tree/legend if the resolution or data changes.
 TimeTree.prototype.draw = function () {
-    var timeTree, treeLifeline;
+    var timeTree, treeLifeline, mode, resolution, start, end;
+
     timeTree = this;
 
-    function updateChildDisplay(mode) {
-        d3.select("#treelifeline svg")
-            .remove("svg:svg");
-
-        d3.select("#treelegend svg")
-            .remove("svg:svg");
-
-        treeLifeline = timeTree.parseTreeData(timeTree.lifeline, timeTree.resolution, mode);
-        timeTree.drawTree(timeTree.tags, treeLifeline, mode);
-    }
-
-    function updateBucketResolution(res) {
-        var mode;
+    function update() {
         // remove lifeline
         d3.select("#treelifeline svg")
             .remove("svg:svg");
@@ -511,9 +513,8 @@ TimeTree.prototype.draw = function () {
         d3.select("#treelegend svg")
             .remove("svg:svg");
 
-        timeTree.resolution = res;
-        mode = $("input[name='mode']:checked").val();
-        treeLifeline = timeTree.parseTreeData(timeTree.lifeline, timeTree.resolution, mode);
+        treeLifeline = timeTree.parseTreeData(timeTree.lifeline, timeTree.resolution, mode,
+            start, end);
         timeTree.drawTree(timeTree.tags, treeLifeline, mode);
     }
 
@@ -522,13 +523,40 @@ TimeTree.prototype.draw = function () {
         max: 5,
         initialResolution: 1,
         onChanged: function () {
-            updateBucketResolution($(this).val());
+            var res;
+            res = $(this).val();
+            if (timeTree.resolution !== res) {
+                timeTree.resolution = res;
+                update();
+            }
         }
     });
 
     $("input[name='mode']").change(function () {
-        var mode = $("input[name='mode']:checked").val();
-        updateChildDisplay(mode);
+        var val;
+        val = $("input[name='mode']:checked").val();
+        if (val !== mode) {
+            mode = val;
+            update();
+        }
+    });
+
+    $('#treelimits #tree-start').change(function (e) {
+        var val;
+        val = e.target.value;
+        if (val !== start) {
+            start = val;
+            update();
+        }
+    });
+
+    $('#treelimits #tree-end').change(function (e) {
+        var val;
+        val = e.target.value;
+        if (val !== end) {
+            end = val;
+            update();
+        }
     });
 
     // draw the initial tree
