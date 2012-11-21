@@ -37,7 +37,7 @@ var TagDag = (function () {
     }
 
     function drawDag(links) {
-        var nodes, w, h, force, path, svg, circle, text;
+        var nodes, w, h, force, path, linkLabel, svg, circle, text;
 
         // Use elliptical arc path segments to doubly-encode directionality.
         function tick() {
@@ -47,7 +47,7 @@ var TagDag = (function () {
                 dx = d.target.x - d.source.x;
                 dy = d.target.y - d.source.y;
                 dr = Math.sqrt(dx * dx + dy * dy);
-                num = d.occurrenceNumber;
+                num = d.type;
 
                 if (d.target.name === d.source.name) {
                     a = Math.atan2(dx, dy);
@@ -57,13 +57,18 @@ var TagDag = (function () {
                         //"q" + b*Math.sin(a) + "," + b*Math.cos(a) + " " + b*Math.sin(a+da) + "," + b*Math.cos(a+da)
                         + " " + " T " + d.target.x + "," + d.target.y;
                 }
-                if (num === 0) {
+
+                // need to fix this!!
+                // multiple edges from one node for multiple tags
+                if (num === '2') {
                     return "M" + d.source.x + "," + d.source.y + "A" + dr + ","
                         + dr + " 0 0,1 " + d.target.x + "," + d.target.y;
                 }
+
                 return "M" + d.source.x + "," + d.source.y +
                     "q0," + 5 * num + " " + 5 * num + ",0 " +
                     " T " + d.target.x + "," + d.target.y;
+
             });
 
             circle.attr("transform", function (d) {
@@ -84,6 +89,7 @@ var TagDag = (function () {
             } else {
                 link.source = nodes[link.source] = {name: link.source};
             }
+
             if (nodes[link.target]) {
                 link.target = nodes[link.target];
             } else {
@@ -110,25 +116,26 @@ var TagDag = (function () {
             .attr("width", w)
             .attr("height", h);
 
-        // Per-type markers, as they don't inherit styles.
-        svg.append("svg:defs").selectAll("marker")
-            .data(["suit", "licensing", "resolved"])
-            .enter().append("svg:marker")
-            .attr("id", String)
-            .attr("viewBox", "0 -5 10 10")
-            .attr("refX", 15)
-            .attr("refY", -1.5)
-            .attr("markerWidth", 6)
-            .attr("markerHeight", 6)
-            .attr("orient", "auto")
-            .append("svg:path")
-            .attr("d", "M0,-5L10,0L0,5");
-
         path = svg.append("svg:g").selectAll("path")
             .data(force.links())
             .enter().append("svg:path")
             .attr("class", function (d) { return "link tag" + d.type; })
-            .attr("marker-end", function (d) { return "url(#" + d.type + ")"; });
+            .attr("id", function(d,i) { return "p" + i; });
+
+        linkLabel = svg.append("svg:g")
+            .selectAll("text")
+            .data(force.links())
+            .enter().append("svg:text")
+                .attr("class", "link-label")
+                .attr("font-size", 10)
+                .attr("text-anchor","middle")
+            .append("svg:textPath")
+                .attr("startOffset","50%")
+                .attr("xlink:xlink:href",
+                    function(d,i) {
+                        return "#p"+i;
+                })
+            .text(function (d) { return d.occurrenceNumber; });
 
         circle = svg.append("svg:g").selectAll("circle")
             .data(force.nodes())
@@ -136,19 +143,10 @@ var TagDag = (function () {
             .attr("r", 6)
             .call(force.drag);
 
-        text = svg.append("svg:g").selectAll("g")
+        text = svg.append("svg:g").selectAll("text")
             .data(force.nodes())
-            .enter().append("svg:g");
-
-        // A copy of the text with a thick white stroke for legibility.
-        text.append("svg:text")
-            .attr("x", 18)
-            .attr("y", ".35em")
-            .attr("class", "shadow")
-            .text(function (d) { return d.name; });
-
-        text.append("svg:text")
-            .attr("x", 18)
+            .enter().append("svg:text")
+            .attr("x", 0)
             .attr("y", ".35em")
             .text(function (d) { return d.name; });
 
@@ -156,27 +154,50 @@ var TagDag = (function () {
     }
 
     function parseLifeline(lifeline) {
-        var links, multiOccurrences;
-        multiOccurrences = {};
-        links = _.map(lifeline, function (lifeEvent) {
-            var link = {};
-            link.source = 'pid: ' + lifeEvent.srcProcessId + ', tid: ' + lifeEvent.srcThreadId;
-            link.target = 'pid: ' + lifeEvent.dstProcessId + ', tid: ' + lifeEvent.dstThreadId;
-            link.type = lifeEvent.tagName;
+        var links = [];
+        var multiOccurrences = {};
+
+        _.each(lifeline, function (lifeEvent) {
+            var source = 'pid: ' + lifeEvent.srcProcessId + ', tid: ' + lifeEvent.srcThreadId;
+            var target = 'pid: ' + lifeEvent.dstProcessId + ', tid: ' + lifeEvent.dstThreadId;
+            var type = lifeEvent.tagName;
 
             // multioccurences -> link.source -> link.target -> number of
             // occurrences for that edge
-            if (!_.has(multiOccurrences, link.source)) {
-                multiOccurrences[link.source] = {};
+            if (!_.has(multiOccurrences, source)) {
+                multiOccurrences[source] = {};
             }
-            if (!_.has(multiOccurrences[link.source], link.target)) {
-                multiOccurrences[link.source][link.target] = 0;
+            if (!_.has(multiOccurrences[source], target)) {
+                multiOccurrences[source][target] = {};
             }
-            link.occurrenceNumber = multiOccurrences[link.source][link.target];
-            multiOccurrences[link.source][link.target] += 1;
 
-            return link;
+            if (!_.has(multiOccurrences[source][target], type)) {
+                multiOccurrences[source][target][type] = 0;
+            }
+
+            multiOccurrences[source][target][type] += 1;
         });
+
+        var linkSource, linkTarget;
+
+        _.each(multiOccurrences, function(source, skey) {
+            linkSource = skey;
+
+            _.each(source, function(target, tkey) {
+                linkTarget = tkey;
+
+                _.each(target, function(numLinks, tag) {
+                    var link = {};
+                    link.source = linkSource;
+                    link.target = linkTarget;
+                    link.type = tag;
+                    link.occurrenceNumber = numLinks;
+
+                    links.push(link);
+                })
+            })
+        });
+
         return links;
     }
 

@@ -121,6 +121,10 @@ path.link {
   stroke-width: 1.5px;
 }
 
+.link-label {
+    font-weight: bold;
+}
+
 /* Co-ocurrence styles */
 
 #cooccur svg {
