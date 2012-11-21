@@ -58,13 +58,14 @@ var TagDag = (function () {
                         + " " + " T " + d.target.x + "," + d.target.y;
                 }
 
-                // need to fix this!!
+                // TODO: don't hardcode '2'
                 // multiple edges from one node for multiple tags
                 if (num === '2') {
                     return "M" + d.source.x + "," + d.source.y + "A" + dr + ","
                         + dr + " 0 0,1 " + d.target.x + "," + d.target.y;
                 }
 
+                // TODO: don't use num
                 return "M" + d.source.x + "," + d.source.y +
                     "q0," + 5 * num + " " + 5 * num + ",0 " +
                     " T " + d.target.x + "," + d.target.y;
