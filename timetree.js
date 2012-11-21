@@ -35,6 +35,8 @@ TimeTree.prototype.parseTreeData = (function () {
         this.tagname = tagname;
         this.children = children;
         this.bucketLevel = 0;
+
+        this.numConnections = 1;
     };
     Node.prototype.addChild = function (childNode, grandchildren) {
         this.children.push(childNode);
@@ -47,12 +49,19 @@ TimeTree.prototype.parseTreeData = (function () {
         });
     }
 
+    function findNode(node, container, nodeLevel) {
+        return _.find(container, function (cNode) {
+            return node.pid === cNode.pid && node.tid === cNode.tid &&
+            node.tagname === cNode.tagname && nodeLevel === cNode.bucketLevel;
+        });
+    }
+
     function addToBucket(buckets, level, node) {
         buckets[level] = buckets[level] || [];
         buckets[level].push(node);
     }
 
-    function parseLifelineData(lifeline, resolution) {
+    function parseLifelineData(lifeline, resolution, mode) {
         var minTime, treeLifeline, buckets, dummyNode;
 
         treeLifeline = [];
@@ -112,9 +121,22 @@ TimeTree.prototype.parseTreeData = (function () {
                 treeLifeline.push(parentNode);
             }
 
-            parentNode.addChild(childNode);
-            childNode.bucketLevel = childLevel;
-            addToBucket(buckets, childLevel, childNode);
+            if (mode === "collapse") {
+                var existingChildren = parentNode.children;
+                var existingNode = findNode(childNode, existingChildren, childLevel);
+
+                if (typeof existingNode !== 'undefined') {
+                    existingNode.numConnections += 1;
+                } else {
+                    parentNode.addChild(childNode);
+                    childNode.bucketLevel = childLevel;
+                    addToBucket(buckets, childLevel, childNode);
+                }
+            } else {
+                parentNode.addChild(childNode);
+                childNode.bucketLevel = childLevel;
+                addToBucket(buckets, childLevel, childNode);
+            }
         });
 
         dummyNode = new Node();
@@ -270,6 +292,7 @@ TimeTree.prototype.drawTree = (function () {
                     tooltiptext += " time: " + p.time;
                 }
                 tooltiptext += " level: " + p.bucketLevel; //debugging
+                tooltiptext += " connections: " + p.numConnections; //debugging
                 tooltip.text(tooltiptext)
                     .transition()
                     .duration(300)
@@ -371,12 +394,12 @@ TimeTree.prototype.drawTree = (function () {
         });
     }
 
-    function drawLifelineTree() {
+    function drawLifelineTree(mode) {
         var tags, lifeline, treeLifeline;
 
         tags = this.tags;
         lifeline = this.lifeline;
-        treeLifeline = this.parseTreeData(this.lifeline, this.resolution);
+        treeLifeline = this.parseTreeData(this.lifeline, this.resolution, mode);
 
         var w = 1760, // the width and height of the whole svg arrea
             h = 1000,//2000;
@@ -414,6 +437,16 @@ TimeTree.prototype.draw = function () {
     var timeTree;
     timeTree = this;
 
+    function updateChildDisplay(mode) {
+        d3.select("#treelifeline svg")
+            .remove("svg:svg");
+
+        d3.select("#treelegend svg")
+            .remove("svg:svg");
+
+        timeTree.drawTree(mode);
+    }
+
     function updateBucketResolution(res) {
         // remove lifeline
         d3.select("#treelifeline svg")
@@ -424,7 +457,8 @@ TimeTree.prototype.draw = function () {
             .remove("svg:svg");
 
         timeTree.resolution = res;
-        timeTree.drawTree();
+        var mode = $("input[name='mode']:checked").val();
+        timeTree.drawTree(mode);
     }
 
     $("#treelifeline-slide").PPSlider({
@@ -435,6 +469,11 @@ TimeTree.prototype.draw = function () {
             updateBucketResolution($(this).val());
         }
     });
+
+    $("input[name='mode']").change(function() {
+        var mode = $("input[name='mode']:checked").val();
+        updateChildDisplay(mode);
+    })
 
     // draw the initial tree
     this.drawTree();
