@@ -47,27 +47,36 @@
 
     </div>
 
-    <div style="height:150px;">
-        <span style="float:left; margin-right:12px;"> Resolution: </span>
-        <div style="padding: 6px; margin-bottom: 24px;">
-            <input type="hidden" value="1" id="treelifeline-slide"/>
+    <div class="options">
+        <div class="left-option-item">
+            <span class="label"> Resolution: </span>
+            <div style="float: left;" class="item">
+                <input type="hidden" value="1" id="treelifeline-slide"/>
+            </div>
         </div>
 
-        <div style="padding-top:12px;">
-            <span style="float:left; margin-right:12px;"> Mode: </span>
-            <label>normal</label><input type="radio" name="mode" value="normal" checked />
-            <label>collapse</label><input type="radio" name="mode" value="collapse" />
+        <div class="left-option-item">
+            <span class="label"> Mode: </span>
+            <label class="label">normal</label>
+            <input class="item" type="radio" name="mode" value="normal" checked />
+            <label class="label">collapse</label>
+            <input class="item" type="radio" name="mode" value="collapse" />
         </div>
 
-        <div id="treelimits">
-          <label for="tree-start">start time</label>
-          <input id="tree-start" type="text" name="tree-start" >
-          <label for="tree-end">end time</label>
-          <input id="tree-end" type="text" name="tree-end" >
+        <div class="left-option-item">
+            <div id="treelimits">
+                <label for="tree-start">start time</label>
+                <input id="tree-start" type="text" name="tree-start" >
+                <label for="tree-end">end time</label>
+                <input id="tree-end" type="text" name="tree-end" >
+            </div>
         </div>
 
-        <div id="treelegend" style="float:right;">
-            <span style=""> Legend </span>
+
+        <div class="right-option-item">
+            <div id="treelegend" style="float:right;">
+                <span style=""> Legend </span>
+            </div>
         </div>
     </div>
 
