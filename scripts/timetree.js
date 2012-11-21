@@ -244,7 +244,14 @@ TimeTree.prototype.drawTree = (function () {
                    .duration(500)
                    .style("opacity", -1);
 
-            d3.selectAll(".node circle").style("fill", 'white')
+            d3.selectAll(".node circle")
+                .style("fill", function(d) {
+                    if (d.children == null) {
+                        return "#b0c4de";
+                    } else {
+                        return "white";
+                    }
+                })
                 .style('opacity', '1');
         }
 
