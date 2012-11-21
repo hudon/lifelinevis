@@ -418,7 +418,7 @@ TimeTree.prototype.drawTree = (function () {
 
         // set the width dynamically
         var w = (maxLevel + 1) * visBucketSize + visBucketSize,
-            h = 1000,//2000;
+            h = 900,//2000;
             tree = d3.layout.tree().size([h, w - 760]),
             animationDuration = 500,
             diagonal,
