@@ -17,8 +17,10 @@
         container.addClass('pp-slider');
         container.addClass('clearfix');
 
+        // Slider button width is required in the element to calculate the initial
+        // position of the slider button
         container.append('<div class="pp-slider-min">0</div><div class="pp-slider-scale">\
-            <div class="pp-slider-button"><div class="pp-slider-divies"></div></div>\
+            <div class="pp-slider-button" style="width:12px;"><div class="pp-slider-divies"></div></div>\
             <div class="pp-slider-tooltip"></div></div><div class="pp-slider-max">' + MAX + '</div>');
 
         if (typeof(options) != 'undefined' && typeof(options.hideTooltip) != 'undefined' && options.hideTooltip == true) {
@@ -91,6 +93,16 @@
             }
             $(document).unbind('mouseup');
         };
+
+        if (typeof(options.initialResolution) != 'undefined') {
+            var resolution = options.initialResolution;
+            var upperBound = (container.find('.pp-slider-scale').width() - container.find('.pp-slider-button').width());
+            var newPos = (resolution / MAX) * upperBound;
+
+            container.find('.pp-slider-button').css("left", newPos);
+            container.find('.pp-slider-tooltip').html(resolution);
+            container.find('.pp-slider-tooltip').css('left', newPos-6);
+        }
 
         container.find('.pp-slider-button').bind('mousedown', startSlide);
         $(document).mousemove(function(e) { moving(e); });

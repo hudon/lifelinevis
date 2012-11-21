@@ -399,7 +399,8 @@ var TimeTree = (function () {
         $("#treelifeline-slide").PPSlider({width: 300, max: 5,
             onChanged: function () {
                 updateBucketResolution($(this).val());
-            }
+            },
+            initialResolution: 1
         });
     });
 

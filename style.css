@@ -1,8 +1,12 @@
 div#treelegend {
   width: 200px;
-  padding: 15px;
+  padding: 10px;
   border: 1px solid;
   margin-bottom: 20px;
+}
+
+div#treelegend svg {
+    margin-top: 12px;
 }
 
 #treelifeline svg {
