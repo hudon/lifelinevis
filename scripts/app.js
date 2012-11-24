@@ -41,8 +41,8 @@ define([
 
         render: function () {
             var histogram, treeView, dagView;
-            treeView = new TimeTreeView(this.model);
-            dagView = new DagView(this.model);
+            treeView = new TimeTreeView({ lifeline: this.model });
+            dagView = new DagView({ model: this.model});
             histogram = new HistogramView();
             cooccur = new CooccurrenceView();
 

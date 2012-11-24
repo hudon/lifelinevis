@@ -18,8 +18,7 @@ define([
     OptionsView = Backbone.View.extend({
         template: _.template(optionsTemplate),
 
-        initialize: function (model) {
-            this.model = model;
+        initialize: function () {
             this.render();
         },
 
@@ -72,8 +71,7 @@ define([
     });
 
     TreeView = Backbone.View.extend({
-        initialize: function (model) {
-            this.model = model;
+        initialize: function () {
             this.model.on('change', this.render, this);
             this.render();
         },
@@ -102,9 +100,9 @@ define([
     ContainerView = Backbone.View.extend({
         template: _.template(timetreeTemplate),
 
-        initialize: function (lifelineModel) {
+        initialize: function (options) {
             this.model = new TimeTreeModels.model({
-                lifeline: lifelineModel
+                lifeline: options.lifeline
             });
 
             this.render();
@@ -117,11 +115,11 @@ define([
             this.$el.html(this.template({}));
 
             // Add tree
-            treeView = new TreeView(this.model);
+            treeView = new TreeView({ model: this.model });
             this.$el.append(treeView.el);
 
             // add options
-            optionsView = new OptionsView(this.model)
+            optionsView = new OptionsView({ model: this.model })
             this.$el.append(optionsView.el);
 
             return this;

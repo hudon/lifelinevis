@@ -14,7 +14,6 @@ define([
         template: _.template(optionsTemplate),
 
         initialize: function (model) {
-            this.model = model;
             this.render();
         },
 
@@ -55,8 +54,7 @@ define([
     });
 
     DagView = Backbone.View.extend({
-        initialize: function (model) {
-            this.model = model;
+        initialize: function () {
             this.render();
         },
 
@@ -75,8 +73,7 @@ define([
     ContainerView = Backbone.View.extend({
         template:  _.template(dagTemplate),
 
-        initialize: function (lifelineModel) {
-            this.model = lifelineModel;
+        initialize: function () {
             this.render();
         },
 
@@ -85,10 +82,10 @@ define([
 
             this.$el.html(this.template());
 
-            dagView = new DagView(this.model);
+            dagView = new DagView({ model: this.model });
             this.$el.append(dagView.el);
 
-            optionsView = new DagOptionsView(this.model);
+            optionsView = new DagOptionsView({ model: this.model });
             this.$el.append(optionsView.el);
 
             return this;

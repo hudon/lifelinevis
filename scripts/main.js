@@ -21,12 +21,12 @@ require.config({
         }
     },
     paths: {
-        jquery: '/scripts/vendor/jquery-min',
+        jquery: '/scripts/vendor/jquery',
         // The underscore lib is under vendor
-        vendorUnderscore: '/scripts/vendor/underscore-min',
+        vendorUnderscore: '/scripts/vendor/underscore',
         // we extend it and alias 'underscore' to our extension
         underscore: '/scripts/utils',
-        backbone: '/scripts/vendor/backbone-min',
+        backbone: '/scripts/vendor/backbone',
         d3: '/scripts/vendor/d3.v2',
         text: '/scripts/vendor/text',
         highcharts: '/scripts/vendor/highcharts'
