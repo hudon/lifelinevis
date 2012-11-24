@@ -1,12 +1,19 @@
 /*jslint nomen: true, browser: true, devel: true*/
 /*global _,d3*/
-'use strict';
-var StackedThreads = (function () {
-    function drawFunc() {
+define([
+    'jquery',
+    'underscore',
+    'backbone',
+    'highcharts'
+], function ($, _, Backbone, Highcharts) {
+
+    'use strict';
+
+    function drawFunc(domElement) {
         var colors = Highcharts.getOptions().colors;
         var chart = new Highcharts.Chart({
             chart: {
-                renderTo: 'stackedThreads',
+                renderTo: domElement,
                 type: 'column'
             },
             title: {
@@ -82,7 +89,9 @@ var StackedThreads = (function () {
             }]
         });
     }
+
     return {
         draw: drawFunc
     };
-}());
+
+});

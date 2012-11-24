@@ -1,8 +1,11 @@
-/*jslint nomen: true, browser: true, devel: true*/
-/*global _,d3*/
-'use strict';
-var Coocur = (function () {
-    function drawFunc() {
+define([
+    'jquery',
+    'underscore',
+    'd3'
+], function ($, _, d3) {
+    'use strict';
+
+    function drawFunc(domElement) {
         var margin, width, height, x, z, c, svg;
 
         margin = {top: 120, right: 0, bottom: 10, left: 180};
@@ -13,7 +16,7 @@ var Coocur = (function () {
         z = d3.scale.linear().domain([0, 4]).clamp(true);
         c = d3.scale.category10().domain(d3.range(10));
 
-        svg = d3.select("#cooccur").append("svg")
+        svg = d3.select(domElement).append("svg")
             .attr("width", width + margin.left + margin.right)
             .attr("height", height + margin.top + margin.bottom)
             .style("margin-left", -margin.left + "px")
@@ -158,13 +161,7 @@ var Coocur = (function () {
             });
         });
     }
-    return {
-        parseLifeline: function (lifeline) {
 
-        },
-        draw: drawFunc
-        //draw: function (dagData) {
-        //}
-    };
+    return { draw: drawFunc };
 
-}());
+});

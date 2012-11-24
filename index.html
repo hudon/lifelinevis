@@ -1,69 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
+
   <head>
     <meta charset="utf-8">
-    <!-- <script src="scripts/vendor/underscore.js"></script>
-    <script src="scripts/vendor/jquery-min.js"></script>
-    <script src="scripts/vendor/d3.v2.js"></script>
-    <script src="scripts/utils.js"></script>
-
-    <script src="scripts/timetree.js"></script>-->
-
-    <!--<script src="scripts/dag.js"></script>>
-    <script src="scripts/co_occurrence.js"></script>
-
-    <script src="scripts/vendor/highcharts.js"></script>
-    <script src="scripts/stacked_threads.js"></script>
-
-    <script src="scripts/lifeline.js"></script> -->
-
     <script data-main="scripts/main" src="scripts/vendor/require.js"></script>
-
     <link rel="stylesheet" type="text/css" href="style.css"></style>
-
   </head>
-  <body>
 
+  <body>
     <section id="graphs">
     </section>
-
-    <div>
-        <h2>Thread Communication Frequency Matrix</h2>
-        <p style="width:800px;">
-            The processes are listed on the vertical axis (sent a tag) and on
-            the horizontal axis (received a tag).  The colored squares in the
-            graph represent the amount of communication between the source and
-            the target process. Hovering over a square highlights the
-            processes involved in the communication.
-            <br> <b>NOTE:</b> Data used here differs from the above two.
-            <!--br> <b>NOTE:</b> The 'Order' functionality does not yet have much
-            semantic meaning in examining the data. </br-->
-        </p>
-    </div>
-
-    <p style="display:none;">Order:
-      <select id="order">
-        <option value="name">by Name</option>
-        <option value="count">by Frequency</option>
-        <option value="group">by Cluster</option>
-      </select>
-    </p>
-
-    <div id="cooccur" style="margin:30px 20px 20px 180px;"></div>
-
-    <div>
-        <h2>Total Interations Per Process</h2>
-        <p style="width:800px;">
-            The x-axis contains a list of all the process threads that
-            either sent or recieved tags. The y-axis measures the total number
-            of interactions for the tread. The left stacked bar measures the
-            number of tags sent by the process. The right stacked bar measures
-            the number of tags recieved by the process. Different colors within
-            the bar represent different tags.
-            <br> <b>NOTE:</b> Data used here is not real data.
-        </p>
-    </div>
-    <div id="stackedThreads"></div>
-
   </body>
+
 </html>
+

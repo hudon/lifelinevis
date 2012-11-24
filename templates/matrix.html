@@ -1,0 +1,22 @@
+<div>
+  <h2>Thread Communication Frequency Matrix</h2>
+  <p style="width:800px;">
+  The processes are listed on the vertical axis (sent a tag) and on
+  the horizontal axis (received a tag).  The colored squares in the
+  graph represent the amount of communication between the source and
+  the target process. Hovering over a square highlights the
+  processes involved in the communication.
+  <br>
+  <b>NOTE:</b> Data used here differs from the above two.
+  </p>
+</div>
+
+<p style="display:none;">Order:
+<select id="order">
+  <option value="name">by Name</option>
+  <option value="count">by Frequency</option>
+  <option value="group">by Cluster</option>
+</select>
+</p>
+
+<div id="cooccur" style="margin:30px 20px 20px 180px;"></div>

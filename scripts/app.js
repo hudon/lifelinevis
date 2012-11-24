@@ -4,8 +4,11 @@ define([
     'backbone',
     'timetree/timetreeView',
     'dag/dagView',
-    'lifelineModel'
-], function ($, _, Backbone, TimeTreeView, DagView, lifelineModels) {
+    'lifelineModel',
+    'histo/tagHistogramView',
+    'cooccur/co_occurrenceView'
+], function ($, _, Backbone, TimeTreeView, DagView, lifelineModels, HistogramView,
+        CooccurrenceView) {
 
     var AppView;
 
@@ -37,12 +40,16 @@ define([
         },
 
         render: function () {
-            var treeView, dagView;
+            var histogram, treeView, dagView;
             treeView = new TimeTreeView(this.model);
             dagView = new DagView(this.model);
+            histogram = new HistogramView();
+            cooccur = new CooccurrenceView();
 
             this.$el.append(treeView.el);
             this.$el.append(dagView.el);
+            this.$el.append(cooccur.el);
+            this.$el.append(histogram.el);
 
             // Add style to target all elements using a .tag<name> class
             // TODO We will need to recreate the <style> tag this generates

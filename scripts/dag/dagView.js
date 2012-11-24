@@ -10,10 +10,6 @@ define([
 ], function ($, _, Backbone, dagTemplate, optionsTemplate, dagParser, dagDrawer, lifeline) {
     var ContainerView, DagOptionsView, DagModel, DagView;
 
-    dagCheckboxTempl = _.template('<input type="checkbox" value="<%= tagname %>"'
-           + ' checked> <span> tag:<%= tagname %> </span>');
-
-
     DagOptionsView = Backbone.View.extend({
         template: _.template(optionsTemplate),
 

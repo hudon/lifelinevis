@@ -2,8 +2,7 @@
 define([
     'jquery',
     'underscore',
-    'd3',
-    '../utils'
+    'd3'
 ], function ($, _, d3) {
     var visBucketSize;
 

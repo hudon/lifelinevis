@@ -1,4 +1,3 @@
-// Require.js allows us to configure shortcut alias
 require.config({
     // The shim config allows us to configure dependencies for
     // scripts that do not call define() to register a module
@@ -10,23 +9,27 @@ require.config({
             exports: '$'
         },
         'backbone': {
-            deps: [
-                'underscore',
-                'jquery'
-            ],
+            deps: [ 'vendorUnderscore', 'jquery' ],
             exports: 'Backbone'
         },
         'd3': {
             exports: 'd3'
+        },
+        'highcharts': {
+            deps: ['jquery'],
+            exports: 'Highcharts'
         }
     },
     paths: {
-        jquery: 'vendor/jquery',
-        vendorUnderscore: 'vendor/underscore',
+        jquery: '/scripts/vendor/jquery',
+        // The underscore lib is under vendor
+        vendorUnderscore: '/scripts/vendor/underscore',
+        // we extend it and alias 'underscore' to our extension
         underscore: '/scripts/utils',
-        backbone: 'vendor/backbone',
-        d3: 'vendor/d3.v2',
-        text: 'vendor/text'
+        backbone: '/scripts/vendor/backbone',
+        d3: '/scripts/vendor/d3.v2',
+        text: '/scripts/vendor/text',
+        highcharts: '/scripts/vendor/highcharts'
     }
 });
 

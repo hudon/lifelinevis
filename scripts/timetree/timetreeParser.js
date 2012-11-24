@@ -5,8 +5,7 @@
 // Prepares the lifeline data to be displayed as a tree
 define([
     'jquery',
-    'underscore',
-    '../utils'
+    'underscore'
 ], function ($, _) {
     var Node;
 
