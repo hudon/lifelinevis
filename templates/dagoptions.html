@@ -1,0 +1,5 @@
+<!-- do some _.each to get the checkboxes -->
+<form id="dagcheckboxes"><% _.each(tags, function (tag) { %>
+  <input type="checkbox" value="<%= tag %>" checked>
+  <span> tag: <%= tag %> </span>
+<% }) %></form>

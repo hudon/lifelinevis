@@ -7,9 +7,10 @@ define([
     'timetree/timetreeModel',
     'timetree/timetreeParser',
     'timetree/timetreeDrawer',
+    'lifelineModel',
     'timetree/timetreeSlider'
 ], function ($, _, Backbone, timetreeTemplate, optionsTemplate,
-        TimeTreeModel, timetreeParser, timetreeDrawer) {
+        TimeTreeModels, timetreeParser, timetreeDrawer, lifeline) {
     'use strict';
 
     var ContainerView, OptionsView, TreeView;
@@ -19,7 +20,7 @@ define([
 
         initialize: function (model) {
             this.model = model;
-            this.model.on('change:tags', this.remakeLegend, this);
+            this.render();
         },
 
         toggleCollapse: function () {
@@ -41,12 +42,16 @@ define([
         },
 
         remakeLegend: function () {
+            var tags;
             this.$('svg').remove();
-            this.$el.append(timetreeDrawer.createLegend(this.model.get('tags')));
+            tags = lifeline.countTags(this.model.get('lifeline'));
+            this.$el.append(timetreeDrawer.createLegend(tags, this.$('#treelegend')[0]));
         },
 
         render: function () {
             this.$el.html(this.template(this.model.toJSON()));
+
+            this.remakeLegend();
 
             var options = this;
             // note: This is a legacy event handler. Use Backbone style
@@ -70,23 +75,24 @@ define([
         initialize: function (model) {
             this.model = model;
             this.model.on('change', this.render, this);
-            this.model.fetch();
+            this.render();
         },
 
         render: function () {
-            var treeLifeline;
+            var treeLifeline, tags;
 
             // remove lifeline
-            //d3.select("#treelifeline svg").remove("svg:svg");
             this.$('svg').remove();
 
-            treeLifeline = timetreeParser.parse(this.model.get('lifeline'),
+            treeLifeline = timetreeParser.parse(TimeTreeModels.getRawLifeline(this.model),
                 this.model.get('resolution'),
                 this.model.get('isCollapsed'), this.model.get('startTime'),
                 this.model.get('endTime'));
 
+            tags = lifeline.countTags(this.model);
+
             // the drawer will take care of appending to this view's element
-            timetreeDrawer.draw(this.model.get('tags'), treeLifeline,
+            timetreeDrawer.draw(tags, treeLifeline,
                    this.model.get('resolution'), this.el);
 
             return this;
@@ -96,14 +102,16 @@ define([
     ContainerView = Backbone.View.extend({
         template: _.template(timetreeTemplate),
 
-        model: new TimeTreeModel,
+        initialize: function (lifelineModel) {
+            this.model = new TimeTreeModels.model({
+                lifeline: lifelineModel
+            });
 
-        initialize: function () {
             this.render();
         },
 
         render: function () {
-            var treeView, optionsView;
+            var treeView, optionsView, tags;
 
             // Add descriptions
             this.$el.html(this.template({}));
@@ -114,7 +122,7 @@ define([
 
             // add options
             optionsView = new OptionsView(this.model)
-            this.$el.append(optionsView.render().el);
+            this.$el.append(optionsView.el);
 
             return this;
         }

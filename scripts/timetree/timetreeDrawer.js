@@ -2,22 +2,23 @@
 define([
     'jquery',
     'underscore',
+    'd3',
     '../utils'
-], function ($, _) {
+], function ($, _, d3) {
     var visBucketSize;
 
     // visBucketSize is how big a bucket is visually. This value with
     // some computation will result in the distance between two levels.
     visBucketSize = 130;
 
-    function createLegend(tags) {
+    function createLegend(tags, domElement) {
         var legendVis, legend, link, tagCount, linkenter, diagonal, id;
 
         diagonal = d3.svg.diagonal().projection(function (d) {
             return [d.y, d.x];
         });
 
-        legendVis = d3.select("#treelegend")
+        legendVis = d3.select(domElement)
             .append("svg:svg")
             .attr("width", 200)
             .attr("height", 100);

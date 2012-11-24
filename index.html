@@ -2,49 +2,31 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <script src="scripts/vendor/underscore.js"></script>
+    <!-- <script src="scripts/vendor/underscore.js"></script>
     <script src="scripts/vendor/jquery-min.js"></script>
     <script src="scripts/vendor/d3.v2.js"></script>
     <script src="scripts/utils.js"></script>
 
-    <!--<script src="scripts/timetree.js"></script>-->
+    <script src="scripts/timetree.js"></script>-->
 
-    <script src="scripts/dag.js"></script>
+    <!--<script src="scripts/dag.js"></script>>
     <script src="scripts/co_occurrence.js"></script>
 
     <script src="scripts/vendor/highcharts.js"></script>
     <script src="scripts/stacked_threads.js"></script>
 
-    <script src="scripts/lifeline.js"></script>
+    <script src="scripts/lifeline.js"></script> -->
 
-    <script data-main="scripts/main" src="scripts/vendor/require-min.js"></script>
+    <script data-main="scripts/main" src="scripts/vendor/require.js"></script>
 
     <link rel="stylesheet" type="text/css" href="style.css"></style>
 
   </head>
   <body>
 
-    <section id="timetree">
+    <section id="graphs">
     </section>
 
-    <div>
-        <h2>Tag Propagation Graph</h2>
-        <p style="width:800px;">
-          Here, every process thread is a node. Edges are formed between
-          nodes that have communicated with eachother.
-        <p style="width:800px;">
-          The different tags are shown as edges with different colors. These
-          colors are the same as the ones used in the tree above for the same
-          tags. Use the checkboxes below to show only certain tags.
-        </p>
-        <p style="width:800px;">
-          Variations on this graph could include representing multiple
-          connections through edge thickness as opposed to multiple edges and
-          adding communication direction.
-        </p>
-    </div>
-    <div id="daglifeline"></div>
-    <form id="dagcheckboxes"> </form>
     <div>
         <h2>Thread Communication Frequency Matrix</h2>
         <p style="width:800px;">

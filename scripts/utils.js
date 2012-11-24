@@ -1,6 +1,6 @@
-/*jslint nomen: true,browser:true*/
-/*global _*/
-(function () {
+define([
+    'vendorUnderscore'
+], function (_) {
     String.prototype.hashCode = function () {
         var hash = 0;
         if (this.length == 0) return hash;
@@ -89,4 +89,6 @@
             return ajaxRequest;
         }
     });
-}());
+
+    return _;
+});

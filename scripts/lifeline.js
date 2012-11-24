@@ -46,7 +46,7 @@
 
             //timeTree.draw();
 
-            TagDag.draw(TagDag.parseLifeline(lifeline));
+            //TagDag.draw(TagDag.parseLifeline(lifeline));
 
             stylizeTagLinks(tags);
         });

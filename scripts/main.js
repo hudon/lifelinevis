@@ -3,7 +3,7 @@ require.config({
     // The shim config allows us to configure dependencies for
     // scripts that do not call define() to register a module
     shim: {
-        'underscore': {
+        'vendorUnderscore': {
             exports: '_'
         },
         'jquery': {
@@ -15,12 +15,17 @@ require.config({
                 'jquery'
             ],
             exports: 'Backbone'
+        },
+        'd3': {
+            exports: 'd3'
         }
     },
     paths: {
-        jquery: 'vendor/jquery-min',
-        underscore: 'vendor/underscore-min',
-        backbone: 'vendor/backbone-min',
+        jquery: 'vendor/jquery',
+        vendorUnderscore: 'vendor/underscore',
+        underscore: '/scripts/utils',
+        backbone: 'vendor/backbone',
+        d3: 'vendor/d3.v2',
         text: 'vendor/text'
     }
 });
@@ -28,7 +33,6 @@ require.config({
 require([
     'app'
 ], function (AppView) {
-
     new AppView();
 });
 
