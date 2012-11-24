@@ -150,10 +150,25 @@ var TagDag = (function () {
             .attr("width", w)
             .attr("height", h);
 
+        // TODO: make marker color correspond to edge color
+        svg.append("svg:defs").selectAll("marker")
+                .data(["dir"])
+            .enter().append("svg:marker")
+                .attr("id", String)
+                .attr("viewBox", "0 -5 10 10")
+                .attr("refX", 15)
+                .attr("refY", -1.5)
+                .attr("markerWidth", 6)
+                .attr("markerHeight", 6)
+                .attr("orient", "auto")
+            .append("svg:path")
+                .attr("d", "M0,-5L10,0L0,5");
+
         path = svg.append("svg:g").selectAll("path")
             .data(force.links())
             .enter().append("svg:path")
             .attr("class", function (d) { return "link tag" + d.type; })
+            .attr("marker-end", function(d) { return "url(#dir)"; })
             .attr("id", function(d,i) { return "p" + i; });
 
         linkLabel = svg.append("svg:g")
