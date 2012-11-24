@@ -51,7 +51,7 @@ define([
 
         linkenter.append("svg:path")
             .attr("class", function (d) {
-                return "link tag" + d.name;
+                return "treelink tag" + d.name;
             })
             .attr("d", function (d) {
                 var o = {x: d.source.x, y: d.source.y};

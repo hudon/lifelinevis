@@ -6,17 +6,21 @@ var TagDag = (function () {
     var dagCheckboxTempl;
 
     function toggleTag(e) {
-        var tagVal, links, checkbox;
+        var tagVal, links, checkbox, linkLabels;
         checkbox = e.target;
         tagVal = checkbox.value;
         links = document.getElementsByClassName('link tag' + tagVal);
+        linkLabels = document.getElementsByClassName('link-label-tag' + tagVal);
+
         if (checkbox.checked) {
-            _.each(links, function (l) {
+            _.each(links, function (l, i) {
                 l.style.display = "block";
+                linkLabels[i].style.display = "block";
             });
         } else {
-            _.each(links, function (l) {
+            _.each(links, function (l, i) {
                 l.style.display = "none";
+                linkLabels[i].style.display = "none";
             });
         }
     }
@@ -81,6 +85,29 @@ var TagDag = (function () {
             });
         }
 
+        // green, blue, orange, pink, teal, red,
+        var colorGen = _.generator(['#009933', '#0000FF', '#FF9933', '#FF4422', '#00FFFF', '#FF0000']);
+
+        // Select all instances of a process (the nodes/circles) in the tree on hover
+        // Give selections with different tids different colors
+        function addSelection(p) {
+            d3.selectAll("circle").style("fill", function (d, i) {
+                if (p.pname === d.pname) {
+                    return colorGen.getWith(i);
+                }
+                d3.select(this).style('opacity', '0.15');
+                return 'black';
+            });
+        }
+
+        function removeSelection() {
+            d3.selectAll("circle")
+                .style("fill", function(d) {
+                    return "white";
+                })
+                .style('opacity', '1');
+        }
+
         nodes = {};
 
         // Compute the distinct nodes from the links.
@@ -88,13 +115,19 @@ var TagDag = (function () {
             if (nodes[link.source]) {
                 link.source = nodes[link.source];
             } else {
-                link.source = nodes[link.source] = {name: link.source};
+                link.source = nodes[link.source] = {
+                    name: link.source,
+                    pname: link.sourceName
+                };
             }
 
             if (nodes[link.target]) {
                 link.target = nodes[link.target];
             } else {
-                link.target = nodes[link.target] = {name: link.target};
+                link.target = nodes[link.target] = {
+                    name: link.target,
+                    pname: link.targetName
+                };
             }
         });
 
@@ -127,7 +160,9 @@ var TagDag = (function () {
             .selectAll("text")
             .data(force.links())
             .enter().append("svg:text")
-                .attr("class", "link-label")
+                .attr("class", function (d) {
+                    return "link-label-tag" + d.type;
+                })
                 .attr("font-size", 10)
                 .attr("text-anchor","middle")
             .append("svg:textPath")
@@ -142,14 +177,16 @@ var TagDag = (function () {
             .data(force.nodes())
             .enter().append("svg:circle")
             .attr("r", 6)
-            .call(force.drag);
+            .call(force.drag)
+            .on("mouseover", addSelection)
+            .on("mouseout", removeSelection);;
 
         text = svg.append("svg:g").selectAll("text")
             .data(force.nodes())
             .enter().append("svg:text")
-            .attr("x", 0)
+            .attr("x", 10)
             .attr("y", ".35em")
-            .text(function (d) { return d.name; });
+            .text(function (d) { return d.pname; });
 
         drawCheckboxes(links);
     }
@@ -157,10 +194,15 @@ var TagDag = (function () {
     function parseLifeline(lifeline) {
         var links = [];
         var multiOccurrences = {};
+        var processNames = {};
 
         _.each(lifeline, function (lifeEvent) {
             var source = 'pid: ' + lifeEvent.srcProcessId + ', tid: ' + lifeEvent.srcThreadId;
+            processNames[source] = lifeEvent.srcProcessName;
+
             var target = 'pid: ' + lifeEvent.dstProcessId + ', tid: ' + lifeEvent.dstThreadId;
+            processNames[target] = lifeEvent.dstProcessName;
+
             var type = lifeEvent.tagName;
 
             // multioccurences -> link.source -> link.target -> number of
@@ -189,8 +231,13 @@ var TagDag = (function () {
 
                 _.each(target, function(numLinks, tag) {
                     var link = {};
+
                     link.source = linkSource;
+                    link.sourceName = processNames[linkSource];
+
                     link.target = linkTarget;
+                    link.targetName = processNames[linkTarget];
+
                     link.type = tag;
                     link.occurrenceNumber = numLinks;
 
