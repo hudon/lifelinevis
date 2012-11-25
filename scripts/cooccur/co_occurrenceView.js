@@ -1,3 +1,5 @@
+/*jslint nomen:true,browser:true*/
+/*global define*/
 define([
     'jquery',
     'underscore',
@@ -25,3 +27,4 @@ define([
     return ContainerView;
 
 });
+

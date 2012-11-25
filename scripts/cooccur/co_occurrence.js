@@ -1,3 +1,5 @@
+/*jslint nomen:true,browser:true*/
+/*global define*/
 define([
     'jquery',
     'underscore',
@@ -51,7 +53,7 @@ define([
                     })
                     .on("mouseover", mouseover)
                     .on("mouseout", mouseout)
-                    .text(function(d, i) {
+                    .text(function (d, i) {
                         return d.z;
                     });
 
@@ -60,7 +62,7 @@ define([
                     .enter().append("text")
                     .attr("class", "cell")
                     .attr("class", "cell_text")
-                    .text(function(d, i) {
+                    .text(function (d, i) {
                         return d.z;
                     }).attr("x", function (d) { return x(d.x) + x.rangeBand() / 2.3; })
                     .attr("y", function (d) { return x.rangeBand() / 1.8; });

@@ -1,3 +1,5 @@
+/*jslint nomen: true, browser: true*/
+/*global define*/
 define([
     'jquery',
     'underscore',
@@ -9,6 +11,7 @@ define([
     'cooccur/co_occurrenceView'
 ], function ($, _, Backbone, TimeTreeView, DagView, lifelineModels, HistogramView,
         CooccurrenceView) {
+    'use strict';
 
     var AppView;
 
@@ -40,7 +43,7 @@ define([
         },
 
         render: function () {
-            var histogram, treeView, dagView;
+            var cooccur, histogram, treeView, dagView;
             treeView = new TimeTreeView({ lifeline: this.model });
             dagView = new DagView({ model: this.model});
             histogram = new HistogramView();

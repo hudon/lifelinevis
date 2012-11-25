@@ -1,8 +1,11 @@
+/*jslint nomen: true, browser: true*/
+/*global define*/
 define([
     'jquery',
     'underscore',
     'backbone'
 ], function ($, _, Backbone, TimeTreeView, DagView) {
+    'use strict';
 
     var LifelineModel;
 

@@ -1,11 +1,14 @@
+/*jslint nomen: true, browser: true*/
+/*global define*/
 define([
     'jquery',
-    'underscore'
-], function ($, _) {
+    'underscore',
+    'd3'
+], function ($, _, d3) {
     'use strict';
 
     function drawDag(links, domElement) {
-        var nodes, w, h, force, path, linkLabel, svg, circle, text;
+        var colorGen, nodes, w, h, force, path, linkLabel, svg, circle, text;
 
         // Use elliptical arc path segments to doubly-encode directionality.
         function tick() {
@@ -50,7 +53,7 @@ define([
         }
 
         // green, blue, orange, pink, teal, red,
-        var colorGen = _.generator(['#009933', '#0000FF', '#FF9933', '#FF4422', '#00FFFF', '#FF0000']);
+        colorGen = _.generator(['#009933', '#0000FF', '#FF9933', '#FF4422', '#00FFFF', '#FF0000']);
 
         // Select all instances of a process (the nodes/circles) in the tree on hover
         // Give selections with different tids different colors
@@ -66,7 +69,7 @@ define([
 
         function removeSelection() {
             d3.selectAll("circle")
-                .style("fill", function(d) {
+                .style("fill", function (d) {
                     return "white";
                 })
                 .style('opacity', '1');
@@ -132,24 +135,23 @@ define([
             .data(force.links())
             .enter().append("svg:path")
             .attr("class", function (d) { return "link tag" + d.type; })
-            .attr("marker-end", function(d) { return "url(#dir)"; })
-            .attr("id", function(d,i) { return "p" + i; });
+            .attr("marker-end", function (d) { return "url(#dir)"; })
+            .attr("id", function (d, i) { return "p" + i; });
 
         linkLabel = svg.append("svg:g")
             .selectAll("text")
             .data(force.links())
             .enter().append("svg:text")
-                .attr("class", function (d) {
-                    return "link-label-tag" + d.type;
-                })
-                .attr("font-size", 10)
-                .attr("text-anchor","middle")
+            .attr("class", function (d) {
+                return "link-label-tag" + d.type;
+            })
+            .attr("font-size", 10)
+            .attr("text-anchor", "middle")
             .append("svg:textPath")
-                .attr("startOffset","50%")
-                .attr("xlink:xlink:href",
-                    function(d,i) {
-                        return "#p"+i;
-                })
+            .attr("startOffset", "50%")
+            .attr("xlink:xlink:href", function (d, i) {
+                return "#p" + i;
+            })
             .text(function (d) { return d.occurrenceNumber; });
 
         circle = svg.append("svg:g").selectAll("circle")
@@ -158,7 +160,7 @@ define([
             .attr("r", 6)
             .call(force.drag)
             .on("mouseover", addSelection)
-            .on("mouseout", removeSelection);;
+            .on("mouseout", removeSelection);
 
         text = svg.append("svg:g").selectAll("text")
             .data(force.nodes())

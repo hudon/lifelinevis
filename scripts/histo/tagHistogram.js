@@ -1,5 +1,5 @@
-/*jslint nomen: true, browser: true, devel: true*/
-/*global _,d3*/
+/*jslint nomen: true, browser: true*/
+/*global define*/
 define([
     'jquery',
     'underscore',
@@ -10,8 +10,9 @@ define([
     'use strict';
 
     function drawFunc(domElement) {
-        var colors = Highcharts.getOptions().colors;
-        var chart = new Highcharts.Chart({
+        var colors, chart;
+        colors = Highcharts.getOptions().colors;
+        chart = new Highcharts.Chart({
             chart: {
                 renderTo: domElement,
                 type: 'column'
@@ -38,16 +39,16 @@ define([
                         fontWeight: 'bold',
                         color: (Highcharts.theme && Highcharts.theme.textColor) || 'gray'
                     },
-                    formatter: function() {
-                        return  this.stack;
+                    formatter: function () {
+                        return this.stack;
                     }
                 }
             },
             tooltip: {
-                formatter: function() {
-                    return '<b>'+ this.x +'</b><br/>'+
-                        this.series.name + ': '+ this.y +'<br/>'+
-                        'Total: '+ this.point.stackTotal;
+                formatter: function () {
+                    return '<b>' + this.x + '</b><br/>' +
+                        this.series.name + ': ' + this.y + '<br/>' +
+                        'Total: ' + this.point.stackTotal;
                 }
             },
             plotOptions: {
@@ -74,13 +75,13 @@ define([
                 data: [2, 4, 5, 1],
                 stack: 'send',
                 color: colors[1]
-            },{
+            }, {
                 name: 'tag0',
                 data: [1, 2, 5, 4],
                 stack: 'receive',
                 color: colors[0],
                 showInLegend: false
-            },{
+            }, {
                 name: 'tag1',
                 data: [3, 8, 2, 1],
                 stack: 'receive',

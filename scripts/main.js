@@ -36,6 +36,7 @@ require.config({
 require([
     'app'
 ], function (AppView) {
-    new AppView();
+    'use strict';
+    return new AppView();
 });
 

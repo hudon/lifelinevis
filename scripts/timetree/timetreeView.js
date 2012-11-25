@@ -1,3 +1,5 @@
+/*jslint nomen: true, browser: true*/
+/*global define*/
 define([
     'jquery',
     'underscore',
@@ -32,7 +34,7 @@ define([
             var start, end;
             start = this.$('#tree-start').val();
             end = this.$('#tree-end').val();
-            this.model.set({ startTime: parseInt(start), endTime: parseInt(end) });
+            this.model.set({ startTime: parseInt(start, 10), endTime: parseInt(end, 10) });
         },
 
         events: {
@@ -119,7 +121,7 @@ define([
             this.$el.append(treeView.el);
 
             // add options
-            optionsView = new OptionsView({ model: this.model })
+            optionsView = new OptionsView({ model: this.model });
             this.$el.append(optionsView.el);
 
             return this;

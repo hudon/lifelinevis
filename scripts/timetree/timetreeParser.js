@@ -1,12 +1,12 @@
-/*jslint nomen: true, browser: true, devel: true*/
-/*global $,_,d3*/
-'use strict';
+/*jslint nomen: true, browser: true*/
+/*global define*/
 
 // Prepares the lifeline data to be displayed as a tree
 define([
     'jquery',
     'underscore'
 ], function ($, _) {
+    'use strict';
     var Node;
 
     // Every bucket is a group of nodes that we will be aligning vertically
@@ -77,16 +77,15 @@ define([
         });
 
         if ((typeof start !== 'undefined') && (typeof end !== 'undefined')) {
-            startTime = parseInt(start);
-            endTime = parseInt(end);
+            startTime = parseInt(start, 10);
+            endTime = parseInt(end, 10);
 
             if (startTime >= 0 && endTime >= startTime) {
                 lifeline = _.filter(lifeline, function (node) {
                     return startTime < node.time && node.time < endTime;
                 });
-            } else {
-                // TODO error
             }
+            // TODO else: error
         }
 
         _.each(lifeline, function (node) {

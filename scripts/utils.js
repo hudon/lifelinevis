@@ -1,12 +1,16 @@
+/*jslint nomen: true, browser: true*/
+/*global define*/
 define([
     'vendorUnderscore'
 ], function (_) {
     String.prototype.hashCode = function () {
-        var hash = 0;
-        if (this.length == 0) return hash;
-        for (i = 0; i < this.length; i++) {
+        var char, i, hash = 0;
+        if (this.length === 0) {
+            return hash;
+        }
+        for (i = 0; i < this.length; i += 1) {
             char = this.charCodeAt(i);
-            hash = ((hash<<5)-hash)+char;
+            hash = ((hash << 5) - hash) + char;
             hash = hash & hash; // Convert to 32bit integer
         }
         return hash;
@@ -16,9 +20,9 @@ define([
         makeClass: function () {
             return function (args) {
                 if (this instanceof arguments.callee) {
-                    if (typeof this.init == "function") {
+                    if (typeof this.init === "function") {
                         this.init.apply(this,
-                            (typeof args != 'undefined') && args.callee ? args : arguments);
+                            (typeof args !== 'undefined') && args.callee ? args : arguments);
                     }
                 } else {
                     return new arguments.callee(arguments);
@@ -41,7 +45,7 @@ define([
                     if (typeof num === 'string') {
                         num = num.hashCode();
                     }
-                    var i = parseInt(num) % elements.length;
+                    var i = parseInt(num, 10) % elements.length;
                     if (elements.length === 0) {
                         return defaultElem;
                     }

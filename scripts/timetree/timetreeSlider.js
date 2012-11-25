@@ -1,3 +1,4 @@
+//TODO jslint this file
 (function ($) {
 
     var PPSliderClass = function (el, opts) {

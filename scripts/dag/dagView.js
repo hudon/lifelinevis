@@ -1,3 +1,5 @@
+/*jslint nomen:true,browser:true*/
+/*global define*/
 define([
     'jquery',
     'underscore',
@@ -8,6 +10,7 @@ define([
     'dag/dagDrawer',
     'lifelineModel'
 ], function ($, _, Backbone, dagTemplate, optionsTemplate, dagParser, dagDrawer, lifeline) {
+    'use strict';
     var ContainerView, DagOptionsView, DagModel, DagView;
 
     DagOptionsView = Backbone.View.extend({
@@ -17,7 +20,7 @@ define([
             this.render();
         },
 
-        toggleTag: function(e) {
+        toggleTag: function (e) {
             var tagVal, links, checkbox, linkLabels;
             checkbox = e.target;
             tagVal = checkbox.value;
@@ -61,9 +64,9 @@ define([
         render: function () {
             var dagData;
 
-            tagData = dagParser.parse(this.model.get('lifeline'));
+            dagData = dagParser.parse(this.model.get('lifeline'));
 
-            dagDrawer.draw(tagData, this.el);
+            dagDrawer.draw(dagData, this.el);
 
             return this;
         }

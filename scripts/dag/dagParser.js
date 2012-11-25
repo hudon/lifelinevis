@@ -1,5 +1,5 @@
-/*jslint nomen: true, browser: true, devel: true*/
-/*global $,_,d3*/
+/*jslint nomen: true, browser: true*/
+/*global define*/
 define([
     'jquery',
     'underscore'
@@ -7,18 +7,22 @@ define([
     'use strict';
 
     function parseLifeline(lifeline) {
-        var links = [];
-        var multiOccurrences = {};
-        var processNames = {};
+        var links, multiOccurrences, processNames, linkSource, linkTarget;
+
+        links = [];
+        multiOccurrences = {};
+        processNames = {};
 
         _.each(lifeline, function (lifeEvent) {
-            var source = 'pid: ' + lifeEvent.srcProcessId + ', tid: ' + lifeEvent.srcThreadId;
+            var source, target, type;
+
+            source = 'pid: ' + lifeEvent.srcProcessId + ', tid: ' + lifeEvent.srcThreadId;
             processNames[source] = lifeEvent.srcProcessName;
 
-            var target = 'pid: ' + lifeEvent.dstProcessId + ', tid: ' + lifeEvent.dstThreadId;
+            target = 'pid: ' + lifeEvent.dstProcessId + ', tid: ' + lifeEvent.dstThreadId;
             processNames[target] = lifeEvent.dstProcessName;
 
-            var type = lifeEvent.tagName;
+            type = lifeEvent.tagName;
 
             // multioccurences -> link.source -> link.target -> number of
             // occurrences for that edge
@@ -36,15 +40,13 @@ define([
             multiOccurrences[source][target][type] += 1;
         });
 
-        var linkSource, linkTarget;
-
-        _.each(multiOccurrences, function(source, skey) {
+        _.each(multiOccurrences, function (source, skey) {
             linkSource = skey;
 
-            _.each(source, function(target, tkey) {
+            _.each(source, function (target, tkey) {
                 linkTarget = tkey;
 
-                _.each(target, function(numLinks, tag) {
+                _.each(target, function (numLinks, tag) {
                     var link = {};
 
                     link.source = linkSource;
@@ -57,8 +59,8 @@ define([
                     link.occurrenceNumber = numLinks;
 
                     links.push(link);
-                })
-            })
+                });
+            });
         });
 
         return links;

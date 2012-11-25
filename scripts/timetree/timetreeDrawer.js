@@ -1,9 +1,13 @@
+/*jslint nomen: true, browser: true*/
+/*global define*/
+
 // This redraws the tree and the legend
 define([
     'jquery',
     'underscore',
     'd3'
 ], function ($, _, d3) {
+    'use strict';
     var visBucketSize;
 
     // visBucketSize is how big a bucket is visually. This value with
@@ -67,7 +71,7 @@ define([
     */
     // TODO break this function up...
     function update(root, source, diagonal, tree, animationDuration, vis, domElement) {
-        var nodeIdentifier, nodes, nodeEnter,
+        var labels, nodeIdentifier, nodes, nodeEnter,
             nodeUpdate, nodeExit, link, node, colorGen, tooltip;
 
         // Remove the highlighting of nodes on mouseout
@@ -77,12 +81,11 @@ define([
                    .style("opacity", -1);
 
             d3.selectAll(".node circle")
-                .style("fill", function(d) {
-                    if (d.children == null) {
+                .style("fill", function (d) {
+                    if (d.children === null) {
                         return "#b0c4de";
-                    } else {
-                        return "white";
                     }
+                    return "white";
                 })
                 .style('opacity', '1');
         }
@@ -93,6 +96,8 @@ define([
                 d._children = d.children;
                 d.children = null;
             } else {
+                // TODO fix the case where user clicks on node that does not
+                // have children
                 d.children = d._children;
                 d._children = null;
             }
@@ -136,7 +141,7 @@ define([
         // Single tooltip used to display extra information about a node
         tooltip = document.getElementsByClassName("tooltip");
         if (tooltip.length) {
-            tooltip = d3.select(domElement).select('.tooltip')//"#treelifeline .tooltip");
+            tooltip = d3.select(domElement).select('.tooltip');
         } else {
             tooltip = d3.select(domElement).append("div")
                 .attr("class", "tooltip")
@@ -258,15 +263,16 @@ define([
             })
             .remove();
 
-        var labels = vis.selectAll("text.connection")
+        labels = vis.selectAll("text.connection")
             .data(tree.links(nodes), function (d) {
                 return d.target.id;
             });
 
         labels.enter().append("text")
-            .text(function(d) {
-                if (d.target.numConnections > 1)
+            .text(function (d) {
+                if (d.target.numConnections > 1) {
                     return d.target.numConnections;
+                }
             })
             .attr('class', 'connection')
             .transition()
