@@ -53,7 +53,9 @@ define([
         }
 
         // green, blue, orange, pink, teal, red,
-        colorGen = _.generator(['#009933', '#0000FF', '#FF9933', '#FF4422', '#00FFFF', '#FF0000']);
+        //colorGen = _.generator(['#009933', '#0000FF', '#FF9933', '#FF4422', '#00FFFF', '#FF0000']);
+        // blue
+        colorGen = _.generator(['#0000FF']);
 
         // Select all instances of a process (the nodes/circles) in the tree on hover
         // Give selections with different tids different colors
