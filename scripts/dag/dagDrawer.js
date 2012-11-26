@@ -18,7 +18,7 @@ define([
                 dx = d.target.x - d.source.x;
                 dy = d.target.y - d.source.y;
                 dr = Math.sqrt(dx * dx + dy * dy);
-                num = d.type;
+                num = d.tagname;
 
                 if (d.target.name === d.source.name) {
                     a = Math.atan2(dx, dy);
@@ -136,7 +136,7 @@ define([
         path = svg.append("svg:g").selectAll("path")
             .data(force.links())
             .enter().append("svg:path")
-            .attr("class", function (d) { return "link tag" + d.type; })
+            .attr("class", function (d) { return "link tag" + d.tagname; })
             .attr("marker-end", function (d) { return "url(#dir)"; })
             .attr("id", function (d, i) { return "p" + i; });
 
@@ -145,7 +145,7 @@ define([
             .data(force.links())
             .enter().append("svg:text")
             .attr("class", function (d) {
-                return "link-label-tag" + d.type;
+                return "link-label-tag" + d.tagname;
             })
             .attr("font-size", 10)
             .attr("text-anchor", "middle")

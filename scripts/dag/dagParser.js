@@ -7,60 +7,58 @@ define([
     'use strict';
 
     function parseLifeline(lifeline) {
-        var links, multiOccurrences, processNames, linkSource, linkTarget;
+        var links, multiOccurrences, processNames;
 
         links = [];
         multiOccurrences = {};
         processNames = {};
 
+        // First, we calculate all the multiple occurrences of edges
         _.each(lifeline, function (lifeEvent) {
-            var source, target, type;
+            var source, target, tagname, multiOccKey;
 
-            source = 'pid: ' + lifeEvent.srcProcessId + ', tid: ' + lifeEvent.srcThreadId;
+            source = 'pid: ' + lifeEvent.srcProcessId + ' tid: ' + lifeEvent.srcThreadId;
             processNames[source] = lifeEvent.srcProcessName;
 
-            target = 'pid: ' + lifeEvent.dstProcessId + ', tid: ' + lifeEvent.dstThreadId;
+            target = 'pid: ' + lifeEvent.dstProcessId + ' tid: ' + lifeEvent.dstThreadId;
             processNames[target] = lifeEvent.dstProcessName;
 
-            type = lifeEvent.tagName;
+            tagname = lifeEvent.tagName;
 
-            // multioccurences -> link.source -> link.target -> number of
-            // occurrences for that edge
-            if (!_.has(multiOccurrences, source)) {
-                multiOccurrences[source] = {};
-            }
-            if (!_.has(multiOccurrences[source], target)) {
-                multiOccurrences[source][target] = {};
-            }
+            // An edge will be considered a duplicate if it has the same
+            // source node, target node, and tagname
+            multiOccKey = [source, target, tagname].join(',');
 
-            if (!_.has(multiOccurrences[source][target], type)) {
-                multiOccurrences[source][target][type] = 0;
+            if (!_.has(multiOccurrences, multiOccKey)) {
+                multiOccurrences[multiOccKey] = 0;
             }
 
-            multiOccurrences[source][target][type] += 1;
+            multiOccurrences[multiOccKey] += 1;
         });
 
-        _.each(multiOccurrences, function (source, skey) {
-            linkSource = skey;
+        // Second, we build the actual links
+        _.each(multiOccurrences, function (numLinks, key) {
+            var link, linkSource, linkTarget, linkData, tagname;
 
-            _.each(source, function (target, tkey) {
-                linkTarget = tkey;
+            link = {};
 
-                _.each(target, function (numLinks, tag) {
-                    var link = {};
+            // This will contain source, target, and tagname
+            linkData = key.split(',');
 
-                    link.source = linkSource;
-                    link.sourceName = processNames[linkSource];
+            linkSource = linkData[0];
+            linkTarget = linkData[1];
+            tagname = linkData[2];
 
-                    link.target = linkTarget;
-                    link.targetName = processNames[linkTarget];
+            link.source = linkSource;
+            link.sourceName = processNames[linkSource];
 
-                    link.type = tag;
-                    link.occurrenceNumber = numLinks;
+            link.target = linkTarget;
+            link.targetName = processNames[linkTarget];
 
-                    links.push(link);
-                });
-            });
+            link.tagname = tagname;
+            link.occurrenceNumber = numLinks;
+
+            links.push(link);
         });
 
         return links;
