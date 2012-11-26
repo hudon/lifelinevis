@@ -58,7 +58,7 @@ define([
         // Select all instances of a process (the nodes/circles) in the tree on hover
         // Give selections with different tids different colors
         function addSelection(p) {
-            d3.selectAll("circle").style("fill", function (d, i) {
+            d3.select(domElement).selectAll("circle").style("fill", function (d, i) {
                 if (p.pname === d.pname) {
                     return colorGen.getWith(i);
                 }
@@ -68,7 +68,7 @@ define([
         }
 
         function removeSelection() {
-            d3.selectAll("circle")
+            d3.select(domElement).selectAll("circle")
                 .style("fill", function (d) {
                     return "white";
                 })
