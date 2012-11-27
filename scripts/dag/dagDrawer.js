@@ -110,12 +110,16 @@ define([
         force = d3.layout.force()
             .nodes(d3.values(nodes))
             .links(links)
-            .size([w, h])           // available layout size - affects the gravitational center & init rand pos
-            .linkDistance(267)      // Distances between nodes
-            .linkStrength(0.1)      // A small link strength means it's very flexible and won't move nodes too much
-            .charge(-70)            // -ve: node repulsion; +ve: node attraction
+            // available layout size - affects the gravitational center & init rand pos
+            .size([w, h])
+            .linkDistance(267)
+            // A small link strength means it's very flexible and won't move nodes too much
+            .linkStrength(0.15)
+            // for charge, -ve: node repulsion; +ve: node attraction
+            .charge(-300)
             .friction(0.09)
-            .gravity(0.01)           // The amount of force pulling everything towards the center
+             // The gravity is the amount of force pulling everything towards the center
+            .gravity(0.01)
             .on("tick", tick)
             .start();
 
