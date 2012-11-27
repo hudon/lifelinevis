@@ -49,11 +49,13 @@ define([
             linkTarget = linkData[1];
             tagname = linkData[2];
 
-            link.source = linkSource;
-            link.sourceName = processNames[linkSource];
+            // The key unique identifies a node (processId, threadId)
+            link.sourceKey = linkSource;
+            // Source contains the actual source node data (including the key)
+            link.source = { name: linkSource, pname: processNames[linkSource] };
 
-            link.target = linkTarget;
-            link.targetName = processNames[linkTarget];
+            link.targetKey = linkTarget;
+            link.target = { name: linkTarget, pname: processNames[linkTarget] };
 
             link.tagname = tagname;
             link.occurrenceNumber = numLinks;

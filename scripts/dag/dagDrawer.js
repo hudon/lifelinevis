@@ -20,6 +20,8 @@ define([
                 dr = Math.sqrt(dx * dx + dy * dy);
                 num = d.tagname;
 
+                // If a vertex has an edge that points to itself, we still
+                // want to display it:
                 if (d.target.name === d.source.name) {
                     a = Math.atan2(dx, dy);
                     da = 0.4;
@@ -79,39 +81,41 @@ define([
 
         nodes = {};
 
-        // Compute the distinct nodes from the links.
-        _.each(links, function (link) {
-            if (nodes[link.source]) {
-                link.source = nodes[link.source];
-            } else {
-                link.source = nodes[link.source] = {
-                    name: link.source,
-                    pname: link.sourceName
-                };
-            }
-
-            if (nodes[link.target]) {
-                link.target = nodes[link.target];
-            } else {
-                link.target = nodes[link.target] = {
-                    name: link.target,
-                    pname: link.targetName
-                };
-            }
-        });
-
         w = 860;
         h = 600;
+
+        // Compute the distinct nodes from the links.
+        _.each(links, function (link) {
+            // If the processId,threadId node exists already, then overwrite
+            // the link's source to the source that exists already (since
+            // we're only keeping distinct nodes).
+            if (nodes[link.sourceKey]) {
+                link.source = nodes[link.sourceKey];
+            } else {
+                // Otherwise, store the first node of its kind
+                nodes[link.sourceKey] = link.source;
+                nodes[link.sourceKey].x = w / 2;
+                nodes[link.sourceKey].y = h / 2;
+            }
+
+            if (nodes[link.targetKey]) {
+                link.target = nodes[link.targetKey];
+            } else {
+                nodes[link.targetKey] = link.target;
+                nodes[link.targetKey].x = w / 2;
+                nodes[link.targetKey].y = h / 2;
+            }
+        });
 
         force = d3.layout.force()
             .nodes(d3.values(nodes))
             .links(links)
             .size([w, h])           // available layout size - affects the gravitational center & init rand pos
-            .linkDistance(267)
-            .linkStrength(0.30)
-            .charge(-150)            // -ve: node repultion; +ve: node attraction
-            .friction(0.1)
-            .gravity(0.02)
+            .linkDistance(267)      // Distances between nodes
+            .linkStrength(0.1)      // A small link strength means it's very flexible and won't move nodes too much
+            .charge(-70)            // -ve: node repulsion; +ve: node attraction
+            .friction(0.09)
+            .gravity(0.01)           // The amount of force pulling everything towards the center
             .on("tick", tick)
             .start();
 
