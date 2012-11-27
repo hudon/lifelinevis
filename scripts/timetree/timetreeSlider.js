@@ -1,5 +1,7 @@
 //TODO jslint this file
-(function ($) {
+define([
+    'jquery'
+], function ($) {
 
     var PPSliderClass = function (el, opts) {
         var element = $(el);
@@ -123,6 +125,6 @@
         width: 150,
         max: 100
     };
-})(jQuery);
+})
 
 
