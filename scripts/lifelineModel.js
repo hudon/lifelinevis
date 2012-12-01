@@ -32,6 +32,18 @@ define([
             // so we'll use the process ID
             result.srcProcessName = words[1];
 
+            // If we can't turn the IDs into numbers, then they are invalid
+            // and we can ignore this row
+            try {
+                parseInt(words[1], 10);
+                parseInt(words[2], 10);
+                parseInt(words[3], 10);
+                parseInt(words[4], 10);
+                parseInt(words[5], 10);
+            } catch (e) {
+                continue;
+            }
+
             result.srcProcessId = words[1];
             result.srcThreadId = words[2];
             result.dstProcessName = words[3];
@@ -50,7 +62,11 @@ define([
         parseShowtagsC: function (rawLifeline) {
             var newLifeline;
             newLifeline = parseRawShowtags(rawLifeline);
-            this.set('lifeline', newLifeline);
+            if (newLifeline.length > 0) {
+                this.set('lifeline', newLifeline);
+            } else {
+                // TODO report error
+            }
         },
 
         parse: function (response) {
