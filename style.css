@@ -13,9 +13,16 @@ text {
   font-size:13px;
 }
 
+/* Global Controls */
+
 form#lifelineform {
   border: none;
 }
+
+.error {
+  color: red;
+}
+
 
 /* Timetree styles */
 

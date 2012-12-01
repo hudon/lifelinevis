@@ -25,12 +25,22 @@ define([
 
         render: function () {
             this.$el.html(this.template());
+            this.$('.error').hide();
             return this;
+        },
+
+        parse: function (text) {
+            this.$('.error').hide();
+            try {
+                this.model.parseShowtagsC(text);
+            } catch (e) {
+                this.$('.error').text(e.message).show();
+            }
         },
 
         readTextArea: function (e) {
             e.preventDefault();
-            this.model.parseShowtagsC(this.$('#lifelineform > textarea').val());
+            parse(this.$('#lifelineform > textarea').val());
         },
 
         readFile: function (ev) {
@@ -42,7 +52,7 @@ define([
             this.reader.onloadend = function () {
                 var text;
                 text = parentView.reader.result;
-                parentView.model.parseShowtagsC(text);
+                parentView.parse(text);
             }
         }
 

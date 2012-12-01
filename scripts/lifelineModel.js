@@ -60,12 +60,19 @@ define([
         url: '/data/tagger.json',
 
         parseShowtagsC: function (rawLifeline) {
-            var newLifeline;
+            var errorMsg, newLifeline;
             newLifeline = parseRawShowtags(rawLifeline);
             if (newLifeline.length > 0) {
                 this.set('lifeline', newLifeline);
             } else {
-                // TODO report error
+                errorMsg = 'Error: Could not read provided lifeline data.'
+                    + ' Please use output provided by showtag.c';
+                throw {
+                    name: 'Parse Error',
+                    level: 'Warning',
+                    message: errorMsg,
+                    htmlMessage: errorMsg
+                };
             }
         },
 
