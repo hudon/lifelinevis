@@ -4,19 +4,13 @@
         A tree node represents a process thread.  An edge between two
         nodes represents communication between them.  The parent is the
         process that sends the tag, and the child is the receiving
-        process.  The tree nodes are placed in time buckets based on the
-        time that the tag was received at. Thus, the time indicated at
-        each node is the time at which a tag was received, not sent.
+        process. The tree nodes are vertically aligned with respect to time,
+        and the time resolution can be changed below.
     </p>
     <p style="width:800px;">
       Here, real data is used after assigning a tag ("2") to firefox threads and
       waiting for a few seconds. One tag name was changed to "0" to show
       an example legend.
-    </p>
-    <p style="width:800px;">
-    Aside from visual enhancements, a worthwhile extension to the graph
-    could be focusing on certain time periods (e.g. if there is one hour's
-    worth of data, view only what happened during the 30th minute).
     </p>
 </div>
 
