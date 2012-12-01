@@ -108,7 +108,7 @@ define([
         },
 
         render: function () {
-            var treeView, optionsView, tags;
+            var treeView, optionsView;
 
             // Add descriptions
             this.$el.html(this.template({}));

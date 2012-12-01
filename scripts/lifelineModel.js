@@ -19,6 +19,12 @@ define([
             var words, result;
             words = lines[i].split(/[ \t]+/);
 
+            // We need at least 6 elements in the array, otherwise it's a
+            // garbage row and we ignore it. NOTE: Potentially we can throw an error
+            if (words.length < 6) {
+                continue;
+            }
+
             result = {};
             result.tagName = words[0];
 
