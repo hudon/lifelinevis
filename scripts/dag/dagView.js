@@ -13,6 +13,12 @@ define([
     'use strict';
     var ContainerView, DagOptionsView, DagModel, DagView;
 
+    function getTags(lifeline) {
+        var tags;
+        tags = _.union(_.pluck(lifeline, 'tagName'));
+        return tags;
+    }
+
     DagOptionsView = Backbone.View.extend({
         template: _.template(optionsTemplate),
 
@@ -44,14 +50,9 @@ define([
             'change #dagcheckboxes > input': 'toggleTag'
         },
 
-        getTags: function () {
-            var tags;
-            tags = _.union(_.pluck(this.model.get('lifeline'), 'tagName'));
-            return tags;
-        },
-
         render: function () {
-            this.$el.html(this.template({tags: this.getTags() }));
+            var tags = getTags(this.model.get('lifeline')).sort();
+            this.$el.html(this.template({tags:tags}));
             return this;
         }
     });
@@ -66,7 +67,7 @@ define([
 
             dagData = dagParser.parse(this.model.get('lifeline'));
 
-            dagDrawer.draw(dagData, this.el);
+            dagDrawer.draw(dagData, getTags(this.model.get('lifeline')), this.el);
 
             return this;
         }

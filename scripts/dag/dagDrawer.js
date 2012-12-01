@@ -7,7 +7,7 @@ define([
 ], function ($, _, d3) {
     'use strict';
 
-    function drawDag(links, domElement) {
+    function drawDag(links, tags, domElement) {
         var colorGen, nodes, w, h, force, path, linkLabel, svg, circle, text;
 
         // Use elliptical arc path segments to doubly-encode directionality.
@@ -18,7 +18,7 @@ define([
                 dx = d.target.x - d.source.x;
                 dy = d.target.y - d.source.y;
                 dr = Math.sqrt(dx * dx + dy * dy);
-                num = d.tagname;
+                var tagName = d.tagname;
 
                 // If a vertex has an edge that points to itself, we still
                 // want to display it:
@@ -31,18 +31,17 @@ define([
                         + " " + " T " + d.target.x + "," + d.target.y;
                 }
 
-                // TODO: don't hardcode '2'
                 // multiple edges from one node for multiple tags
-                if (num === '2') {
+                var tagIndex = tags.indexOf(tagName);
+
+                if (tagIndex === 0) {
                     return "M" + d.source.x + "," + d.source.y + "A" + dr + ","
                         + dr + " 0 0,1 " + d.target.x + "," + d.target.y;
+                } else {
+                    return "M" + d.source.x + "," + d.source.y +
+                        "q0," + 5 * tagIndex + " " + 5 * tagIndex + ",0 " +
+                        " T " + d.target.x + "," + d.target.y;
                 }
-
-                // TODO: don't use num
-                return "M" + d.source.x + "," + d.source.y +
-                    "q0," + 5 * num + " " + 5 * num + ",0 " +
-                    " T " + d.target.x + "," + d.target.y;
-
             });
 
             circle.attr("transform", function (d) {
