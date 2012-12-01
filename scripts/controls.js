@@ -19,12 +19,18 @@ define([
         },
 
         events: {
-            'change input#file': 'readFile'
+            'change input#file': 'readFile',
+            'click #lifelineform > input': 'readTextArea'
         },
 
         render: function () {
             this.$el.html(this.template());
             return this;
+        },
+
+        readTextArea: function (e) {
+            e.preventDefault();
+            this.model.parseShowtagsC(this.$('#lifelineform > textarea').val());
         },
 
         readFile: function (ev) {

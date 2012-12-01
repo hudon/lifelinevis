@@ -79,7 +79,7 @@ define([
         },
 
         render: function () {
-            var treeLifeline, tags;
+            var treeLifeline;
 
             // remove lifeline
             this.$('svg').remove();
@@ -89,11 +89,8 @@ define([
                 this.model.get('isCollapsed'), this.model.get('startTime'),
                 this.model.get('endTime'));
 
-            tags = lifeline.countTags(this.model);
-
             // the drawer will take care of appending to this view's element
-            timetreeDrawer.draw(tags, treeLifeline,
-                   this.model.get('resolution'), this.el);
+            timetreeDrawer.draw(treeLifeline, this.model.get('resolution'), this.el);
 
             return this;
         }

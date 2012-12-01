@@ -312,7 +312,7 @@ define([
         return _.max(childLevels);
     }
 
-    function drawLifelineTree(tags, treeLifeline, mode, domElement) {
+    function drawLifelineTree(treeLifeline, mode, domElement) {
         var w, h, tree, animationDuration, diagonal, vis, maxLevel;
 
         maxLevel = getMaxLevel(treeLifeline);

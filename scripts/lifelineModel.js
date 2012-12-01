@@ -31,7 +31,7 @@ define([
             result.dstProcessName = words[3];
             result.dstProcessId = words[3];
             result.dstThreadId = words[4];
-            result.time = parseInt(words[5]);
+            result.time = parseInt(words[5], 10);
 
             results.push(result);
         }

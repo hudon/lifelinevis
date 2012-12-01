@@ -13,6 +13,10 @@ text {
   font-size:13px;
 }
 
+form#lifelineform {
+  border: none;
+}
+
 /* Timetree styles */
 
 div#treelegend {

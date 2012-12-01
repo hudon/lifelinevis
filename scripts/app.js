@@ -25,6 +25,10 @@ define([
         initialize: function () {
             this.model = new lifeline.model();
             this.model.on('change', this.render, this);
+
+            this.controlsView = new ControlsView({ model: this.model });
+            this.$el.html(this.controlsView.el);
+
             this.model.fetch();
         },
 
@@ -62,12 +66,10 @@ define([
         },
 
         render: function () {
-            var controls, treeView, dagView, histogram, cooccur;
+            var treeView, dagView, histogram, cooccur;
 
-            controls = new ControlsView({ model: this.model });
-
-            this.$el.html(controls.el);
             // add tabs
+            this.$('#tabs').remove();
             this.$el.append(this.template());
 
             treeView = new TimeTreeView({ lifeline: this.model });
