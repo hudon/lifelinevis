@@ -15,7 +15,7 @@ text {
 
 /* Global Controls */
 
-form#lifelineform {
+.globalControls form {
   border: none;
 }
 

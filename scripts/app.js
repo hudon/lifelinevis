@@ -22,7 +22,7 @@ define([
         template: _.template(tabsTemplate),
 
         initialize: function () {
-            this.model.on('change', this.render, this);
+            this.model.on('change:lifeline', this.render, this);
             this.model.fetch();
         },
 

@@ -19,9 +19,7 @@ define([
             // resolution means more things in 1 bucket
             resolution: 1.0,
             // This collapses duplicate edges into one when set to true
-            isCollapsed: false,
-            startTime: 0,
-            endTime: Infinity
+            isCollapsed: false
         }
     });
 

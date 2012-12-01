@@ -13,6 +13,8 @@ define([
     ControlsView = Backbone.View.extend({
         template: _.template(controlsTmpl),
 
+        className: 'globalControls',
+
         initialize: function () {
             this.reader = new FileReader();
             this.render();
@@ -20,11 +22,23 @@ define([
 
         events: {
             'change input#file': 'readFile',
-            'click #lifelineform > input': 'readTextArea'
+            'click #lifelineform > input': 'readTextArea',
+            'click #timecontrols > input': 'renderNewTimeLimits'
+        },
+
+        renderNewTimeLimits: function (e) {
+            var start, end;
+
+            e.preventDefault();
+
+            start = this.$('#tree-start').val();
+            end = this.$('#tree-end').val();
+            this.model.set({ startTime: parseInt(start, 10), endTime: parseInt(end, 10) });
+            this.model.updateTimeLimits();
         },
 
         render: function () {
-            this.$el.html(this.template());
+            this.$el.html(this.template(this.model.toJSON()));
             this.$('.error').hide();
             return this;
         },

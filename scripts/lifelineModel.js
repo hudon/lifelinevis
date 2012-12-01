@@ -59,11 +59,29 @@ define([
     LifelineModel = Backbone.Model.extend({
         url: '/data/tagger.json',
 
+        defaults: {
+            startTime: 0,
+            endTime: Infinity
+        },
+
+        updateTimeLimits: function () {
+            var lifeline, start, end;
+            lifeline = this.get('lifelineOriginal');
+            start = this.get('startTime');
+            end = this.get('endTime');
+            lifeline = _.filter(lifeline, function (node) {
+                 return start < node.time && node.time < end;
+            });
+            this.set({ lifeline: lifeline });
+        },
+
         parseShowtagsC: function (rawLifeline) {
             var errorMsg, newLifeline;
             newLifeline = parseRawShowtags(rawLifeline);
             if (newLifeline.length > 0) {
-                this.set('lifeline', newLifeline);
+                this.set({ lifelineOriginal: newLifeline}, { silent: true });
+                this.set({ lifeline: newLifeline}, { silent: true });
+                this.updateTimeLimits();
             } else {
                 errorMsg = 'Error: Could not read provided lifeline data.'
                     + ' Please use output provided by showtag.c';
@@ -77,7 +95,8 @@ define([
         },
 
         parse: function (response) {
-            return { lifeline: response };
+            // we also keep an original copy because we might modify it
+            return { lifeline: response, lifelineOriginal: response };
         }
 
     });
