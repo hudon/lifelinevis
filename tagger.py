@@ -79,6 +79,8 @@ def to_json(showtag_output):
 def showtag():
     result = ""
     try:
+        # NOTE: This uses a slightly modified showtag scripts, that prints
+        # nicer output. Modify to_json according to your showtags.c output
         showtag = subprocess.Popen(["./showtag", "-s2"], stdout=subprocess.PIPE)
         showtag.wait()
         showtag_output = showtag.stdout

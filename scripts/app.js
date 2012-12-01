@@ -9,9 +9,10 @@ define([
     'lifelineModel',
     'histo/tagHistogramView',
     'cooccur/co_occurrenceView',
-    'text!../templates/apptabs.html'
+    'text!../templates/apptabs.html',
+    'controls'
 ], function ($, _, Backbone, TimeTreeView, DagView, lifeline, HistogramView,
-        CooccurrenceView, tabsTemplate) {
+        CooccurrenceView, tabsTemplate, ControlsView) {
     'use strict';
 
     var AppView;
@@ -51,19 +52,23 @@ define([
 
         tabClick: function (e) {
             // Make only clicked tab 'active'
-            this.$('#tabs ul li').removeClass('active');
+            this.$('#tabs > ul > li').removeClass('active');
             this.$(e.currentTarget).addClass('active');
             // Hide all immediate divs except for first one (tab list)
-            $('#' + this.el.id + ' > div').hide().first().show();
+            $('#tabs > div').hide();
             var currentTab = this.$(e.currentTarget).attr('href');
             this.$(currentTab).show();
             return false;
         },
 
         render: function () {
-            var treeView, dagView, histogram, cooccur;
+            var controls, treeView, dagView, histogram, cooccur;
 
-            this.$el.html(this.template());
+            controls = new ControlsView({ model: this.model });
+
+            this.$el.html(controls.el);
+            // add tabs
+            this.$el.append(this.template());
 
             treeView = new TimeTreeView({ lifeline: this.model });
             dagView = new DagView({ model: this.model});
@@ -75,12 +80,12 @@ define([
             cooccur.$el.attr('id', 'tab-3');
             histogram.$el.attr('id', 'tab-4');
 
-            this.$el.append(treeView.$el.hide());
-            this.$el.append(dagView.$el.hide());
-            this.$el.append(cooccur.$el.hide());
-            this.$el.append(histogram.$el.hide());
+            this.$('#tabs').append(treeView.$el.hide())
+                .append(dagView.$el.hide())
+                .append(cooccur.$el.hide())
+                .append(histogram.$el.hide());
 
-            this.$('#tabs a').first().click();
+            this.$('#tabs > ul > li > a').first().click();
 
             // Add style to target all elements using a .tag<name> class
             // TODO We will need to recreate the <style> tag this generates

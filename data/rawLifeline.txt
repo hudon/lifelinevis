@@ -1,0 +1,64 @@
+The Tag list for the Tag value 0 and tag name 2 is 
+TAG		SrcPro		Src Thd		DestPro		DestThrd		Time
+2		 610342		 1		 126994		 1		 698989696  Fri Nov 30 16:50:38 2012
+: TAG		SrcPro		Src Thd		DestPro		DestThrd		Time
+2		 610342		 1		 126994		 1		 698989696  Fri Nov 30 16:50:38 2012
+: TAG		SrcPro		Src Thd		DestPro		DestThrd		Time
+2		 610342		 1		 126994		 1		 698989696  Fri Nov 30 16:50:38 2012
+: TAG		SrcPro		Src Thd		DestPro		DestThrd		Time
+2		 610342		 1		 126994		 1		 698989696  Fri Nov 30 16:50:38 2012
+: TAG		SrcPro		Src Thd		DestPro		DestThrd		Time
+2		 610342		 1		 126994		 1		 698989696  Fri Nov 30 16:50:38 2012
+: TAG		SrcPro		Src Thd		DestPro		DestThrd		Time
+2		 610342		 1		 126994		 1		 698989696  Fri Nov 30 16:50:38 2012
+: TAG		SrcPro		Src Thd		DestPro		DestThrd		Time
+2		 610342		 1		 126994		 1		 698989696  Fri Nov 30 16:50:38 2012
+: TAG		SrcPro		Src Thd		DestPro		DestThrd		Time
+2		 610342		 1		 126994		 1		 698989696  Fri Nov 30 16:50:38 2012
+: TAG		SrcPro		Src Thd		DestPro		DestThrd		Time
+2		 610342		 1		 126994		 1		 698989696  Fri Nov 30 16:50:38 2012
+: TAG		SrcPro		Src Thd		DestPro		DestThrd		Time
+2		 610342		 1		 126994		 1		 698989696  Fri Nov 30 16:50:38 2012
+: TAG		SrcPro		Src Thd		DestPro		DestThrd		Time
+2		 610342		 1		 126994		 1		 698989696  Fri Nov 30 16:50:38 2012
+: TAG		SrcPro		Src Thd		DestPro		DestThrd		Time
+2		 610342		 1		 126994		 1		 698989696  Fri Nov 30 16:50:38 2012
+: TAG		SrcPro		Src Thd		DestPro		DestThrd		Time
+2		 610342		 1		 20489		 2		 698989696  Fri Nov 30 16:50:38 2012
+: TAG		SrcPro		Src Thd		DestPro		DestThrd		Time
+2		 610342		 2		 20489		 2		 895959752  Fri Nov 30 16:50:38 2012
+: TAG		SrcPro		Src Thd		DestPro		DestThrd		Time
+2		 20489		 2		 610342		 0		 895959752  Fri Nov 30 16:50:38 2012
+: TAG		SrcPro		Src Thd		DestPro		DestThrd		Time
+2		 610342		 0		 20489		 2		 895959752  Fri Nov 30 16:50:38 2012
+: TAG		SrcPro		Src Thd		DestPro		DestThrd		Time
+2		 610342		 0		 610342		 0		 895959752  Fri Nov 30 16:50:38 2012
+: TAG		SrcPro		Src Thd		DestPro		DestThrd		Time
+2		 126994		 1		 208923		 0		 645693752  Fri Nov 30 16:50:40 2012
+: TAG		SrcPro		Src Thd		DestPro		DestThrd		Time
+2		 208923		 0		 352288		 0		 645693752  Fri Nov 30 16:50:40 2012
+: TAG		SrcPro		Src Thd		DestPro		DestThrd		Time
+2		 610342		 2		 20489		 2		 779369384  Fri Nov 30 16:50:42 2012
+: TAG		SrcPro		Src Thd		DestPro		DestThrd		Time
+2		 20489		 2		 610342		 0		 779369384  Fri Nov 30 16:50:42 2012
+: TAG		SrcPro		Src Thd		DestPro		DestThrd		Time
+2		 610342		 0		 20489		 2		 779369384  Fri Nov 30 16:50:42 2012
+: TAG		SrcPro		Src Thd		DestPro		DestThrd		Time
+2		 610342		 0		 610342		 0		 779369384  Fri Nov 30 16:50:42 2012
+: TAG		SrcPro		Src Thd		DestPro		DestThrd		Time
+2		 610342		 0		 20489		 2		 789280016  Fri Nov 30 16:50:36 2012
+: TAG		SrcPro		Src Thd		DestPro		DestThrd		Time
+2		 610342		 0		 610342		 0		 789280016  Fri Nov 30 16:50:36 2012
+: TAG		SrcPro		Src Thd		DestPro		DestThrd		Time
+2		 610342		 2		 20489		 2		 698989696  Fri Nov 30 16:50:38 2012
+: TAG		SrcPro		Src Thd		DestPro		DestThrd		Time
+2		 20489		 2		 610342		 0		 698989696  Fri Nov 30 16:50:38 2012
+: TAG		SrcPro		Src Thd		DestPro		DestThrd		Time
+2		 610342		 0		 20489		 2		 698989696  Fri Nov 30 16:50:38 2012
+: TAG		SrcPro		Src Thd		DestPro		DestThrd		Time
+2		 610342		 0		 610342		 0		 698989696  Fri Nov 30 16:50:38 2012
+: TAG		SrcPro		Src Thd		DestPro		DestThrd		Time
+2		 610342		 1		 20489		 2		 698989696  Fri Nov 30 16:50:38 2012
+: TAG		SrcPro		Src Thd		DestPro		DestThrd		Time
+2		 610342		 1		 126994		 1		 698989696  Fri Nov 30 16:50:38 2012
+: 
