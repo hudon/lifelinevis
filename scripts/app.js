@@ -8,12 +8,14 @@ define([
     'dag/dagView',
     'lifelineModel',
     'histo/tagHistogramView',
+    'pie/threadInteractionPieView',
     'cooccur/co_occurrenceView',
     'text!../templates/apptabs.html',
     'controls',
     'text!../templates/graphsContainer.html'
 ], function ($, _, Backbone, TimeTreeView, DagView, lifeline, HistogramView,
-        CooccurrenceView, tabsTemplate, ControlsView, containerTemplate) {
+        ThreadPieView, CooccurrenceView, tabsTemplate, ControlsView,
+        containerTemplate) {
     'use strict';
 
     var TabsView, AppView;
@@ -60,7 +62,7 @@ define([
         },
 
         render: function () {
-            var treeView, dagView, histogram, cooccur, controls;
+            var treeView, dagView, histogram, cooccur, controls, pie;
 
             // add tabs
             this.$('#tabs').remove();
@@ -71,18 +73,22 @@ define([
             dagView = new DagView({ model: this.model});
             histogram = new HistogramView();
             cooccur = new CooccurrenceView();
+            pie = new ThreadPieView();
             controls = new ControlsView({ model: this.model });
 
             treeView.$el.attr('id', 'tab-1');
             dagView.$el.attr('id', 'tab-2');
             cooccur.$el.attr('id', 'tab-3');
             histogram.$el.attr('id', 'tab-4');
-            controls.$el.attr('id', 'tab-5');
+            pie.$el.attr('id', 'tab-5');
+            controls.$el.attr('id', 'tab-6');
+
 
             this.$('#tab-content').append(treeView.$el.hide())
                 .append(dagView.$el.hide())
                 .append(cooccur.$el.hide())
                 .append(histogram.$el.hide())
+                .append(pie.$el.hide())
                 .append(controls.$el.hide());
 
             this.$('#tabs > ul > li > a').first().click();
@@ -123,4 +129,3 @@ define([
     return AppView;
 
 });
-
