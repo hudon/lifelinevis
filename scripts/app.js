@@ -73,7 +73,7 @@ define([
             dagView = new DagView({ model: this.model });
             histogram = new HistogramView();
             cooccur = new CooccurrenceView();
-            pie = new PieView({ model: this.model });
+            pie = new PieView({ lifeline: this.model });
             controls = new ControlsView({ model: this.model });
 
             treeView.$el.attr('id', 'tab-1');

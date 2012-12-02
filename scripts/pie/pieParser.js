@@ -31,14 +31,11 @@ define([
             return null;
         }
 
-        function getProcess(pid, tid, data, isFull) {
+        function getProcess(name, data) {
             for (var i = 0; i < data.length; i++) {
                 var process = data[i];
-                var name = process.pname + ' tid:' + process.tid;
 
-                if (isFull && process[0] == name) {
-                    return process;
-                } else if (process[0] == process.pname) {
+                if (process[0] == name) {
                     return process;
                 }
             }
@@ -84,8 +81,8 @@ define([
         _.each(processStats, function (process) {
             var p;
 
-            if (mode == 'collapse') {
-                p = getProcess(process.pid, process.tid, data, false);
+            if (mode) {
+                p = getProcess(process.pname, data);
 
                 if (p == null) {
                     p = [process.pname, 0];
@@ -94,7 +91,7 @@ define([
                     dindex += 1;
                 }
             } else {
-                p = getProcess(process.pid, process.tid, data, true);
+                p = getProcess(process.pname, data);
 
                 if (p == null) {
                     var name = process.pname + ' tid:' + process.tid;
