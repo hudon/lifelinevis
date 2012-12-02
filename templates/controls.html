@@ -1,24 +1,31 @@
-<label>Upload data from raw lifeline data:  <input type="file"
-  id="file"></label>
-<form id='lifelineform'>
-  <label>
-    Or copy/paste data directly:
-    <textarea name='lifelinetext'></textarea>
-  </label>
-  <input type="submit">
-</form>
-<form id="timecontrols">
-  <label>
-    Set the start time:
-    <input id="tree-start" value="<%= startTime %>" type="text" name="tree-start" >
-  </label>
-  <label>
-    end time:
-    <input id="tree-end" type="text" value="<%= endTime %>" name="tree-end" >
-  </label>
-  <input type="submit">
-</form>
-<p class="error">
-  Error: The provided text cannot be parsed. Please use the output of the
-  showtag.c program.
-</p>
+<div class="options">
+
+  <div class="left-option-item">
+    <span class="label">Upload data from raw lifeline data: </span>
+    <input type="file" id="file" class="item" style="padding-top:2px; line-height:0px !important">
+  </div>
+
+  <div class="left-option-item">
+    <form id='lifelineform'>
+      <span class="label">Or copy/paste data directly: </span>
+      <textarea name='lifelinetext' class="item"></textarea>
+      <input class="item btn" type="submit">
+    </form>
+  </div>
+
+  <div class="left-option-item">
+    <form id="timecontrols">
+      <span class="label">Set the start time: </span>
+      <input id="tree-start" value="<%= startTime %>" type="text" name="tree-start" class="item" >
+
+      <span class="label">end time: </span>
+      <input id="tree-end" type="text" value="<%= endTime %>" name="tree-end" class="item" >
+      <input type="submit" class="btn">
+    </form>
+  </div>
+
+  <p class="error">
+    Error: The provided text cannot be parsed. Please use the output of the
+    showtag.c program.
+  </p>
+</div>

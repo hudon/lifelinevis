@@ -110,11 +110,8 @@ define([
                 p[1] += process.sent + process.received;
             }
         });
-
         return data;
     }
-
     return { parse: parseLifeline };
-
 });
 
