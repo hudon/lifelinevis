@@ -27,8 +27,15 @@ define([
             this.model.set('isCollapsed', val === 'collapse');
         },
 
+        togglePieInteractions: function () {
+            var val;
+            val = $("input[name='interactions']:checked").val();
+            this.model.set('interactions', val);
+        },
+
         events: {
-            'change .options.pie input[name="mode"]': 'togglePieCollapse'
+            'change .options.pie input[name="mode"]': 'togglePieCollapse',
+            'change .options.pie input[name="interactions"]': 'togglePieInteractions'
         },
 
         render: function () {

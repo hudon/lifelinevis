@@ -102,9 +102,9 @@ define([
                 }
             }
 
-            if (interactions == 'send') {
+            if (interactions == 'sent') {
                 p[1] += process.sent;
-            } else if (interactions == 'receive') {
+            } else if (interactions == 'received') {
                 p[1] += process.received;
             } else {
                 p[1] += process.sent + process.received;
