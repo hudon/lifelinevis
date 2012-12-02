@@ -26,8 +26,8 @@ define([
             this.model = new lifeline.model();
             this.model.on('change', this.render, this);
 
-            this.controlsView = new ControlsView({ model: this.model });
-            this.$el.html(this.controlsView.el);
+            // this.controlsView = new ControlsView({ model: this.model });
+            // this.$el.html(this.controlsView.el);
 
             this.model.fetch();
         },
@@ -57,35 +57,40 @@ define([
         tabClick: function (e) {
             // Make only clicked tab 'active'
             this.$('#tabs > ul > li').removeClass('active');
-            this.$(e.currentTarget).addClass('active');
+            this.$(e.currentTarget).parent().addClass('active');
             // Hide all immediate divs except for first one (tab list)
-            $('#tabs > div').hide();
+            $('#tab-content > div').hide();
             var currentTab = this.$(e.currentTarget).attr('href');
             this.$(currentTab).show();
             return false;
         },
 
         render: function () {
-            var treeView, dagView, histogram, cooccur;
+            var treeView, dagView, histogram, cooccur, controls;
 
             // add tabs
             this.$('#tabs').remove();
+
+            this.$('#tab-content').remove();
             this.$el.append(this.template());
 
             treeView = new TimeTreeView({ lifeline: this.model });
             dagView = new DagView({ model: this.model});
             histogram = new HistogramView();
             cooccur = new CooccurrenceView();
+            controls = new ControlsView({ model: this.model });
 
             treeView.$el.attr('id', 'tab-1');
             dagView.$el.attr('id', 'tab-2');
             cooccur.$el.attr('id', 'tab-3');
             histogram.$el.attr('id', 'tab-4');
+            controls.$el.attr('id', 'tab-5');
 
-            this.$('#tabs').append(treeView.$el.hide())
+            this.$('#tab-content').append(treeView.$el.hide())
                 .append(dagView.$el.hide())
                 .append(cooccur.$el.hide())
-                .append(histogram.$el.hide());
+                .append(histogram.$el.hide())
+                .append(controls.$el.hide());
 
             this.$('#tabs > ul > li > a').first().click();
 

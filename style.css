@@ -6,7 +6,7 @@ form {
 }
 
 form input {
-  margin-left: 15px;
+  margin-left: 15px !important;
 }
 
 text {
@@ -84,9 +84,9 @@ div.tooltip {
 
 .left-option-item {
     float: left;
-    height: 50px;
+    height: auto;
     width: auto;
-    margin-bottom: 6px;
+    margin-bottom: 18px;
     overflow: hidden;
     clear: left;
 }
@@ -98,14 +98,17 @@ div.tooltip {
 }
 
 .label {
-    margin-right: 6px;
+    margin-right: 12px;
     float: left;
+    color: black !important;
+    background-color: white !important;
+    font-weight: normal !important;
 }
 
 .item {
     float: left;
     padding: 6px;
-    margin-right: 12px;
+    margin-right: 12px !important;
 }
 
 .pp-slider { width: 150px; float:left;  -webkit-user-select: none; -khtml-user-select: none; -moz-user-select: none; -o-user-select: none; user-select: none; height: 30px; }
@@ -149,4 +152,7 @@ line {
   stroke: #fff;
 }
 
-
+/* Navigation styles */
+#tab-content {
+  margin-left: 24px;
+}
