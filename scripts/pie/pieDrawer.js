@@ -9,7 +9,7 @@ define([
 
     'use strict';
 
-    function drawFunc(domElement) {
+    function drawFunc(data, domElement) {
         var chart;
 
         // Radialize the colors
@@ -58,26 +58,10 @@ define([
             series: [{
                 type: 'pie',
                 name: 'Thread',
-                data: [
-                    ['io-pkt-v4-hc tid:1', 1.0],
-                    ['io-pkt-v4-hc tid:2', 2.0],
-                    {
-                        name: 'pipe tid: 2',
-                        y: 14.0,
-                        sliced: true,
-                        selected: true
-                    },
-                    ['pipe tid: 3', 9.0],
-                    ['firefox-bin tid: 0', 19.0],
-                    ['firefox-bin tid: 1', 4.0],
-                    ['firefox-bin tid: 2', 6.0]
-                ]
+                data: data
             }]
         });
     }
 
-    return {
-        draw: drawFunc
-    };
-
+    return { draw: drawFunc };
 });

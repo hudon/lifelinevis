@@ -4,7 +4,7 @@ define([
     'jquery',
     'underscore',
     'backbone'
-], function ($, _, Backbone, TimeTreeView, DagView) {
+], function ($, _, Backbone, TimeTreeView, DagView, PieView) {
     'use strict';
 
     var LifelineModel, parseRawShowtags;

@@ -6,15 +6,15 @@ define([
     'backbone',
     'timetree/timetreeView',
     'dag/dagView',
+    'pie/pieView',
     'lifelineModel',
     'histo/tagHistogramView',
-    'pie/threadInteractionPieView',
     'cooccur/co_occurrenceView',
     'text!../templates/apptabs.html',
     'controls',
     'text!../templates/graphsContainer.html'
-], function ($, _, Backbone, TimeTreeView, DagView, lifeline, HistogramView,
-        ThreadPieView, CooccurrenceView, tabsTemplate, ControlsView,
+], function ($, _, Backbone, TimeTreeView, DagView, PieView, lifeline,
+        HistogramView, CooccurrenceView, tabsTemplate, ControlsView,
         containerTemplate) {
     'use strict';
 
@@ -70,10 +70,10 @@ define([
             this.$el.html(this.template());
 
             treeView = new TimeTreeView({ lifeline: this.model });
-            dagView = new DagView({ model: this.model});
+            dagView = new DagView({ model: this.model });
             histogram = new HistogramView();
             cooccur = new CooccurrenceView();
-            pie = new ThreadPieView();
+            pie = new PieView({ model: this.model });
             controls = new ControlsView({ model: this.model });
 
             treeView.$el.attr('id', 'tab-1');
