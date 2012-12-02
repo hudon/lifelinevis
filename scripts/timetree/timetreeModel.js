@@ -1,17 +1,9 @@
 /*jslint nomen: true, browser: true*/
 /*global define*/
 define([
-    'jquery',
-    'underscore',
     'backbone'
-], function ($, _, Backbone) {
+], function (Backbone) {
     'use strict';
-
-    // TODO remove me
-    function maxTime(lifeline) {
-        var times = _.pluck(lifeline, 'time');
-        return _.max(times);
-    }
 
     var TimeTreeModel = Backbone.Model.extend({
         defaults: {
