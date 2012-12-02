@@ -95,9 +95,7 @@ define([
             this.$('#tabs > ul > li > a').first().click();
 
             // Add style to target all elements using a .tag<name> class
-            // TODO We will need to recreate the <style> tag this generates
-            // when we allow the raw lifeline data to change (uploading, copy
-            // pasting, ...)
+            // this also removes old styles
             this.addTagStyles();
             return this;
         }
