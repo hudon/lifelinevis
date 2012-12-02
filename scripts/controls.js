@@ -22,8 +22,8 @@ define([
 
         events: {
             'change input#file': 'readFile',
-            'click #lifelineform > input': 'readTextArea',
-            'click #timecontrols > input': 'renderNewTimeLimits'
+            'click #lifelineform > input[type="submit"]': 'readTextArea',
+            'click #timecontrols > input[type="submit"]': 'renderNewTimeLimits'
         },
 
         renderNewTimeLimits: function (e) {
