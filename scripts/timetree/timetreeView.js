@@ -30,16 +30,8 @@ define([
             this.model.set('isCollapsed', val === 'collapse');
         },
 
-        renderNewTimeLimits: function () {
-            var start, end;
-            start = this.$('#tree-start').val();
-            end = this.$('#tree-end').val();
-            this.model.set({ startTime: parseInt(start, 10), endTime: parseInt(end, 10) });
-        },
-
         events: {
-            'change .options input[name="mode"]': 'toggleCollapse',
-            'change .options #treelimits input': 'renderNewTimeLimits'
+            'change .options input[name="mode"]': 'toggleCollapse'
         },
 
         remakeLegend: function () {
@@ -86,8 +78,7 @@ define([
 
             treeLifeline = timetreeParser.parse(TimeTreeModels.getRawLifeline(this.model),
                 this.model.get('resolution'),
-                this.model.get('isCollapsed'), this.model.get('startTime'),
-                this.model.get('endTime'));
+                this.model.get('isCollapsed'));
 
             // the drawer will take care of appending to this view's element
             timetreeDrawer.draw(treeLifeline, this.model.get('resolution'), this.el);

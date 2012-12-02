@@ -1,6 +1,24 @@
 <label>Upload data from raw lifeline data:  <input type="file"
   id="file"></label>
 <form id='lifelineform'>
-  <textarea name='lifelinetext'></textarea>
+  <label>
+    Or copy/paste data directly:
+    <textarea name='lifelinetext'></textarea>
+  </label>
   <input type="submit">
 </form>
+<form id="timecontrols">
+  <label>
+    Set the start time:
+    <input id="tree-start" value="<%= startTime %>" type="text" name="tree-start" >
+  </label>
+  <label>
+    end time:
+    <input id="tree-end" type="text" value="<%= endTime %>" name="tree-end" >
+  </label>
+  <input type="submit">
+</form>
+<p class="error">
+  Error: The provided text cannot be parsed. Please use the output of the
+  showtag.c program.
+</p>

@@ -56,8 +56,19 @@ define([
         buckets[level].push(node);
     }
 
-    function parseLifelineData(lifeline, resolution, mode, start, end) {
-        var minTime, treeLifeline, buckets, dummyNode, startTime, endTime;
+    function parseLifelineData(lifeline, resolution, mode) {
+        var minTime, treeLifeline, buckets, dummyNode;
+
+        if (typeof lifeline === 'undefined') {
+            throw {
+                name: 'Parser Error',
+                level: 'Error',
+                message: 'Error: No lifeline provided for time graph',
+                htmlMessage: 'Error: No lifeline provided for time graph'
+            };
+        } else if (lifeline.length === 0) {
+            return new Node();
+        }
 
         treeLifeline = [];
         buckets = [];
@@ -75,18 +86,6 @@ define([
         _.each(lifeline, function (node) {
             node.vistime = node.time / minTime;
         });
-
-        if ((typeof start !== 'undefined') && (typeof end !== 'undefined')) {
-            startTime = parseInt(start, 10);
-            endTime = parseInt(end, 10);
-
-            if (startTime >= 0 && endTime >= startTime) {
-                lifeline = _.filter(lifeline, function (node) {
-                    return startTime < node.time && node.time < endTime;
-                });
-            }
-            // TODO else: error
-        }
 
         _.each(lifeline, function (node) {
             var existingChildren, existingNode, existingParent, childNode,

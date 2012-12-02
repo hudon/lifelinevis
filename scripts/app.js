@@ -10,26 +10,24 @@ define([
     'histo/tagHistogramView',
     'cooccur/co_occurrenceView',
     'text!../templates/apptabs.html',
-    'controls'
+    'controls',
+    'text!../templates/graphsContainer.html'
 ], function ($, _, Backbone, TimeTreeView, DagView, lifeline, HistogramView,
-        CooccurrenceView, tabsTemplate, ControlsView) {
+        CooccurrenceView, tabsTemplate, ControlsView, containerTemplate) {
     'use strict';
 
-    var AppView;
+    var TabsView, AppView;
 
-    AppView = Backbone.View.extend({
-        el: '#graphs',
-
+    TabsView = Backbone.View.extend({
         template: _.template(tabsTemplate),
 
         initialize: function () {
-            this.model = new lifeline.model();
             this.model.on('change', this.render, this);
-
-            // this.controlsView = new ControlsView({ model: this.model });
-            // this.$el.html(this.controlsView.el);
-
             this.model.fetch();
+        },
+
+        events: {
+            'click #tabs ul li a': 'tabClick'
         },
 
         addTagStyles: function () {
@@ -50,10 +48,6 @@ define([
             });
         },
 
-        events: {
-            'click #tabs ul li a': 'tabClick'
-        },
-
         tabClick: function (e) {
             // Make only clicked tab 'active'
             this.$('#tabs > ul > li').removeClass('active');
@@ -70,9 +64,8 @@ define([
 
             // add tabs
             this.$('#tabs').remove();
-
             this.$('#tab-content').remove();
-            this.$el.append(this.template());
+            this.$el.html(this.template());
 
             treeView = new TimeTreeView({ lifeline: this.model });
             dagView = new DagView({ model: this.model});
@@ -99,6 +92,30 @@ define([
             // when we allow the raw lifeline data to change (uploading, copy
             // pasting, ...)
             this.addTagStyles();
+            return this;
+        }
+    });
+
+    AppView = Backbone.View.extend({
+        el: '#graphs',
+
+        template: _.template(containerTemplate),
+
+        initialize: function () {
+            this.model = new lifeline.model();
+            this.render();
+        },
+
+        render: function () {
+            var controlsView, tabsView;
+
+            //controlsView = new ControlsView({ model: this.model });
+            tabsView = new TabsView({ model: this.model });
+
+            this.$el.html(this.template());
+            //this.$el.append(controlsView.el);
+            this.$el.append(tabsView.el);
+
             return this;
         }
     });
