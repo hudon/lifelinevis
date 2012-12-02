@@ -34,6 +34,7 @@ define([
 
         addTagStyles: function () {
             var tags, colorGen;
+            $('.tagStyle').remove();
             colorGen = _.generator(["green", "orange", "blue", "teal"]);
 
             tags = lifeline.countTags(this.model);
@@ -46,7 +47,7 @@ define([
                 if (Math.random() > 0.7) {
                     style.innerHTML += '.tag' + key + ' { stroke-dasharray:15,5 } ';
                 }
-                document.getElementsByTagName('head')[0].appendChild(style);
+                $(style).addClass('tagStyle').appendTo('head');
             });
         },
 
