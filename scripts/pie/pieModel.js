@@ -1,10 +1,9 @@
 /*jslint nomen: true, browser: true*/
 /*global define*/
 define([
-    'jquery',
     'underscore',
     'backbone'
-], function ($, _, Backbone) {
+], function (_, Backbone) {
     'use strict';
 
     var PieModel = Backbone.Model.extend({

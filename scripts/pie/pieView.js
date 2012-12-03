@@ -42,7 +42,7 @@ define([
             this.$el.html(this.template);
             return this;
         }
-    })
+    });
 
     PieView = Backbone.View.extend({
         template: _.template(pieTemplate),
