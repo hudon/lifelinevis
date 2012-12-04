@@ -35,7 +35,7 @@ define([
         addTagStyles: function () {
             var tags, colorGen;
             $('.tagStyle').remove();
-            colorGen = _.generator(["green", "orange", "blue", "teal"]);
+            colorGen = _.generator(["green", "orange", "blue", "teal", "red"]);
 
             tags = lifeline.countTags(this.model);
 
