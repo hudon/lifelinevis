@@ -15,3 +15,6 @@ or
     python3 -m http.server
 
 
+Contributors are:
+* [Greta Cutulenco](https://github.com/gretac)
+* [James Hudon](https://github.com/Hudon)
