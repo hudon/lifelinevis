@@ -3,7 +3,7 @@ mTags Lifeline Visualization
 
 mTags are lightweight meta-data that augment QNX inter-process communication through biomarker-like behavior.
 Read more about mTags here: [research paper](https://uwaterloo.ca/embedded-software-group/publications/mtags-augmenting-microkernel-messages-lightweight-metadata)
-. Read our report here: [LifelineVis report](https://docs.google.com/document/d/1ipuFCCEpD82O_8B4vVjIbENxqXjc1gW4Ns8ua-QXJ6w/edit?usp=sharing).
+. 
 
 lifelinevis is a demonstration of how mTags can potentially be visualized to take advantage of the data they produce.
 
