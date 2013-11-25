@@ -15,7 +15,7 @@ define([
         results = [];
         // NOTE: This uses a slightly modified showtag scripts, that prints
         // nicer output. Modify to_json according to your showtags.c output
-        for (i = 2; i < lines.length; i += 2) {
+        for (i = 2; i < lines.length; i += 1) {
             var words, result;
             words = lines[i].split(/[ \t]+/);
 
